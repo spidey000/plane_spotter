@@ -1,0 +1,30 @@
+# API Documentation: AeroDataBox
+
+This file documents the AeroDataBox integration used in the Twitter Spotter project.
+
+## Overview
+
+The `api_handler_aerodatabox.py` module handles the interaction with the AeroDataBox API to retrieve flight data for LEMD airport. It fetches arrivals and departures within a specified time range.
+
+## Key Functionality
+
+*   **Fetching Flights:** The `fetch_adb_data(move, start_time, end_time)` function retrieves flight data (arrivals or departures) from the AeroDataBox API.
+    *   `move`: Specifies whether to fetch 'arrivals' or 'departures'.
+    *   `start_time`: The start time for the data retrieval in ISO format (e.g., '2025-02-10T06:00').
+    *   `end_time`: The end time for the data retrieval in ISO format (e.g., '2025-02-10T07:00').
+*   **Query Parameters:** The module uses different query parameters for arrivals and departures.
+*   **Data Storage:** The retrieved data is stored in JSON files in the `api/data/` directory.
+
+## Configuration
+
+*   **API Key:** The AeroDataBox API key is retrieved from the environment variable `x-magicapi-key`.
+*   **Base URL:** The base URL for the AeroDataBox API is `https://api.magicapi.dev/api/v1/aedbx/aerodatabox/flights/airports/Icao/LEMD/{start_time}/{end_time}`.
+
+## Dependencies
+
+*   `aiohttp`: For making asynchronous HTTP requests.
+*   `asyncio`: For asynchronous programming.
+*   `loguru`: For logging.
+*   `json`: For handling JSON data.
+*   `os`: For creating directories.
+*   `http.client`: For HTTP client constants.

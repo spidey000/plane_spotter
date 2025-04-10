@@ -1,0 +1,47 @@
+# Database Schema: Baserow
+
+This file documents the Baserow database schema used in the Twitter Spotter project.
+
+## Overview
+
+The `baserow_manager.py` module manages the interaction with the Baserow database. It provides functions to query, create, update, and retrieve data from the database.
+
+## Tables
+
+The following tables are used in the project:
+
+*   **All Registrations (table ID: 441094):** Stores information about all aircraft registrations.
+    *   Fields:
+        *   `registration`: Aircraft registration number.
+        *   Other fields (not specified in the code).
+*   **All Models (table ID: 441095):** Stores information about all aircraft models.
+    *   Fields:
+        *   `name`: Aircraft model name.
+        *   Other fields (not specified in the code).
+*   **Interesting Models (table ID: 441097):** Stores information about interesting aircraft models.
+    *   Fields:
+        *   `name`: Aircraft model name.
+        *   `model`: Aircraft model identifier.
+        *   Other fields (not specified in the code).
+*   **Interesting Registrations (table ID: 441099):** Stores information about interesting aircraft registrations.
+    *   Fields:
+        *   `registration`: Aircraft registration number.
+        *   Other fields (not specified in the code).
+
+## Key Functionality
+
+*   **Querying Tables:** The `query_table(table_id, filters=None, user_field_names=True)` function queries a Baserow table with optional filters.
+*   **Creating Records:** The `create_record(table_id, data)` function creates a new record in a Baserow table.
+*   **Updating Records:** The `update_record(table_id, data_to_update, data)` function updates an existing record in a Baserow table.
+*   **Getting Rows:** The `get_rows(table_id, user_field_names=True, page=1, size=100, search=None, order_by=None, filters=None, filter_type='AND', include=None, exclude=None, view_id=None)` function retrieves rows from a Baserow table with pagination and filtering.
+*   **Getting All Rows as Dictionary:** The `get_all_rows_as_dict(table_id: int, key: str = "registration")` function retrieves all rows from a Baserow table and returns them as a dictionary.
+
+## Configuration
+
+*   **Baserow Token:** The Baserow API token is stored in the `BASEROW_TOKEN` variable.
+
+## Dependencies
+
+*   `aiohttp`: For making asynchronous HTTP requests.
+*   `loguru`: For logging.
+*   `datetime`: For handling dates and times.

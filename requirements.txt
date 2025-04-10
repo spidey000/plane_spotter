@@ -1,0 +1,8 @@
+python-telegram-bot==21.0.1
+instagram-private-api==1.6.0
+linkedin-api==2.0.0
+threads-api==1.2.0
+atproto==0.0.59
+pyyaml==6.0.1
+requests==2.31.0
+loguru==0.7.0

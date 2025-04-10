@@ -1,0 +1,38 @@
+# Social Media Configuration
+
+This file documents the social media configuration used in the Twitter Spotter project.
+
+## Overview
+
+The `socials_processing.py` module handles the posting of flight information to various social media platforms. It uses the `config.config` module to determine which social networks are enabled.
+
+## Key Functionality
+
+*   **Posting to Social Networks:** The `call_socials(flight_data, interesting)` function posts flight information to the enabled social networks.
+*   **Image Handling:** The module downloads an image of the aircraft from JetPhotos or Planespotters and includes it in the social media posts.
+*   **Social Network Modules:** The module uses separate modules for each social network (e.g., `bluesky.py`, `telegram.py`, `twitter.py`).
+
+## Configuration
+
+The following social networks can be enabled or disabled in the `config.config` module:
+
+*   `telegram`
+*   `bluesky`
+*   `twitter`
+*   `threads`
+*   `instagram`
+*   `linkedin`
+
+## Dependencies
+
+*   `config.config`: For retrieving configuration settings.
+*   `socials.bluesky`: For posting to Bluesky.
+*   `socials.telegram`: For posting to Telegram.
+*   `socials.twitter`: For posting to Twitter.
+*   `socials.threads`: For posting to Threads.
+*   `socials.instagram`: For posting to Instagram.
+*   `socials.linkedin`: For posting to LinkedIn.
+*   `utils.image_finder`: For finding images of aircraft.
+*   `os`: For file operations.
+*   `requests`: For downloading images.
+*   `loguru`: For logging.

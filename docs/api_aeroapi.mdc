@@ -1,0 +1,33 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# API Documentation: AeroAPI
+
+This file documents the AeroAPI integration used in the Twitter Spotter project.
+
+## Overview
+
+The `api_handler_aeroapi.py` module handles the interaction with the AeroAPI to retrieve flight data for LEMD airport. It fetches scheduled arrivals and departures within a specified time range.
+
+## Key Functionality
+
+*   **Fetching Scheduled Flights:** The `fetch_aeroapi_scheduled(move, start_time, end_time)` function retrieves scheduled flight data (arrivals or departures) from the AeroAPI.
+    *   `move`: Specifies whether to fetch 'arrivals' or 'departures'.
+    *   `start_time`: The start time for the data retrieval in ISO format (e.g., '2025-02-13T00:01').
+    *   `end_time`: The end time for the data retrieval in ISO format (e.g., '2025-02-13T23:59').
+*   **Rate Limiting:** The module implements retry logic with exponential backoff to handle rate limiting by the AeroAPI.
+*   **Data Storage:** The retrieved data is stored in JSON files in the `api/data/` directory.
+
+## Configuration
+
+*   **API Key:** The AeroAPI key is retrieved from the environment variable `x-apikey`.
+*   **Base URL:** The base URL for the AeroAPI is `https://aeroapi.flightaware.com/aeroapi/airports/lemd/flights/{move}`.
+
+## Dependencies
+
+*   `aiohttp`: For making asynchronous HTTP requests.
+*   `asyncio`: For asynchronous programming.
+*   `loguru`: For logging.
+*   `json`: For handling JSON data.

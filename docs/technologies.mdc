@@ -1,0 +1,62 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Technologies Used
+
+This file documents the technologies used in each module of the Twitter Spotter project.
+
+## Main Modules
+
+*   `main.py`:
+    *   **Description:** Orchestrates the execution of the different modules.
+    *   **Technologies:**
+        *   `asyncio`: For asynchronous programming.
+        *   `loguru`: For logging.
+        *   `config.config`: For reading configuration settings.
+        *   `api`: For fetching flight data.
+        *   `database`: For interacting with the Baserow database.
+        *   `socials`: For posting to social media platforms.
+*   `api/`:
+    *   **Description:** Handles the interaction with different APIs to obtain flight data.
+    *   **Technologies:**
+        *   `aiohttp`: For making asynchronous HTTP requests.
+        *   `asyncio`: For asynchronous programming.
+        *   `loguru`: For logging.
+        *   `json`: For handling JSON data.
+*   `config/`:
+    *   **Description:** Manages the configuration of the project.
+    *   **Technologies:**
+        *   `python-dotenv`: For reading environment variables from a `.env` file.
+        *   `yaml`: For reading configuration from a `config.yaml` file.
+*   `database/`:
+    *   **Description:** Manages the interaction with the Baserow database.
+    *   **Technologies:**
+        *   `aiohttp`: For making asynchronous HTTP requests.
+        *   `loguru`: For logging.
+*   `socials/`:
+    *   **Description:** Handles the posting of flight information to various social media platforms.
+    *   **Technologies:**
+        *   `os`: For file operations.
+        *   `requests`: For downloading images.
+        *   `loguru`: For logging.
+        *   **Bluesky:**
+            *   `argparse`: For parsing command-line arguments.
+            *   `PIL (Pillow)`: For image processing.
+        *   **Telegram:**
+            *   `telegram`: For interacting with the Telegram Bot API.
+            *   `telegram.ext`: For building Telegram bots.
+        *   **Twitter:**
+            *   `twikit`: For interacting with the Twitter API.
+        *   **Threads:**
+            *   Uses the Facebook Graph API (details not available in the provided code).
+        *   **Instagram:**
+            *   `aiograpi`: For interacting with the Instagram API.
+        *   **LinkedIn:**
+            *   Uses the LinkedIn API (details not available in the provided code).
+*   `utils/`:
+    *   **Description:** Contains utility functions used throughout the project.
+    *   **Technologies:**
+        *   `requests`: For downloading images.
+        *   `bs4 (Beautiful Soup)`: For parsing HTML.
