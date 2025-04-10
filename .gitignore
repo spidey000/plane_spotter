@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+logs/
+
+# Test data and images
+test/images/
+test/adb_test_data.json
+test/aeroapi_data_arrivals.json
+test/aeropai_data_departures.json
+test/airline table.csv
+test/debug.log
+
+# API data
+api/data/
+api/data/preloaded/
+
+# Temporary files
+socials/temp_image.jpg_compressed.jpg
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# System
+.DS_Store
+Thumbs.db
