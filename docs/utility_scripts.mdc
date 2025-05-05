@@ -1,0 +1,80 @@
+# Utility Scripts
+
+This document explains the purpose and usage of the utility scripts located in the `utils/` directory.
+
+## Overview
+
+The utility scripts provide supporting functionality for the main application workflow:
+
+1. **`create_bsky_post.py`**
+2. **`data_processing.py`**
+3. **`image_finder.py`**
+
+## Script Details
+
+### `create_bsky_post.py`
+
+**Purpose:** Handles Bluesky-specific post creation and formatting.
+
+**Functions:**
+- `format_post(content: dict) -> dict`: Formats content for Bluesky
+- `add_media(post: dict, media: list) -> dict`: Adds media attachments
+- `validate_post(post: dict) -> bool`: Validates post before sending
+
+**Usage:**
+```python
+from utils.create_bsky_post import format_post
+
+content = {
+    'text': 'Sample post',
+    'metadata': {...}
+}
+formatted_post = format_post(content)
+```
+
+### `data_processing.py`
+
+**Purpose:** Processes raw flight data into structured format.
+
+**Functions:**
+- `clean_data(raw_data: dict) -> dict`: Cleans and validates raw data
+- `extract_key_info(data: dict) -> dict`: Extracts key flight information
+- `generate_post_content(data: dict) -> dict`: Generates content for social posts
+
+**Usage:**
+```python
+from utils.data_processing import clean_data
+
+raw_data = {...}
+cleaned_data = clean_data(raw_data)
+```
+
+### `image_finder.py`
+
+**Purpose:** Finds and processes relevant images for posts.
+
+**Functions:**
+- `find_images(flight_data: dict) -> list`: Finds relevant images
+- `process_images(images: list) -> list`: Processes images for posting
+- `validate_images(images: list) -> bool`: Validates images before use
+
+**Usage:**
+```python
+from utils.image_finder import find_images
+
+flight_data = {...}
+images = find_images(flight_data)
+```
+
+## Error Handling
+
+All utility scripts:
+- Log errors to `logs/`
+- Return `None` or empty collections on failure
+- Include input validation
+
+## Dependencies
+
+- `data_processing.py` depends on flight data structure
+- `image_finder.py` depends on image repository setup
+- `create_bsky_post.py` depends on Bluesky API

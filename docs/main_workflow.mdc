@@ -1,0 +1,54 @@
+# Main Application Workflow
+
+This document outlines the primary execution flow of the Twitter Spotter application, starting from `main.py`.
+
+## Flow Overview
+
+```mermaid
+graph TD
+    A[Start main.py] --> B{Fetch Data from APIs}
+    B --> C{Process Flight Data}
+    C --> D{Store Data in Baserow}
+    D --> E{Format Posts}
+    E --> F{Post to Social Platforms}
+    F --> G[End]
+```
+
+## Detailed Steps
+
+1. **Data Fetching**
+   - Use `api/api_handler_aeroapi.py` to fetch data from AeroAPI
+   - Use `api/api_handler_aerodatabox.py` to fetch data from AeroDataBox
+
+2. **Data Processing**
+   - Process raw flight data using `utils/data_processing.py`
+   - Find relevant images using `utils/image_finder.py`
+
+3. **Database Integration**
+   - Store processed data in Baserow using `database/baserow_manager.py`
+
+4. **Post Formatting**
+   - Format data into social media posts using `socials/socials_processing.py`
+
+5. **Social Media Distribution**
+   - Post formatted content to various platforms using:
+     - `socials/twitter.py`
+     - `socials/bluesky.py`
+     - `socials/instagram.py`
+     - `socials/linkedin.py`
+     - `socials/telegram.py`
+     - `socials/threads.py`
+
+## Error Handling
+
+- Each stage incorporates error handling and logging
+- Errors are logged to log files in the `logs/` directory
+- Application continues running unless critical failures occur
+
+## Scheduling and Control
+
+The workflow runs continuously based on intervals defined in `config.yaml`.
+
+- **Main Loop:** Fetches, processes, stores, and posts data periodically.
+- **Configuration Reloading:** The configuration (`config.yaml`) is reloaded at the start of each main loop iteration to pick up changes.
+- **Telegram Bot Listener:** An integrated Telegram bot listener (running concurrently via `asyncio` in `main.py`) handles commands from the designated admin user (`telegram.admin_id`) to view or modify the configuration in real-time.

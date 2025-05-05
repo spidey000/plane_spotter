@@ -6,74 +6,11 @@ import asyncio
 from datetime import datetime, timedelta
 from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
 import os
-import config.config as cfg
-
-def is_admin(user_id):
-    """Check if user is admin"""
-    return str(user_id) == os.getenv('ADMIN_USER_ID')
-
-async def config_set(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_set command"""
-    if not is_admin(update.message.from_user.id):
-        await update.message.reply_text("Acceso denegado")
-        return
-    
-    try:
-        key = context.args[0]
-        value = context.args[1]
-        cfg.update_config(key, value)
-        await update.message.reply_text(f"Configuración actualizada: {key} = {value}")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
-
-async def config_get(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_get command"""
-    if not is_admin(update.message.from_user.id):
-        await update.message.reply_text("Acceso denegado")
-        return
-    
-    try:
-        key = context.args[0]
-        value = cfg.get_config(key)
-        await update.message.reply_text(f"{key} = {value}")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
-
-async def config_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_list command"""
-    if not is_admin(update.message.from_user.id):
-        await update.message.reply_text("Acceso denegado")
-        return
-    
-    try:
-        config = cfg.load_config()
-        await update.message.reply_text(f"Configuración actual:\n{config}")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
-
-async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_reset command"""
-    if not is_admin(update.message.from_user.id):
-        await update.message.reply_text("Acceso denegado")
-        return
-    
-    try:
-        cfg.save_config(cfg.DEFAULT_CONFIG)
-        await update.message.reply_text("Configuración restablecida a valores por defecto")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize Telegram application with longer timeout
-application = ApplicationBuilder().token('6572961963:AAE29B4HnmR17HTllBAmKK02ecIwav6WQmk')\
-    .read_timeout(30)\
-    .write_timeout(30)\
-    .build()
-
-# Register configuration commands
-application.add_handler(CommandHandler("config_set", config_set))
-application.add_handler(CommandHandler("config_get", config_get))
-application.add_handler(CommandHandler("config_list", config_list))
-application.add_handler(CommandHandler("config_reset", config_reset))
+application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).read_timeout(30).write_timeout(30).build()
 
 def generate_flight_message(flight_data):
     """Generate a formatted message from flight data"""

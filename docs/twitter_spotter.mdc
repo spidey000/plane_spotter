@@ -43,8 +43,8 @@ alwaysApply: true
 *   `config/`: Archivos de configuración.
     *   Almacena la configuración del sistema, incluyendo API keys, credenciales de redes sociales, y otros parámetros.
     *   `.env`: Variables de entorno (API keys, etc.).
-    *   `config.py`: Configuración del proyecto. Define las clases y funciones para cargar la configuración desde los archivos.
-    *   `config.yaml`: Archivo de configuración YAML. Contiene los parámetros de configuración del sistema.
+    *   `config_load.py`: Configuración del proyecto. Define las clases y funciones para cargar la configuración desde los archivos.
+    *   `config.json`: Archivo de configuración YAML. Contiene los parámetros de configuración del sistema.
 *   `database/`:  Manejo de la base de datos.
     *   `baserow_manager.py`:  Interactúa con la base de datos Baserow. Define las clases y funciones para conectar, leer, escribir y actualizar datos en la base de datos Baserow. Es utilizado por `main.py` y `api/` para almacenar y recuperar datos de vuelos.
 *   `docs/`: Documentación del proyecto.

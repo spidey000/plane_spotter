@@ -29,7 +29,8 @@ This file documents the technologies used in each module of the Twitter Spotter 
     *   **Description:** Manages the configuration of the project.
     *   **Technologies:**
         *   `python-dotenv`: For reading environment variables from a `.env` file.
-        *   `yaml`: For reading configuration from a `config.yaml` file.
+        *   `json`: For reading configuration from a `config.json` file.
+        *   `config\config_load.py` : to centralize the config loading logic
 *   `database/`:
     *   **Description:** Manages the interaction with the Baserow database.
     *   **Technologies:**

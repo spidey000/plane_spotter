@@ -9,6 +9,7 @@ from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
 from loguru import logger
 from PIL import Image
 import io
+from config import config_manager
 
 def generate_flight_message(flight_data):
     """Generate a formatted message from flight data"""
@@ -31,8 +32,9 @@ def generate_flight_message(flight_data):
 def post_flight_to_bluesky(flight_data, image_path=None):
     """Post flight information to Bluesky"""
     logger.info(f"Posting flight {flight_data['flight_name']} to Bluesky")
-    ATP_AUTH_HANDLE = 'lemdspotter.bsky.social'
-    ATP_AUTH_PASSWORD = 'sdpMAD1217'
+    config = config_manager.load_config()
+    ATP_AUTH_HANDLE = config['bluesky']['handle']
+    ATP_AUTH_PASSWORD = config['bluesky']['password']
     message = generate_flight_message(flight_data)
     
     if image_path and flight_data['registration']:

@@ -1,0 +1,117 @@
+# Deployment and Setup Guide
+
+This document provides step-by-step instructions for setting up and deploying the Twitter Spotter application.
+
+## Prerequisites
+
+- Python 3.8+
+- Git
+- Virtualenv (recommended)
+- Required system libraries (if any)
+
+## Setup Instructions
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/yourusername/twitter_spotter_v4.git
+   cd twitter_spotter_v4
+   ```
+
+2. **Create Virtual Environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configuration**
+   - Copy `config/config.example.yaml` to `config/config.yaml`
+   - Fill in required configuration values:
+     - API keys (AeroAPI, AeroDataBox)
+     - Database credentials (Baserow)
+     - Social media credentials (Twitter, Bluesky, Instagram, LinkedIn, Telegram Bot Token, Threads)
+     - **Telegram Admin User ID (`telegram.admin_id`)**: Set this to the numeric Telegram user ID of the admin who will manage the configuration via the bot.
+     - Other application settings (thresholds, intervals, etc.)
+
+5. **Database Setup**
+   - Create required tables in Baserow
+   - Update table IDs in `config.yaml`
+
+6. **Test the Setup**
+   ```bash
+   pytest test/
+   ```
+
+## Running the Application
+
+### Development Mode
+```bash
+python main.py
+```
+
+### Production Deployment
+
+1. **Install Gunicorn**
+   ```bash
+   pip install gunicorn
+   ```
+
+2. **Run with Gunicorn**
+   ```bash
+   gunicorn --workers 4 --bind 0.0.0.0:8000 main:app
+   ```
+
+3. **Set Up Systemd Service**
+   Create `/etc/systemd/system/twitter_spotter.service`:
+   ```ini
+   [Unit]
+   Description=Twitter Spotter Service
+   After=network.target
+
+   [Service]
+   User=youruser
+   WorkingDirectory=/path/to/twitter_spotter_v4
+   ExecStart=/path/to/venv/bin/gunicorn --workers 4 --bind 0.0.0.0:8000 main:app
+   Restart=always
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+4. **Enable and Start Service**
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl enable twitter_spotter
+   sudo systemctl start twitter_spotter
+   ```
+
+## Updating the Application
+
+1. Pull latest changes:
+   ```bash
+   git pull origin main
+   ```
+
+2. Update dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Restart service:
+   ```bash
+   sudo systemctl restart twitter_spotter
+   ```
+
+## Logs
+
+Application logs are stored in:
+- `logs/application.log`
+- `logs/error.log`
+
+Systemd service logs can be viewed with:
+```bash
+journalctl -u twitter_spotter

@@ -1,0 +1,82 @@
+# Testing Guide
+
+This document outlines the testing strategy and provides instructions for running the tests in the `test/` directory.
+
+## Test Structure
+
+The test suite is organized into the following categories:
+
+1. **API Tests** (`test/api/`)
+   - `test_api_handler.py`: Tests API handler functionality
+
+2. **Database Tests** (`test/`)
+   - `test_database.py`: Tests Baserow database interactions
+
+3. **Processing Tests** (`test/`)
+   - `test_processing.py`: Tests data processing logic
+
+4. **Integration Tests** (`test/`)
+   - `download_all.py`: Tests full data download workflow
+   - `get_rows.py`: Tests database row retrieval
+   - `terminal_out.py`: Tests terminal output formatting
+
+## Running Tests
+
+### Prerequisites
+- Python 3.8+
+- pytest installed (`pip install pytest`)
+- All project dependencies installed
+
+### Running All Tests
+```bash
+pytest test/
+```
+
+### Running Specific Test Categories
+```bash
+# Run API tests
+pytest test/api/
+
+# Run database tests
+pytest test/test_database.py
+
+# Run processing tests
+pytest test/test_processing.py
+```
+
+### Test Coverage
+To generate a coverage report:
+```bash
+pytest --cov=twitter_spotter_v4 test/
+```
+
+## Writing New Tests
+
+1. Create a new test file in the appropriate directory
+2. Follow existing test patterns
+3. Use descriptive test names
+4. Include assertions for expected behavior
+5. Add any necessary test fixtures
+
+## Test Data
+
+- Test data is stored in `test/data/`
+- Use mock data for API responses
+- Use test database credentials in `config.yaml`
+
+## Continuous Integration
+
+Tests are automatically run on:
+- Push to main branch
+- Pull request creation
+- Scheduled nightly runs
+
+## Debugging Tests
+
+To debug a failing test:
+1. Run the specific test with `-s` flag:
+   ```bash
+   pytest test/test_file.py::test_name -s
+   ```
+2. Add print statements or use a debugger
+3. Check test logs in `logs/test.log`

@@ -1,0 +1,84 @@
+# Social Media Integrations
+
+This document details the implementation of each social media platform integration in the `socials/` directory.
+
+## Overview
+
+The application supports posting to multiple social media platforms through dedicated modules:
+
+- Twitter (`socials/twitter.py`)
+- Bluesky (`socials/bluesky.py`)
+- Instagram (`socials/instagram.py`)
+- LinkedIn (`socials/linkedin.py`)
+- Telegram (`socials/telegram.py`)
+- Threads (`socials/threads.py`)
+
+Each platform module follows a similar structure but implements platform-specific requirements.
+
+## Common Structure
+
+All platform modules implement:
+
+1. **Authentication**
+   - Uses credentials from `config.yaml`
+   - Handles token management and refresh
+
+2. **Post Formatting**
+   - Implements platform-specific content formatting
+   - Handles media attachments (images, videos)
+
+3. **Posting**
+   - Sends formatted content to the platform
+   - Handles rate limits and retries
+
+4. **Error Handling**
+   - Logs errors to `logs/`
+   - Implements retry logic
+
+## Platform-Specific Details
+
+### Twitter
+- Uses `twikit` library
+- Supports:
+  - Text posts
+  - Image attachments
+  - Threads
+- Rate limit handling
+
+### Bluesky
+- Uses AT Protocol
+- Supports:
+  - Text posts
+  - Image attachments
+  - Rich text formatting
+
+### Instagram
+- Uses Instagram Graph API
+- Supports:
+  - Image posts
+  - Captions
+  - Hashtags
+
+### LinkedIn
+- Uses LinkedIn API
+- Supports:
+  - Professional posts
+  - Article sharing
+  - Company page integration
+
+### Telegram
+- Uses Telegram Bot API
+- Supports:
+  - Posting text messages and images to a specified channel/chat (`chat_id`).
+  - **Admin Configuration:** Allows a designated admin (`admin_id` in config) to manage the application's configuration via bot commands (e.g., `/set_config`, `/get_config`). This listener runs within `main.py`.
+
+### Threads
+- Uses Threads API
+- Supports:
+  - Text posts
+  - Image attachments
+  - Hashtags
+
+## Configuration
+
+Each platform requires specific configuration in `config.yaml` under the `social_media` section. Refer to `config_details.mdc` for configuration specifics.

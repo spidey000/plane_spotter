@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
-import config.config as cfg
+from config import config_manager
+
+config = config_manager.load_config()
 
 # Add project root to Python path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -39,25 +41,24 @@ async def call_socials(flight_data, interesting):
                 with open(temp_image_path, "wb+") as f:
                     f.write(response.content)
                     logger.debug(f"Image saved to {temp_image_path}")
-
         # Post to enabled social networks
-        if cfg.get_config('social_networks.telegram'):
+        if config.get('social_networks.telegram'):
             telegram_task = await tg.schedule_telegram(flight_data, image_path=temp_image_path)
             await telegram_task
             
-        if cfg.get_config('social_networks.bluesky'):
+        if config['social_networks'].get('bluesky', False):
             await bs.post_flight_to_bluesky(flight_data, image_path=temp_image_path)
             
-        if cfg.get_config('social_networks.twitter'):
+        if config['social_networks'].get('twitter', False):
             await tw.post_to_twitter(flight_data, image_path=temp_image_path)
             
-        if cfg.get_config('social_networks.threads'):
+        if config['social_networks'].get('threads', False):
             await th.post_to_threads(flight_data, image_path=temp_image_path)
             
-        if cfg.get_config('social_networks.instagram'):
+        if config['social_networks'].get('instagram', False):
             await ig.post_to_instagram(flight_data, image_path=temp_image_path)
             
-        if cfg.get_config('social_networks.linkedin'):
+        if config['social_networks'].get('linkedin', False):
             await li.post_to_linkedin(flight_data, image_path=temp_image_path)
         
     finally:
@@ -65,3 +66,4 @@ async def call_socials(flight_data, interesting):
         if temp_image_path and os.path.exists(temp_image_path):
             os.remove(temp_image_path)
             logger.debug(f"Removed temporary image {temp_image_path}")
+

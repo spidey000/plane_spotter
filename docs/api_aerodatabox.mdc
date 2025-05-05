@@ -1,3 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
 # API Documentation: AeroDataBox
 
 This file documents the AeroDataBox integration used in the Twitter Spotter project.

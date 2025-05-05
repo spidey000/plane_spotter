@@ -1,0 +1,84 @@
+# Data Flow Details
+
+This document provides a more detailed look at how data flows through the Twitter Spotter application, from API retrieval to social media posting.
+
+## 1. API Data Retrieval
+
+- **Source:** AeroAPI (`api/api_handler_aeroapi.py`), AeroDataBox (`api/api_handler_aerodatabox.py`)
+- **Example Payload (Simplified AeroAPI):**
+  ```json
+  {
+    "fa_flight_id": "AAL123-1618000000-fa-001",
+    "ident": "AAL123",
+    "origin": {"code": "KJFK"},
+    "destination": {"code": "KLAX"},
+    "aircraft_type": "B772",
+    "registration": "N777AA",
+    "scheduled_out": "2025-04-10T10:00:00Z",
+    "actual_out": "2025-04-10T10:05:00Z",
+    "status": "En Route"
+    // ... other fields
+  }
+  ```
+- **Output:** Raw JSON data representing flight information.
+
+## 2. Data Processing (`utils/data_processing.py`)
+
+- **Input:** Raw JSON data from APIs.
+- **Actions:**
+    - Cleaning and validation (`clean_data`).
+    - Extraction of key fields (flight ID, origin, destination, aircraft type, registration, status, timestamps) (`extract_key_info`).
+    - Enrichment (e.g., calculating flight duration, looking up airline names).
+    - Filtering based on criteria (e.g., interesting aircraft types, specific routes defined in `config.yaml`).
+- **Output:** A structured dictionary containing processed and relevant flight information.
+  ```python
+  processed_data = {
+      'flight_id': 'AAL123-1618000000-fa-001',
+      'callsign': 'AAL123',
+      'origin_code': 'KJFK',
+      'destination_code': 'KLAX',
+      'aircraft_type': 'B772',
+      'registration': 'N777AA',
+      'status': 'En Route',
+      'is_interesting': True, # Based on config rules
+      # ... other processed fields
+  }
+  ```
+
+## 3. Database Storage (`database/baserow_manager.py`)
+
+- **Input:** Processed flight data dictionary.
+- **Actions:**
+    - Connects to Baserow using credentials from `config.yaml`.
+    - Maps the processed data dictionary to the Baserow table schema (see `database_schema.mdc`).
+    - Creates a new row or updates an existing row in the specified Baserow table.
+- **Output:** Baserow row ID (or confirmation of update).
+
+## 4. Image Finding (`utils/image_finder.py`)
+
+- **Input:** Processed flight data (specifically registration/aircraft type).
+- **Actions:**
+    - Queries external image sources (e.g., JetPhotos, Planespotters API - if configured) for images matching the aircraft registration.
+    - Downloads a suitable image.
+    - Stores the image path.
+- **Output:** Path to a downloaded image file (e.g., `images/N777AA.jpg`).
+
+## 5. Social Media Formatting (`socials/socials_processing.py`)
+
+- **Input:** Processed flight data dictionary and image path.
+- **Actions:**
+    - Generates platform-specific text content based on the flight data.
+    - Incorporates hashtags, mentions, and links as needed.
+    - Prepares the image for attachment.
+- **Output:** A dictionary or object containing the formatted text and media ready for posting to each enabled platform.
+
+## 6. Posting to Platforms (`socials/*.py`)
+
+- **Input:** Formatted post content for a specific platform.
+- **Actions:**
+    - Uses platform-specific libraries (`twikit`, AT Protocol client, etc.) and credentials from `config.yaml`.
+    - Sends the post (text and image) to the platform's API.
+    - Handles API responses, rate limits, and errors.
+- **Output:** Confirmation of successful post or logged error.
+
+This flow ensures data is consistently fetched, processed, stored, and distributed across the configured social media channels.

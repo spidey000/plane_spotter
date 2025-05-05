@@ -7,6 +7,11 @@
 import aiohttp
 from loguru import logger
 import datetime
+from dotenv import load_dotenv
+import os
+import json
+from config import config_manager
+
 
 # import the credentials for the baserow
 
@@ -15,17 +20,26 @@ import datetime
 # to check interesting models '441097'
 # to check interesting registrations '441099'
 
-# token 'CAMiafEgTCRDCcymT5FKH5inb3u2geKK'
 
+# Load the .env file
+load_dotenv()
 
+# Load the config file
+config = config_manager.load_config()
 
-#generate the authentication 
-# Set up authentication headers for Baserow API
-BASEROW_TOKEN = 'CAMiafEgTCRDCcymT5FKH5inb3u2geKK'
+# Use the Baserow token from .env
+BASEROW_TOKEN = os.getenv('BASEROW_TOKEN')
 headers = {
-    "Authorization": f"Token {'CAMiafEgTCRDCcymT5FKH5inb3u2geKK'}",
+    "Authorization": f"Token {BASEROW_TOKEN}",
     "Content-Type": "application/json"
 }
+
+# Use configurable table IDs and API URL from config.json
+REGISTRATIONS_TABLE_ID = config['baserow']['tables']['registrations']
+INTERESTING_MODELS_TABLE_ID = config['baserow']['tables']['interesting_models']
+INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations']
+BASEROW_API_URL = config['baserow']['api_url']
+
 async def query_table(table_id, filters=None, user_field_names=True):
     """
     Generic function to query any Baserow table
@@ -34,7 +48,7 @@ async def query_table(table_id, filters=None, user_field_names=True):
     :param user_field_names: Whether to use human-readable field names
     :return: Response data or None if not found
     """
-    url = f"https://api.baserow.io/api/database/rows/table/{table_id}/"
+    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/"
     params = {"user_field_names": "true" if user_field_names else "false"}
     
     if filters:
@@ -62,14 +76,14 @@ async def query_table(table_id, filters=None, user_field_names=True):
 async def query_registrations_table(flight):
     logger.debug(f"Querying registrations table for flight {flight['registration']}")
     return await query_table(
-        table_id=441094,  # Registrations table ID
+        table_id=REGISTRATIONS_TABLE_ID,  # Registrations table ID
         filters={"registration": flight['registration']}
     )
 
 async def query_interesting_registrations_table(flight):
     logger.debug(f"Querying interesting registrations table for flight {flight['registration']}")
     return await query_table(
-        table_id=441099,  # Interesting registrations table ID
+        table_id=INTERESTING_REGISTRATIONS_TABLE_ID,  # Interesting registrations table ID
         filters={"registration": flight['registration']}
     )
 
@@ -78,7 +92,7 @@ async def query_interesting_models_table(flight):
     if model:
         logger.debug(f"Querying interesting models table for model {model}")
         model_query = await query_table(
-            table_id=441097,  # Interesting models table ID
+            table_id=INTERESTING_MODELS_TABLE_ID,  # Interesting models table ID
             filters={"name": model}
         )
         return model_query
@@ -86,7 +100,7 @@ async def query_interesting_models_table(flight):
         model = flight['aircraft_icao']
         logger.debug(f"Querying interesting models table for model {model}")
         model_query = await query_table(
-            table_id=441097,  # Interesting models table ID
+            table_id=INTERESTING_MODELS_TABLE_ID,  # Interesting models table ID
             filters={"model": model}
         )
         return model_query
@@ -99,7 +113,7 @@ async def create_record(table_id, data):
     :param data: Dictionary of data to create
     :return: Created record data or None if failed
     """
-    url = f"https://api.baserow.io/api/database/rows/table/{table_id}/"
+    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/"
 
     params = {"user_field_names": "true"}
     
@@ -135,7 +149,7 @@ async def get_rows(table_id, user_field_names=True, page=1, size=100, search=Non
     :param view_id: View ID to apply
     :return: List of rows or None if failed
     """
-    url = f"https://api.baserow.io/api/database/rows/table/{table_id}/"
+    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/"
     params = {
         "user_field_names": "true" if user_field_names else "false",
         "page": page,
@@ -184,7 +198,7 @@ async def update_record(table_id, data_to_update, data):
     """
 
     row_id = await query_table(table_id, filters={'registration': data['registration']})
-    url = f"https://api.baserow.io/api/database/rows/table/{table_id}/{row_id['id']}/"
+    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/{row_id['id']}/"
 
     params = {"user_field_names": "true"}
 

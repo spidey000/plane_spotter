@@ -1,0 +1,48 @@
+# Error Handling and Logging
+
+This document describes the error handling strategies and logging setup used within the Twitter Spotter application.
+
+## Logging Framework
+
+- **Library:** Loguru (`loguru`) is used for flexible and powerful logging.
+- **Configuration:** Logging is typically configured in `main.py` or a dedicated setup module.
+- **Log Levels:** Standard levels (DEBUG, INFO, WARNING, ERROR, CRITICAL) are used. The level can often be set via `config.yaml` or environment variables for different environments (development vs. production).
+
+## Log Destinations
+
+- **Console:** Logs are typically output to the console during development or when running interactively.
+- **Files:** Logs are written to files in the `logs/` directory.
+    - `application.log`: General application events and informational messages.
+    - `error.log`: Errors and critical failures.
+- **Rotation:** Log files may be configured to rotate based on size or time (e.g., daily rotation) to prevent them from growing indefinitely. This configuration is handled by Loguru settings.
+
+## Error Handling Strategy
+
+- **General Approach:** Exceptions are caught at relevant boundaries (e.g., API calls, database operations, file I/O, social media posting).
+- **API Calls (`api/`):**
+    - Handle connection errors, timeouts, invalid responses (e.g., 4xx, 5xx status codes).
+    - Log error details including status code and response body if available.
+    - Implement retry logic with backoff for transient network issues where appropriate.
+- **Database Operations (`database/`):**
+    - Catch exceptions related to database connection, query execution, or data integrity.
+    - Log specific database errors.
+    - Avoid crashing the application if the database is temporarily unavailable; retry or queue operations if feasible.
+- **Data Processing (`utils/`):**
+    - Handle missing keys, incorrect data types, or validation failures during data cleaning and transformation.
+    - Log warnings for recoverable issues, errors for critical processing failures.
+    - Return default values or skip records where appropriate.
+- **Social Media Posting (`socials/`):**
+    - Handle API errors from social platforms (e.g., authentication failures, rate limits, invalid content).
+    - Log platform-specific error codes and messages.
+    - Implement rate limit handling (e.g., wait and retry).
+    - Log success/failure for each posting attempt.
+- **File Operations:**
+    - Use `try...except` blocks for file reading/writing (e.g., image downloads, config loading).
+    - Handle `FileNotFoundError`, `PermissionError`, etc.
+
+## Monitoring
+
+- **Log Analysis:** Regularly review log files (especially `error.log`) to identify recurring issues.
+- **Alerting (Optional):** In a production environment, consider integrating with monitoring services (e.g., Sentry, Datadog) to get real-time alerts for critical errors based on log messages.
+
+By combining robust error handling with detailed logging, the application aims to be resilient and provide clear diagnostics when issues occur.

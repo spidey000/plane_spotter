@@ -1,0 +1,84 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Configuration Details
+
+This document explains the structure and purpose of the `config.yaml` file, which serves as the central configuration for the Twitter Spotter application.
+
+## Structure
+
+The `config.yaml` file is divided into several sections:
+
+### API Configuration
+- **aeroapi**: Contains credentials and settings for the AeroAPI integration.
+- **aerodatabox**: Contains credentials and settings for the AeroDataBox integration.
+
+### Database Configuration
+- **baserow**: Contains connection details for the Baserow database, including API key and table IDs.
+
+### Social Media Configuration
+This section contains credentials and settings for each supported social media platform. Each platform sub-section typically includes API keys, tokens, user identifiers, and potentially platform-specific flags.
+
+- **twitter**: Credentials for Twitter API v1.1 or v2.
+- **bluesky**: Handle and password/app password for the AT Protocol.
+- **instagram**: User ID and access token for Instagram Graph API.
+- **linkedin**: API key, secret, and access token for LinkedIn API.
+- **telegram**: Bot token and chat ID for Telegram Bot API.
+- **threads**: Credentials for Threads API (details may vary based on library used).
+
+### Application Settings
+- **thresholds**: Various operational thresholds used in data processing.
+- **intervals**: Timing intervals for API polling and social media posting.
+
+## Usage
+
+The `config/config.py` module loads and validates this configuration at application startup. Each section is mapped to a corresponding Python object for easy access throughout the application.
+
+## Example
+
+```yaml
+aeroapi:
+  api_key: "your_aeroapi_key"
+  base_url: "https://aeroapi.com/v2"
+
+baserow:
+  api_key: "your_baserow_key"
+  table_id: "12345"
+
+twitter:
+  enabled: true # Example flag
+  api_key: "your_twitter_key"
+  api_secret: "your_twitter_secret"
+  access_token: "your_access_token"
+  access_secret: "your_access_secret"
+
+bluesky:
+  enabled: true
+  handle: "your_handle.bsky.social"
+  password: "your_app_password"
+
+instagram:
+  enabled: false
+  user_id: "your_instagram_user_id"
+  access_token: "your_instagram_access_token"
+
+linkedin:
+  enabled: false
+  api_key: "your_linkedin_key"
+  api_secret: "your_linkedin_secret"
+  access_token: "your_linkedin_access_token"
+
+telegram:
+  enabled: true
+  bot_token: "your_telegram_bot_token"
+  chat_id: "your_telegram_chat_id" # or channel ID
+
+threads:
+  enabled: false
+  username: "your_threads_username"
+  password: "your_threads_password" # Or other auth method
+```
+
+**Note:** The specific keys required may vary depending on the libraries used and the authentication methods chosen for each platform. Always refer to the official documentation for the respective APIs and libraries. The `enabled` flag (example shown) is typically used by the application logic (`socials/socials_processing.py`) to determine if posts should be sent to a specific platform.
