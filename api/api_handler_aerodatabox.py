@@ -4,6 +4,8 @@ from loguru import logger
 import json
 import http.client
 import os
+from log.logger_config import logger
+
 
 async def fetch_adb_data(move, start_time, end_time):
 

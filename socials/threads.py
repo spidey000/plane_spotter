@@ -1,4 +1,6 @@
 # uses threads api https://developers.facebook.com/docs/threads
+from log.logger_config import logger
+
 
 def generate_flight_message(flight_data):
     """Generate a formatted message from flight data"""

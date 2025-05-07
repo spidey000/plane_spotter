@@ -1,16 +1,30 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 from loguru import logger
-from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters, CommandHandler
+from telegram.ext import ApplicationBuilder
 import telegram.error
 import asyncio
 from datetime import datetime, timedelta
 from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
 import os
 from dotenv import load_dotenv
-load_dotenv()
+from log.logger_config import logger
 
+
+
+
+env_path = Path(__file__).resolve().parent.parent / 'config' / '.env'  # Use the determined project_root
+if env_path.exists():
+    load_dotenv(env_path)
+    logger.info(f"Loaded environment variables from: {env_path}")
+else:
+    logger.warning(f".env file not found at: {env_path}. Relying on system environment variables.")
+
+
+load_dotenv()
 # Initialize Telegram application with longer timeout
-application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).read_timeout(30).write_timeout(30).build()
+application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
 
 def generate_flight_message(flight_data):
     """Generate a formatted message from flight data"""
@@ -118,3 +132,27 @@ async def schedule_telegram(flight_data, image_path=None):
     # Create a background task that won't block the main execution
     task = asyncio.create_task(send_message_task())
     return task  # Return the task so it can be awaited if needed
+
+if __name__ == "__main__":
+    # Create dummy flight data for testing
+    dummy_data = {
+        'flight_name_iata': 'TEST FLIGHT',
+        'flight_name': 'TEST FLIGHT',
+        'registration': 'CS-TST',
+        'aircraft_name': 'Airbus A320',
+        'aircraft_icao': 'A320',
+        'airline_name': 'TAP Air Portugal',
+        'airline': 'TAP',
+        'origin_name': 'Lisbon',
+        'origin_icao': 'LPPT',
+        'destination_name': 'Paris',
+        'destination_icao': 'LFPG',
+        'scheduled_time': '2024-01-01 12:00',
+        'terminal': '1',
+        'diverted': False
+    }
+    
+    # Send test message
+    import asyncio
+    asyncio.run(send_flight_update(chat_id='-1002116996158', flight_data=dummy_data))
+    logger.info("Sent test Telegram message with dummy data")

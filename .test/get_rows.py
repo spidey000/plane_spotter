@@ -1,16 +1,30 @@
 import asyncio
 import sys
 from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))  # Add project root to Python path
+from config import config_manager
+from log.logger_config import logger
+config = config_manager.load_config()
+from dotenv import load_dotenv
 
 # Add project root to Python path
 sys.path.append(str(Path(__file__).parent.parent))
+
+env_path = Path(__file__).resolve().parent.parent / 'config' / '.env'  # Use the determined project_root
+if env_path.exists():
+    load_dotenv(env_path)
+    logger.info(f"Loaded environment variables from: {env_path}")
+else:
+    logger.warning(f".env file not found at: {env_path}. Relying on system environment variables.")
+
+load_dotenv()
 
 # Use absolute import
 from database import baserow_manager as bm
 async def test_get_rows():
     # Test basic row retrieval
     print("Testing basic row retrieval...")
-    rows = await bm.get_rows(441094)  # Registrations table
+    rows = await bm.get_rows(f'{config['baserow']['tables']['registrations']}')  # Registrations table
     if rows:
         print(f"Successfully retrieved {len(rows)} rows")
         #print(rows)
@@ -24,7 +38,7 @@ async def test_get_rows():
     all_rows = []
 
     while True:
-        rows = await bm.get_rows(441094, page=page, size=100)
+        rows = await bm.get_rows(f'{config['baserow']['tables']['registrations']}', page=page, size=100)
         if not rows:
             break
         all_rows.extend(rows)
@@ -42,7 +56,7 @@ async def test_get_rows():
 
     # # Test filtering
     # print("\nTesting filtering...")
-    # filtered_rows = await bm.get_rows(441094, filters={"registration": "TEST123"})
+    # filtered_rows = await bm.get_rows(f'{config['baserow']['tables']['registrations']}', filters={"registration": "TEST123"})
     # if filtered_rows:
     #     print(f"Found {len(filtered_rows)} rows matching filter")
     # else:
@@ -50,7 +64,7 @@ async def test_get_rows():
 
     # # Test ordering
     # print("\nTesting ordering...")
-    # ordered_rows = await bm.get_rows(441094, order_by="-registration")
+    # ordered_rows = await bm.get_rows(f'{config['baserow']['tables']['registrations']}', order_by="-registration")
     # if ordered_rows:
     #     print(f"First registration in descending order: {ordered_rows[0]['registration']}")
     # else:
@@ -58,7 +72,7 @@ async def test_get_rows():
 
     # # Test field selection
     # print("\nTesting field selection...")
-    # selected_fields = await bm.get_rows(441094, include="registration,first_seen")
+    # selected_fields = await bm.get_rows(f'{config['baserow']['tables']['registrations']}', include="registration,first_seen")
     # if selected_fields:
     #     print(f"First row with selected fields: {selected_fields[0]}")
     # else:

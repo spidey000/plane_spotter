@@ -8,7 +8,7 @@ from loguru import logger
 from config import config_manager
 from dotenv import load_dotenv
 import os
-
+from log.logger_config import logger
 
 
 # Add project root to Python path if necessary (adjust if your structure differs)
@@ -25,39 +25,40 @@ import socials.socials_processing as sp
 # Load configuration
 config = config_manager.load_config()
 # Load environment variables from .env file
-load_dotenv()
+env_path = Path(__file__).parent.parent / 'config' / '.env'
+load_dotenv(env_path)
+    
+# FLIGHT_TIME_RANGE_HOURS = config['flight']['time_range_hours']
+# DATABASE_REGISTRATION_TABLE_ID = config['baserow']['tables']['registrations'] # has all the registrations
+# DATABASE_MODEL_TABLE_ID = config['baserow']['tables']['interesting_models'] # has all the models
+# DATABASE_INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations'] # has only interesting registrations
+# EXECUTION_INTERVAL = config['execution']['interval']
 
-FLIGHT_TIME_RANGE_HOURS = config['flight']['time_range_hours']
-DATABASE_REGISTRATION_TABLE_ID = config['baserow']['tables']['registrations'] # has all the registrations
-DATABASE_MODEL_TABLE_ID = config['baserow']['tables']['interesting_models'] # has all the models
-DATABASE_INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations'] # has only interesting registrations
-EXECUTION_INTERVAL = config['execution']['interval']
+# # Get logger configuration from config
+# LOG_FILE = config['logging']['log_file']
+# WARN_LOG_FILE = config['logging']['warning_log_file']
+# LOG_LEVEL = config['logging']['log_level']
+# LOG_ROTATION = config['logging']['log_rotation']
 
-# Get logger configuration from config
-LOG_FILE = config['logging']['log_file']
-WARN_LOG_FILE = config['logging']['warning_log_file']
-LOG_LEVEL = config['logging']['log_level']
-LOG_ROTATION = config['logging']['log_rotation']
+# # --- Logger Setup ---
+# try:
+#     logger.remove() # Remove default handler
+#     # Ensure logs directory exists
+#     Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
+#     logger.add(LOG_FILE, level=LOG_LEVEL.upper(), enqueue=True, rotation=LOG_ROTATION)
+#     if WARN_LOG_FILE != LOG_FILE:
+#          Path(WARN_LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
+#          logger.add(WARN_LOG_FILE, level="WARNING", enqueue=True, rotation=LOG_ROTATION)
+#     logger.add(sys.stdout, level="INFO") # Keep console output for INFO+
+#     logger.info("Logger initialized.")
 
-# --- Logger Setup ---
-try:
-    logger.remove() # Remove default handler
-    # Ensure logs directory exists
-    Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
-    logger.add(LOG_FILE, level=LOG_LEVEL.upper(), enqueue=True, rotation=LOG_ROTATION)
-    if WARN_LOG_FILE != LOG_FILE:
-         Path(WARN_LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
-         logger.add(WARN_LOG_FILE, level="WARNING", enqueue=True, rotation=LOG_ROTATION)
-    logger.add(sys.stdout, level="INFO") # Keep console output for INFO+
-    logger.info("Logger initialized.")
-
-except Exception as e:
-    print(f"Error initializing logger: {e}", file=sys.stderr)
-    # Fallback basic logger
-    logger.remove()
-    logger.add(sys.stderr, level="INFO")
-    logger.error("Failed to configure logger from config file.")
-# --- End Logger Setup ---
+# except Exception as e:
+#     print(f"Error initializing logger: {e}", file=sys.stderr)
+#     # Fallback basic logger
+#     logger.remove()
+#     logger.add(sys.stderr, level="INFO")
+#     logger.error("Failed to configure logger from config file.")
+# # --- End Logger Setup ---
 
 # --- Main Application Logic ---
 
@@ -165,10 +166,7 @@ async def fetch_and_process_flights():
         reg_table_id = config['baserow']['tables']['registrations']
         model_table_id = config['baserow']['tables']['interesting_models']
         model_table_key = config.get('database', {}).get('model_table_key', 'model') # Default key
-
-        DATABASE_REGISTRATION_TABLE_ID = config['baserow']['tables']['registrations']
-        DATABASE_MODEL_TABLE_ID = config['baserow']['tables']['interesting_models']
-        DATABASE_INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations']
+        interesting_reg_table_id = config['baserow']['tables']['interesting_registrations']
 
         if not reg_table_id or not model_table_id:
              logger.error("Database table IDs not configured. Cannot check flights.")
@@ -176,7 +174,8 @@ async def fetch_and_process_flights():
 
         reg_db_task = bm.get_all_rows_as_dict(reg_table_id)
         model_db_task = bm.get_all_rows_as_dict(model_table_id, key=model_table_key)
-        db_results = await asyncio.gather(reg_db_task, model_db_task, return_exceptions=True)
+        interesting_reg_table_task = bm.get_all_rows_as_dict(interesting_reg_table_id)
+        db_results = await asyncio.gather(reg_db_task, model_db_task, interesting_reg_table_task, return_exceptions=True)
 
         if isinstance(db_results[0], Exception):
             logger.error(f"Error fetching registration DB data: {db_results[0]}")
@@ -190,13 +189,19 @@ async def fetch_and_process_flights():
         else:
             model_db_copy = db_results[1]
 
+        if isinstance(db_results[1], Exception):
+            logger.error(f"Error fetching model DB data: {db_results[1]}")
+            interesting_reg_db_copy = {}
+        else:
+            interesting_reg_db_copy = db_results[2]
+
         logger.info(f"Checking {len(all_flights)} flights against database...")
         social_tasks = []
         for flight_key, flight_details in all_flights.items():
             try:
                 # Check flight against DB rules
                 flight_data, interesting_registration, interesting_model, first_seen = await dp.check_flight(
-                    flight_details, reg_db_copy, model_db_copy
+                    flight_details, reg_db_copy, interesting_reg_db_copy, model_db_copy
                 )
 
                 # Determine if interesting
@@ -204,7 +209,7 @@ async def fetch_and_process_flights():
                     "MODEL": interesting_model,
                     "REGISTRATION": interesting_registration,
                     "FIRST_SEEN": first_seen,
-                    "DIVERTED": flight_data.get("diverted", False) # Assuming check_flight updates this
+                    "DIVERTED": False if flight_data.get("diverted", "null") == "null" else flight_data["diverted"]
                 }
                 is_interesting = any(interesting_reasons.values())
 
@@ -213,7 +218,7 @@ async def fetch_and_process_flights():
                     flight_name_display = flight_data.get('flight_name') or flight_data.get('flight_name_iata', 'N/A')
                     logger.info(f"Flight {flight_name_display} is interesting ({reasons_str}). Queueing social post.")
                     # Queue the social media posting task
-                    social_tasks.append(sp.call_socials(flight_data, interesting_reasons, config)) # Pass config
+                    social_tasks.append(sp.call_socials(flight_data, interesting_reasons)) # Pass config
 
             except Exception as e:
                 logger.exception(f"Error checking flight {flight_key}: {e}")
@@ -222,7 +227,11 @@ async def fetch_and_process_flights():
         if social_tasks:
             logger.info(f"Sending {len(social_tasks)} posts to social media...")
             # Run social posting tasks concurrently
-            await asyncio.gather(*social_tasks, return_exceptions=True) # Add error handling for gather results if needed
+            for task in social_tasks:
+                try:
+                    await task
+                except Exception as e:
+                    logger.exception(f"Error sending social media post: {e}")
             logger.info("Finished sending social media posts.")
         else:
             logger.info("No interesting flights found to post.")
@@ -232,25 +241,16 @@ async def fetch_and_process_flights():
 
     logger.info("Finished flight processing cycle.")
 
-
 async def main_loop():
     """Runs the main flight processing cycle periodically."""
     while True:
-        try:
-            await fetch_and_process_flights()
-            # Get interval from config *inside* the loop to pick up changes
-            interval = config['execution']['interval']
-            if not isinstance(interval, (int, float)) or interval <= 0:
-                logger.warning(f"Invalid or missing execution.interval in config. Using default 110 minutes.")
-                interval = (2 * 60 * 60) - 600 # Default: 2 hours minus 10 minutes
-            logger.info(f"Next processing cycle starts in {timedelta(seconds=interval)}.")
-            await asyncio.sleep(interval)
-        except asyncio.CancelledError:
-             logger.info("Main loop cancelled.")
-             break
-        except Exception as e:
-            logger.exception("Unhandled error in main_loop:")
-            logger.error("Waiting 60 seconds before retrying...")
-            await asyncio.sleep(60) # Wait a bit before retrying after a major error
+        await fetch_and_process_flights()
+        # Get interval from config *inside* the loop to pick up changes
+        interval = config['execution']['interval']
+        if not isinstance(interval, (int, float)) or interval <= 0:
+            logger.warning(f"Invalid or missing execution.interval in config. Using default 110 minutes.")
+            interval = (2 * 60 * 60) - 600  # Default: 2 hours minus 10 minutes
+        logger.info(f"Next processing cycle starts in {timedelta(seconds=interval)}.")
+        await asyncio.sleep(interval)
 
-
+asyncio.run(main_loop())

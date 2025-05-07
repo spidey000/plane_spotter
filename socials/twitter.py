@@ -4,6 +4,7 @@ import utils.image_finder as image_finder
 import asyncio
 from twikit import Client
 from datetime import timedelta
+from log.logger_config import logger
 
 async def create_tweet(client, flight_data):
     client = Client()  # Initialize your Twikit client

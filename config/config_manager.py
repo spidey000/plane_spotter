@@ -1,6 +1,7 @@
 import json
 from loguru import logger
 
+
 def load_config(config_path='config/config.json'):
     """
     Load the configuration from a JSON file and return it as a dictionary.

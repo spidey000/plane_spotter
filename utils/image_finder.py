@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import time
 import random
 from loguru import logger
+from log.logger_config import logger
+
 
 def get_first_image_url_jp(registration):
     params = {

@@ -16,6 +16,8 @@ from datetime import datetime, timezone
 
 import requests
 from bs4 import BeautifulSoup
+from log.logger_config import logger
+
 
 
 def bsky_login_session(pds_url: str, handle: str, password: str) -> Dict:

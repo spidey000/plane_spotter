@@ -2,6 +2,8 @@ import aiohttp
 import asyncio
 from loguru import logger
 import json
+from log.logger_config import logger
+
 
 # delete for production
 

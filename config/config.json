@@ -34,7 +34,7 @@
         "tables": {
             "registrations": 441094,
             "registrations_key": "registration",
-            "models" : 441095,
+            "models": 441095,
             "models_key": "name",
             "interesting_models": 441097,
             "interesting_models_key": "name",
@@ -44,7 +44,7 @@
     },
     "social_networks": {
         "telegram": true,
-        "bluesky": false,
+        "bluesky": true,
         "twitter": false,
         "threads": false,
         "instagram": false,

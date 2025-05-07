@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 import os
 import json
 from config import config_manager
+from log.logger_config import logger
+
 
 
 # import the credentials for the baserow
@@ -22,23 +24,34 @@ from config import config_manager
 
 
 # Load the .env file
-load_dotenv()
 
 # Load the config file
 config = config_manager.load_config()
 
 # Use the Baserow token from .env
-BASEROW_TOKEN = os.getenv('BASEROW_TOKEN')
-headers = {
-    "Authorization": f"Token {BASEROW_TOKEN}",
-    "Content-Type": "application/json"
-}
+# BASEROW_TOKEN = os.getenv('BASEROW_TOKEN')
+
+# headers = {
+#     "Authorization": f"Token {BASEROW_TOKEN}",
+#     "Content-Type": "application/json"
+# }
 
 # Use configurable table IDs and API URL from config.json
 REGISTRATIONS_TABLE_ID = config['baserow']['tables']['registrations']
 INTERESTING_MODELS_TABLE_ID = config['baserow']['tables']['interesting_models']
 INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations']
 BASEROW_API_URL = config['baserow']['api_url']
+
+def get_baserow_headers():
+    """
+    Helper function to generate Baserow headers with the token.
+    :return: Dictionary containing the headers
+    """
+    BASEROW_TOKEN = os.getenv('BASEROW_TOKEN')
+    return {
+        "Authorization": f"Token {BASEROW_TOKEN}",
+        "Content-Type": "application/json"
+    }
 
 async def query_table(table_id, filters=None, user_field_names=True):
     """
@@ -48,7 +61,8 @@ async def query_table(table_id, filters=None, user_field_names=True):
     :param user_field_names: Whether to use human-readable field names
     :return: Response data or None if not found
     """
-    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/"
+
+    url = f"{config['baserow']['api_url']}{table_id}/"
     params = {"user_field_names": "true" if user_field_names else "false"}
     
     if filters:
@@ -58,7 +72,9 @@ async def query_table(table_id, filters=None, user_field_names=True):
                 # Extract value from filter dict if provided in advanced format
                 value = value.get('value', '')
             params[f"filter__{field}__equal"] = str(value)
-                
+    
+    headers = get_baserow_headers()
+
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, params=params) as response:
             if response.status == 200:
@@ -113,10 +129,12 @@ async def create_record(table_id, data):
     :param data: Dictionary of data to create
     :return: Created record data or None if failed
     """
-    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/"
+    url = f"{config['baserow']['api_url']}{table_id}/"
 
     params = {"user_field_names": "true"}
-    
+
+    headers = get_baserow_headers()   
+
     async with aiohttp.ClientSession() as session:
         async with session.post(
             url,
@@ -149,7 +167,7 @@ async def get_rows(table_id, user_field_names=True, page=1, size=100, search=Non
     :param view_id: View ID to apply
     :return: List of rows or None if failed
     """
-    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/"
+    url = f"{config['baserow']['api_url']}{table_id}/"
     params = {
         "user_field_names": "true" if user_field_names else "false",
         "page": page,
@@ -177,7 +195,7 @@ async def get_rows(table_id, user_field_names=True, page=1, size=100, search=Non
         for field, value in filters.items():
             filter_params[f"filter__{field}__equal"] = str(value)
         params.update(filter_params)
-        
+    headers = get_baserow_headers() 
     async with aiohttp.ClientSession() as session:
         async with session.get(url, headers=headers, params=params) as response:
             if response.status == 200:
@@ -198,10 +216,10 @@ async def update_record(table_id, data_to_update, data):
     """
 
     row_id = await query_table(table_id, filters={'registration': data['registration']})
-    url = f"{REGISTRATIONS_TABLE_ID}{table_id}/{row_id['id']}/"
+    url = f"{config['baserow']['api_url']}{table_id}/{row_id['id']}/"
 
     params = {"user_field_names": "true"}
-
+    headers = get_baserow_headers()
     async with aiohttp.ClientSession() as session:
         async with session.patch(
             url,
@@ -225,7 +243,7 @@ async def get_all_rows_as_dict(table_id: int, key: str = "registration") -> dict
         logger.debug(f"Fetching page {page} of table {table_id}")
         rows = await get_rows(table_id, page=page, size=100)
         if not rows:
-            logger.warning(f"No more rows found in table {table_id}")
+            logger.warning(f"No more rows found in table {table_id} rows: {len(all_rows)}")
             break
         all_rows.extend(rows)
         if len(rows) < 100:
@@ -233,18 +251,18 @@ async def get_all_rows_as_dict(table_id: int, key: str = "registration") -> dict
             break
         page += 1
     
-    registrations_dict = {}
+    data_dict = {}
     logger.debug(f"Processing {len(all_rows)} rows into dictionary")
     
     processed_count = 0
     for row in all_rows:
         if key in row and row[key]:
-            registrations_dict[row[key]] = row
+            data_dict[row[key]] = row
             processed_count += 1
-    
+    logger.info(f"Processed {len(all_rows)} total rows, found {processed_count} valid entries with key '{key}'")
     if processed_count == 0:
         logger.error(f"No valid registrations found in table {table_id}")
     else:
         logger.success(f"Successfully created dict {processed_count} entries from table {table_id}")
     
-    return registrations_dict
+    return data_dict

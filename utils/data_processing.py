@@ -4,14 +4,15 @@
 from datetime import datetime
 import database.baserow_manager as bm
 from loguru import logger
+from log.logger_config import logger
+
+from config import config_manager
+
+config = config_manager.load_config()
 
 def process_flight_data_adb(flight, movement):
     # Extract flight information
-    try:
-        registration = flight['aircraft']['reg']
-    except Exception as e:
-        logger.debug(f"Failed to get registration: {e}")
-        registration = 'null'
+    registration = flight['aircraft'].get('reg', 'null')
 
 
     flight_name = flight.get('callSign', 'null')
@@ -23,13 +24,13 @@ def process_flight_data_adb(flight, movement):
     airline_name = flight['airline'].get('name', 'null')
 
     if movement == 'departures':
-        destination_icao = flight['arrival']['airport']['icao']
-        destination_name = flight['arrival']['airport']['name']
+        destination_icao = flight.get('arrival', {}).get('airport', {}).get('icao', 'null')
+        destination_name = flight.get('arrival', {}).get('airport', {}).get('name', 'null')
         origin_icao = "LEMD"
         origin_name = "Madrid"
     else:
-        origin_icao = flight['departure']['airport']['icao']
-        origin_name = flight['departure']['airport']['name']
+        origin_icao = flight.get('departure', {}).get('airport', {}).get('icao', 'null')
+        origin_name = flight.get('departure', {}).get('airport', {}).get('name', 'null')
         destination_icao = "LEMD"
         destination_name = "Madrid"
 
@@ -65,7 +66,7 @@ def process_flight_data_adb(flight, movement):
         'diverted': diverted
     }
 
-    logger.debug(f"Processed ADB flight data: {single_flight_data}")
+    #logger.debug(f"Processed ADB flight data: {single_flight_data}")
     return single_flight_data
 
 def get_valid_value(flight, keys, default='null'):
@@ -125,7 +126,7 @@ def process_flight_data_aeroapi(flight):
     logger.debug(f"Processed AeroAPI flight data: {single_flight_data}")
     return single_flight_data
 
-async def check_flight(flight, reg_db, model_db):
+async def check_flight(flight, reg_db, interesting_reg_db, model_db):
     interesting_registration = False
     interesting_model = False
     first_seen = False        
@@ -140,7 +141,7 @@ async def check_flight(flight, reg_db, model_db):
             db_reg = reg_db[flight['registration']]
             logger.debug(f"Flight {flight['registration']} has been seen before")
             
-            if db_reg['reason'] not in ['null', None]:
+            if (db_reg['reason'] not in ['null', None]) or flight['registration'] in interesting_reg_db:
                 logger.info(f"Flight {flight['registration']} is in interesting registrations table")
                 interesting_registration = True
                 
@@ -161,7 +162,7 @@ async def check_flight(flight, reg_db, model_db):
             }
             try:
                 # await bm.update_record('441094', payload, flight)
-                logger.debug(f"Updated record for {flight['registration']} in table 441094")
+                logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
             except Exception as e:
                 logger.error(f"Failed to update record for {flight['registration']}: {e}")
 
@@ -175,8 +176,8 @@ async def check_flight(flight, reg_db, model_db):
                 "reason": None
             }
             try:
-                await bm.create_record('441094', payload)
-                logger.success(f"Created new record for {flight['registration']} in table 441094")
+                await bm.create_record(f'{config['baserow']['tables']['registrations']}', payload)
+                logger.success(f"Created new record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
                 first_seen = True
             except Exception as e:
                 logger.error(f"Failed to create record for {flight['registration']}: {e}")
