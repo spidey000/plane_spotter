@@ -6,6 +6,7 @@ from config import config_manager
 # Removed dotenv import as we will rely on environment variables passed to the container
 # from dotenv import load_dotenv
 from log.logger_config import logger
+import os
 
 # Load configuration
 config = config_manager.load_config()
@@ -39,15 +40,9 @@ def stop_process(process):
 def main():
     logger.info("Starting processes...")
     # Start the main application
-    # Removed dotenv loading logic
-    # from pathlib import Path
-    # env_path = Path(__file__).resolve().parent.parent / 'config' / '.env'  # Use the determined project_root
-    # if env_path.exists():
-    #     load_dotenv(env_path)
-    #     logger.info(f"Loaded environment variables from: {env_path}")
-    # else:
-    #     logger.warning(f".env file not found at: {env_path}. Relying on system environment variables.")
-
+    # Print all environment variables
+    for key, value in os.environ.items():
+        print(f"{key}: {value}")
 
     main_process = start_process("python main.py")
     logger.info("Main application started.")
