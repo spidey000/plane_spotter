@@ -33,4 +33,4 @@ RUN mkdir -p /app/logs && chown -R nobody:nogroup /app/logs
 # This assumes 'main.py' is the entry point of your application.
 # If your application is started differently (e.g., using gunicorn for a web app),
 # you'll need to change this command.
-CMD ["python", "main.py"]
+CMD ["python", "master.py"]
