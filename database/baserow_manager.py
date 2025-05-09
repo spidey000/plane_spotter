@@ -7,7 +7,8 @@
 import aiohttp
 from loguru import logger
 import datetime
-from dotenv import load_dotenv
+# Removed dotenv import as we will rely on environment variables passed to the container
+# from dotenv import load_dotenv
 import os
 import json
 from config import config_manager

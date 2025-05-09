@@ -1,233 +1,257 @@
 # Twitter Spotter v4
 
+## Project Overview
+
+Twitter Spotter v4 is a Python application designed to track flights and post updates to various social media platforms. It integrates with multiple flight data APIs, processes the data, and schedules posts with relevant information and images.
+
 ## File Tree
+
 ```
 twitter_spotter_v4/
 ├── main.py
+├── master.py
 ├── readme.md
 ├── requirements.txt
-├── twikit_documentation.md
 ├── api/
 │   ├── api_handler_aeroapi.py
 │   ├── api_handler_aerodatabox.py
 │   └── data/
+├── bot/
+│   ├── __init__.py
+│   └── handlers.py
 ├── config/
-│   └── config.yaml
+│   ├── config_manager.py
+│   └── config.json
 ├── database/
-│   ├── database.md
-│   ├── flights.db
-│   ├── planes.db
-│   └── scheduled_messages.db
+│   ├── airlines.json
+│   ├── baserow_manager.py
+│   └── common_airlines.json
+├── log/
+│   └── logger_config.py
 ├── logs/
 ├── socials/
 │   ├── bluesky.py
 │   ├── instagram.py
 │   ├── linkedin.py
 │   ├── socials_processing.py
-│   ├── telegram.py
+│   ├── telegram_msg_bot.py
 │   ├── threads.py
 │   └── twitter.py
-├── test/
-│   ├── adb_test_data.json
-│   ├── test_apis.py
-│   ├── test_database.py
-│   └── test_processing.py
-└── utils/
-    ├── data_processing.py
-    └── image_finder.py
+├── utils/
+│   ├── create_bsky_post.py
+│   ├── data_processing.py
+│   └── image_finder.py
 ```
 
-## File Contexts
+## Key Features
 
-### API Integrations
+-   Fetches flight data from AeroAPI and AeroDataBox.
+-   Processes and merges data from multiple sources.
+-   Stores flight and aircraft information in a Baserow database.
+-   Generates and schedules posts for Telegram, Bluesky, Twitter, Threads, Instagram, and LinkedIn.
+-   Finds relevant aircraft images using cloudscraper and BeautifulSoup.
+-   Configurable via a JSON file.
+-   Comprehensive logging using Loguru.
 
-#### AeroAPI Handler
-The AeroAPI handler (api_handler_aeroapi.py) provides functionality to fetch scheduled flight data. Key features:
+## API Integrations
 
-- Uses aiohttp for asynchronous HTTP requests
-- Fetches arrival/departure data for specified time range
-- Handles pagination of API responses
-- Implements rate limiting with 11-second delays between requests
-- Saves raw API responses to JSON files
-- Uses logging for error handling and debugging
+### AeroAPI Handler (`api/api_handler_aeroapi.py`)
 
-#### Example Usage
-```python
-from api.api_handler_aeroapi import fetch_scheduled
+-   Fetches scheduled flight data (arrivals and departures).
+-   Uses `aiohttp` for asynchronous requests.
+-   Handles API pagination and rate limiting.
+-   Saves raw API responses to JSON files.
 
-# Fetch arrivals data
-arrivals = await fetch_scheduled("arrivals", start_time, end_time)
+### AeroDataBox API Handler (`api/api_handler_aerodatabox.py`)
 
-# Fetch departures data
-departures = await fetch_scheduled("departures", start_time, end_time)
-```
+-   Fetches flight data (arrivals and departures).
+-   Uses `aiohttp` for asynchronous requests.
+-   Supports comprehensive query parameters.
+-   Saves raw API responses to JSON files.
 
-#### AeroDataBox API Handler
-The AeroDataBox handler (api_handler_aerodatabox.py) provides functionality to fetch flight data. Key features:
+## Social Media Integrations
 
-- Uses aiohttp for asynchronous HTTP requests
-- Supports both arrival and departure data
-- Includes comprehensive query parameters for filtering flights
-- Saves raw API responses to JSON files
-- Implements robust error handling and logging
+### Socials Processing (`socials/socials_processing.py`)
 
-#### Example Usage
-```python
-from api.api_handler_aerodatabox import fetch_data
+-   Orchestrates posting to various social media platforms.
+-   Fetches aircraft images using `utils/image_finder.py`.
 
-# Fetch arrival data
-arrivals = await fetch_data("arrival", start_time, end_time)
+### Telegram (`socials/telegram_msg_bot.py`)
 
-# Fetch departure data
-departures = await fetch_data("departure", start_time, end_time)
-```
+-   Sends flight updates to a Telegram chat.
+-   Uses the `python-telegram-bot` library.
 
-# Twitter Spotter v4
+### Bluesky (`socials/bluesky.py`)
 
-## File Tree
-```
-twitter_spotter_v4/
-├── main.py
-├── readme.md
-├── requirements.txt
-├── twikit_documentation.md
-├── api/
-│   ├── api_handler_aeroapi.py
-│   ├── api_handler_aerodatabox.py
-│   └── data/
-├── config/
-│   └── config.yaml
-├── database/
-│   ├── database.md
-│   ├── flights.db
-│   ├── planes.db
-│   └── scheduled_messages.db
-├── logs/
-├── socials/
-│   ├── bluesky.py
-│   ├── instagram.py
-│   ├── linkedin.py
-│   ├── socials_processing.py
-│   ├── telegram.py
-│   ├── threads.py
-│   └── twitter.py
-├── test/
-│   ├── adb_test_data.json
-│   ├── test_apis.py
-│   ├── test_database.py
-│   └── test_processing.py
-└── utils/
-    ├── data_processing.py
-    └── image_finder.py
-```
+-   Creates posts on Bluesky.
+-   Uses the `atproto` library.
 
-## File Contexts
+### Twitter (`socials/twitter.py`)
 
-### Main Application Workflow
+-   Schedules tweets with flight information.
+-   Uses the `twikit` library.
 
-The main.py file orchestrates the following workflow:
+### Threads (`socials/threads.py`)
 
-1. Load flight information from APIs
-2. For each flight:
-   - Clean and process data using utils.data_processing
-   - Store flight data in database
-   - Check if plane exists in database
-     - If not, store plane information
-   - Generate social media messages using socials_processing
-   - Schedule messages and store in scheduled_messages.db
+-   Generates messages for Threads.
 
-The application integrates with multiple APIs and social media platforms to track flights and schedule relevant posts.
+### Instagram (`socials/instagram.py`)
 
-### Twitter Integration
+-   (Placeholder for Instagram integration)
 
-The Twitter functionality uses the Twikit library for scheduling tweets. Key features:
+### LinkedIn (`socials/linkedin.py`)
 
-- Tweets are scheduled based on flight data
-- Includes flight information and a follow prompt
-- Automatically attaches relevant images when available
-- Uses Twikit's async client for scheduling
+-   (Placeholder for LinkedIn integration)
 
-#### Dependencies
-- twikit (see twikit_documentation.md for setup)
-- socials_processing.py for text generation
-- utils.image_finder.py for image selection
+## Database (`database/baserow_manager.py`)
 
-#### Example Usage
-```python
-from socials.twitter import schedule_tweet
+-   Manages interaction with a Baserow database.
+-   Uses `aiohttp` for asynchronous API calls to Baserow.
+-   Stores and retrieves flight and aircraft data.
 
-# Initialize with flight data
-await schedule_tweet(client, flight_data)
-```
+## Configuration (`config/config_manager.py`)
 
-### Testing
+-   Loads configuration from `config/config.json`.
+-   Allows modification of configuration values.
 
-The test directory contains test data and test scripts to verify the application's functionality.
+## Logging (`log/logger_config.py`)
 
-#### Test Data
-The test/adb_test_data.json file contains sample flight data used for testing the AeroDataBox API handler. The data structure includes:
+-   Configures Loguru for application-wide logging.
+-   Supports log rotation and different log levels.
 
-- Flight movements (arrivals/departures)
-- Airport information (ICAO, IATA, name, timezone)
-- Scheduled and revised times
-- Aircraft details (registration, model)
-- Airline information
-- Flight status and codeshare information
+## Testing
 
-This test data allows for comprehensive testing of the flight data processing pipeline without making actual API calls.
+-   (No dedicated test files found in the current structure, but testing is crucial for ensuring application stability.)
 
-#### Test Scripts
-The test directory includes several test scripts:
+## Utilities
 
-- test_apis.py: Tests API handlers and data processing
-- test_database.py: Tests database operations and schemas
-- test_processing.py: Tests data processing utilities
+### Data Processing (`utils/data_processing.py`)
 
-### Data Processing Utilities
+-   Cleans, processes, and merges flight data from various APIs.
+-   Interacts with the Baserow database.
 
-The utils/data_processing.py file contains functions for processing flight data:
+### Image Finder (`utils/image_finder.py`)
 
-- Loads flight data from multiple APIs
-- Compares flights by flight_name across different API responses
-- Merges the most complete information from different sources
-- Stores the processed data in the database
-- Handles data normalization and cleaning
+-   Finds aircraft images from JetPhotos and Planespotters.net.
+-   Uses `cloudscraper` and `BeautifulSoup`.
 
-These utilities ensure consistent and accurate flight data is stored in the database, even when information comes from different sources.
+### Bluesky Post Creation (`utils/create_bsky_post.py`)
 
-### Database Schemas
+-   Helper utility for creating Bluesky posts.
 
-#### flights.db
-```sql
-CREATE TABLE flights (
-    flight_name TEXT PRIMARY KEY,
-    registration TEXT,
-    aircraft TEXT,
-    airline TEXT,
-    origin_icao TEXT,
-    destination_icao TEXT,
-    scheduled_time DATETIME,
-    last_update DATETIME
-);
-```
+## Setup and Usage
 
-#### planes.db
-```sql
-CREATE TABLE planes (
-    registration TEXT PRIMARY KEY,
-    first_seen DATETIME,
-    last_seen DATETIME,
-    times_seen INTEGER,
-    interest_reason TEXT
-);
-```
+1.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+2.  **Configure the application:**
+    -   Copy `config/config.example.json` to `config/config.json`.
+    -   Update `config/config.json` with your API keys, Baserow details, and social media credentials.
+    -   Alternatively, set environment variables for sensitive data (e.g., `BASEROW_API_URL`, `TELEGRAM_CHAT_ID`).
+3.  **Run the application:**
+    ```bash
+    python master.py
+    ```
 
-#### scheduled_messages.db
-```sql
-CREATE TABLE scheduled_messages (
-    flight_name+shceduled_time TEXT PRIMARY KEY,
-    platform TEXT,
-    scheduled_time DATETIME,
-    text TEXT
-);
-```
+## Docker Deployment
+
+This project can be deployed using Docker, providing a consistent environment for the application.
+
+### Using Dockerfile directly
+
+A `Dockerfile` is provided for containerizing the application.
+
+1.  **Build the Docker image:**
+    ```bash
+    docker build -t twitter-spotter-v4 .
+    ```
+2.  **Run the Docker container:**
+    Ensure you pass all necessary environment variables.
+    ```bash
+    docker run -d \
+      -e BASEROW_API_URL="your_baserow_api_url" \
+      -e TELEGRAM_CHAT_ID="your_telegram_chat_id" \
+      -e AEROAPI_KEY="your_aeroapi_key" \
+      --name twitter_spotter_container \
+      twitter-spotter-v4
+    ```
+    (Add other necessary environment variables as required by `config/config.json`.)
+    To view logs:
+    ```bash
+    docker logs -f twitter_spotter_container
+    ```
+
+### Using Docker Compose
+
+A `docker-compose.yml` file is also provided to simplify the deployment and management, especially for handling environment variables and volumes.
+
+1.  **Environment Variables:**
+    It is highly recommended to create a `.env` file in the project root directory (alongside `docker-compose.yml`) to store your sensitive credentials and configuration. Docker Compose will automatically load variables from this file.
+    Create a file named `.env` with the following content, replacing placeholder values with your actual credentials.
+    The `config_manager.py` expects environment variables for nested JSON structures to be formatted as `PARENTKEY__CHILDKEY__GRANDCHILDKEY`.
+    For example, if your `config.json` has `{"baserow": {"db_id": "value"}}`, the corresponding environment variable is `BASEROW__DB_ID`.
+
+    ```env
+    # Baserow (assuming these are under a "baserow" key in config.json)
+    BASEROW__DB_ID=your_baserow_db_id
+    BASEROW__TABLE_ID_AIRCRAFT=your_baserow_aircraft_table_id
+    BASEROW__TABLE_ID_FLIGHTS=your_baserow_flights_table_id
+    BASEROW__TABLE_ID_AIRLINES=your_baserow_airlines_table_id
+    BASEROW__API_URL=your_baserow_api_url
+    BASEROW__USER=your_baserow_user
+    BASEROW__PASSWORD=your_baserow_password
+    BASEROW__JWT_TOKEN=your_baserow_jwt_token # If using JWT
+
+    # Telegram (assuming these are under a "telegram" key in config.json)
+    TELEGRAM__BOT_TOKEN=your_telegram_bot_token
+    TELEGRAM__CHAT_ID=your_telegram_chat_id
+
+    # Social Media APIs (e.g., under "social_media":"bluesky" in config.json)
+    SOCIAL_MEDIA__BLUESKY__HANDLE=your_bsky_handle
+    SOCIAL_MEDIA__BLUESKY__APP_PASSWORD=your_bsky_app_password
+    # Add other social media API keys following the PARENT__CHILD__KEY convention
+    # Example: SOCIAL_MEDIA__TWITTER__API_KEY=your_twitter_api_key
+
+    # API Keys (e.g., under "api_keys" in config.json)
+    API_KEYS__AEROAPI=your_aeroapi_key
+    # If AeroDataBox keys are nested, e.g., "api_keys":{"aerodatabox":{"key":"...", "app_id":"..."}}
+    API_KEYS__AERODATABOX__KEY=your_aerodatabox_api_key 
+    API_KEYS__AERODATABOX__APP_ID=your_aerodatabox_app_id
+
+    # Other configurations (if they are top-level in config.json, use their direct name)
+    # Example: PYTHON_ENV=production (if "python_env" is a top-level key)
+    # If nested, e.g. "settings":{"python_env":"production"}, use SETTINGS__PYTHON_ENV=production
+    ```
+    The `config_manager.py` is now set up to load values from `config/config.json` and then override them with any matching environment variables found.
+    Docker Compose will automatically load variables from the `.env` file and make them available to the application container.
+
+2.  **Build and run the application:**
+    To build the Docker image (if it doesn't exist or if the `Dockerfile` has changed) and start the service:
+    ```bash
+    docker-compose up --build
+    ```
+    To run in detached mode (in the background):
+    ```bash
+    docker-compose up -d --build
+    ```
+    If the image is already built and up-to-date, you can omit `--build`:
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  **View logs (if running in detached mode):**
+    The service name in `docker-compose.yml` is `app`.
+    ```bash
+    docker-compose logs -f app
+    ```
+
+4.  **Stop the application:**
+    This will stop and remove the containers, networks, and volumes created by `up`.
+    ```bash
+    docker-compose down
+    ```
+    To stop without removing volumes (if you have persistent data volumes defined and want to keep them):
+    ```bash
+    docker-compose stop
+    ```

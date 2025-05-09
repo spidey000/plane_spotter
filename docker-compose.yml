@@ -1,0 +1,72 @@
+version: '3.8' # Specifies the version of the Docker Compose file format
+
+services:
+  app: # Defines a service named 'app'
+    build: . # Instructs Docker Compose to build an image from the Dockerfile in the current directory
+    container_name: twitter_spotter_app # Assigns a specific name to the container
+    # ports:
+      # - "5000:5000" # Maps port 5000 of the host to port 5000 of the container
+                      # Uncomment and adjust if your application exposes a port (e.g., for an API)
+    volumes:
+      # - .:/app # Mounts the current directory on the host to /app in the container
+                 # This is useful for development to see code changes live without rebuilding.
+                 # For production, it's often better to rely on the code copied during the image build.
+      - ./logs:/app/logs # Mounts a local 'logs' directory to '/app/logs' in the container
+                         # This allows log files to persist even if the container is removed.
+
+    # --- Environment Variable Loading ---
+    # Option 1: Load environment variables from a .env file (suitable for development)
+    # Ensure your .env file is in the same directory as this docker-compose.yml
+    env_file:
+      - .env
+
+    # Option 2: Use Docker Secrets (recommended for production)
+    # 1. Create secrets:
+    #    echo "your_telegram_bot_token" | docker secret create telegram_bot_token -
+    #    echo "your_aeroapi_key" | docker secret create aeroapi_key -
+    #    echo "your_aerodatabox_key" | docker secret create aerodatabox_key -
+    #    echo "your_baserow_token" | docker secret create baserow_token -
+    # 2. Comment out the 'env_file' section above.
+    # 3. Uncomment the 'secrets' section below and list the secrets to use.
+    # 4. In your application code, read secrets from /run/secrets/<secret_name>
+    #    e.g., with Python:
+    #    with open("/run/secrets/telegram_bot_token", "r") as f:
+    #        telegram_token = f.read().strip()
+    # secrets:
+    #   - telegram_bot_token
+    #   - aeroapi_key
+    #   - aerodatabox_key
+    #   - baserow_token
+
+    # --- Other Configuration ---
+    # environment:
+      # - PYTHON_ENV=production # Example environment variable
+      # Add any other necessary environment variables here that are NOT secrets
+
+    # restart: unless-stopped # Configures the container to restart automatically unless it was manually stopped
+                             # Other options: 'no', 'on-failure', 'always'
+
+# You can define other services here if needed (e.g., a database)
+# services:
+#   db:
+#     image: postgres:13
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data/
+#     environment:
+#       - POSTGRES_USER=user
+#       - POSTGRES_PASSWORD=password
+#       - POSTGRES_DB=mydb
+#
+# volumes:
+#   postgres_data: # Defines a named volume for persistent database storage
+
+# Define secrets here if using Docker Secrets (uncomment the 'secrets' section in the service above too)
+# secrets:
+#   telegram_bot_token:
+#     external: true
+#   aeroapi_key:
+#     external: true
+#   aerodatabox_key:
+#     external: true
+#   baserow_token:
+#     external: true

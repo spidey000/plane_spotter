@@ -212,8 +212,9 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
                 "reason": None
             }
             try: # its new, lets add it to the db
-                await bm.create_record(f'{config['baserow']['tables']['registrations']}', payload)
-                logger.success(f"Created new record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
+                table_name = config['baserow']['tables']['registrations']
+                await bm.create_record(f'{table_name}', payload)
+                logger.success(f"Created new record for {flight['registration']} in table {table_name}")
                 first_seen = True
             except Exception as e:
                 logger.error(f"Failed to create record for {flight['registration']}: {e}")

@@ -6,7 +6,8 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from loguru import logger
 from config import config_manager
-from dotenv import load_dotenv
+# Removed dotenv import as we will rely on environment variables passed to the container
+# from dotenv import load_dotenv
 import os
 from log.logger_config import logger
 
@@ -24,9 +25,10 @@ import socials.socials_processing as sp
 # Load initial config to get log settings
 # Load configuration
 config = config_manager.load_config()
+# Removed dotenv loading logic
 # Load environment variables from .env file
-env_path = Path(__file__).parent.parent / 'config' / '.env'
-load_dotenv(env_path)
+# env_path = Path(__file__).parent.parent / 'config' / '.env'
+# load_dotenv(env_path)
 
 # --- Main Application Logic ---
 

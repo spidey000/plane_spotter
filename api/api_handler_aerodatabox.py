@@ -5,10 +5,11 @@ import json
 import http.client
 import os
 from log.logger_config import logger
-from dotenv import load_dotenv
+# Removed dotenv import as we will rely on environment variables passed to the container
+# from dotenv import load_dotenv
 
 # delete for production
-load_dotenv()
+#load_dotenv()
 
 
 async def fetch_adb_data(move, start_time, end_time):

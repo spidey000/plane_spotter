@@ -8,24 +8,14 @@ import asyncio
 from datetime import datetime, timedelta
 from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
 import os
-from dotenv import load_dotenv
+# Removed dotenv import as we will rely on environment variables passed to the container
+# from dotenv import load_dotenv
 from log.logger_config import logger
 import random
 
 
-
-
-
-env_path = Path(__file__).resolve().parent.parent / 'config' / '.env'  # Use the determined project_root
-if env_path.exists():
-    load_dotenv(env_path)
-    logger.info(f"Loaded environment variables from: {env_path}")
-else:
-    logger.warning(f".env file not found at: {env_path}. Relying on system environment variables.")
-
-
-load_dotenv()
 # Initialize Telegram application with longer timeout
+# Relying on TELEGRAM_BOT_TOKEN being set as an environment variable
 application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
 
 def generate_flight_message(flight_data, interesting_reasons):
@@ -71,7 +61,7 @@ def generate_flight_message(flight_data, interesting_reasons):
         if interesting_reasons.get("DIVERTED", False):
             message += "- Este vuelo ha llegado aquí por desvío inesperado. 🧭\n\n"
 
-    message += f"\n\nFlight: {flight_data['flight_name_iata']}{"/" + flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else ''}\n"
+    message += f"\n\nFlight: {flight_data['flight_name_iata']}{'/' + flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else ''}\n"
     message += f"Registration: {flight_data['registration'] if flight_data['registration'] not in [None, 'null'] else 'Unkown'}\n"
     message += f"Aircraft: {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']}\n"
     message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"

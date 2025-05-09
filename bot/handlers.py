@@ -5,7 +5,8 @@ import json
 import os
 import sys
 from pathlib import Path
-from dotenv import load_dotenv
+# Removed dotenv import as we will rely on environment variables passed to the container
+# from dotenv import load_dotenv
 from log.logger_config import logger
 
 
@@ -207,13 +208,13 @@ def main() -> None:
     """Start Telegram bot."""
     logger.info("Starting bot setup...")
 
-    # Define env_path relative to this script's location
-    env_path = project_root / 'config' / '.env' # Use the determined project_root
-    if env_path.exists():
-        load_dotenv(env_path)
-        logger.info(f"Loaded environment variables from: {env_path}")
-    else:
-        logger.warning(f".env file not found at: {env_path}. Relying on system environment variables.")
+    # # Define env_path relative to this script's location
+    # env_path = project_root / 'config' / '.env' # Use the determined project_root
+    # if env_path.exists():
+    #     #load_dotenv(env_path)
+    #     logger.info(f"Loaded environment variables from: {env_path}")
+    # else:
+    #     logger.warning(f".env file not found at: {env_path}. Relying on system environment variables.")
 
     # Get Telegram token from environment variables
     telegram_token = os.getenv('TELEGRAM_BOT_TOKEN')

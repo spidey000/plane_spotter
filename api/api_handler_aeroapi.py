@@ -3,12 +3,14 @@ import asyncio
 from loguru import logger
 import json
 from log.logger_config import logger
-from dotenv import load_dotenv
+# Removed dotenv import as we will rely on environment variables passed to the container
+# from dotenv import load_dotenv
 import os
 
 
 # delete for production
-load_dotenv()
+# Removed dotenv loading logic
+# load_dotenv()
 
 async def fetch_aeroapi_scheduled(move, start_time, end_time):
 
