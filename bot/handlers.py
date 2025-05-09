@@ -1,3 +1,6 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 import json
 import os
 import sys
@@ -117,12 +120,13 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle new value entered by user."""
+    if context.user_data is None:
+        context.user_data = {}  # Initialize user_data if it's None
+
     key_path = context.user_data.get('edit_key_path')
 
     if not key_path:
         # User sent a message, but we weren't expecting an edit value
-        # Optionally, provide guidance or ignore.
-        # await update.message.reply_text("Use /start to manage configuration.")
         logger.info("Received unexpected message, ignoring.")
         return
 
@@ -133,7 +137,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     current_config = load_config()
     if not current_config:
         await update.message.reply_text("Error loading configuration. Cannot validate or update.")
-        del context.user_data['edit_key_path'] # Clean up state
+        del context.user_data['edit_key_path']  # Clean up state
         return
 
     current_value = get_nested_value(current_config, key_path.split('.'))
@@ -141,7 +145,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if current_value is None:
         # This shouldn't happen if the button was generated correctly, but check anyway
         await update.message.reply_text(f"Error: Could not find parameter '{key_path}' in current configuration.")
-        del context.user_data['edit_key_path'] # Clean up state
+        del context.user_data['edit_key_path']  # Clean up state
         return
 
     try:
@@ -159,14 +163,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         elif original_type == float:
             new_value = float(new_value_str)
         elif original_type == str:
-            new_value = new_value_str # No conversion needed for strings
+            new_value = new_value_str  # No conversion needed for strings
         else:
             # Handle other potential types like lists or if None was somehow the original type
-            # For simplicity, try direct eval or JSON loading for complex types,
-            # but this can be risky. Sticking to basic types is safer.
-            # Let's assume we only handle bool, int, float, str for now.
             await update.message.reply_text(f"Error: Unsupported data type ({original_type.__name__}) for parameter '{key_path}'. Only Bool, Int, Float, Str supported.")
-            del context.user_data['edit_key_path'] # Clean up state
+            del context.user_data['edit_key_path']  # Clean up state
             return
 
         # Modify configuration using the imported function

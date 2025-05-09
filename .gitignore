@@ -60,3 +60,4 @@ socials/temp_image.jpg_compressed.jpg
 # System
 .DS_Store
 Thumbs.db
+.*

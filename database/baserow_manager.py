@@ -12,7 +12,7 @@ import os
 import json
 from config import config_manager
 from log.logger_config import logger
-
+import asyncio
 
 
 # import the credentials for the baserow
@@ -214,24 +214,50 @@ async def update_record(table_id, data_to_update, data):
     :param data: Dictionary of fields to update
     :return: Updated record data or None if failed
     """
-
     row_id = await query_table(table_id, filters={'registration': data['registration']})
     url = f"{config['baserow']['api_url']}{table_id}/{row_id['id']}/"
 
     params = {"user_field_names": "true"}
     headers = get_baserow_headers()
+    
+    max_retries = 5
+    base_delay = 1  # Starting delay in seconds
+    retry_count = 0
+    
     async with aiohttp.ClientSession() as session:
-        async with session.patch(
-            url,
-            headers=headers,
-            json=data_to_update,
-            params=params
-        ) as response:
-            if response.status == 200:
-                logger.success(f"Successfully updated record {data_to_update} from {data['registration']} in table {table_id}")
-                return await response.json()
-            logger.error(f"Failed to update record in table {table_id}. Status code: {response.status}")
-            return None
+        while retry_count < max_retries:
+            try:
+                async with session.patch(
+                    url,
+                    headers=headers,
+                    json=data_to_update,
+                    params=params
+                ) as response:
+                    if response.status == 200:
+                        logger.success(f"Successfully updated record {data_to_update} from {data['registration']} in table {table_id}")
+                        return await response.json()
+                    elif response.status == 429:  # Rate limited
+                        retry_after = int(response.headers.get('Retry-After', base_delay))
+                        wait_time = min(retry_after * (2 ** retry_count), 60)  # Cap at 60 seconds
+                        logger.warning(f"Rate limited. Retrying in {wait_time} seconds (attempt {retry_count + 1})")
+                        await asyncio.sleep(wait_time)
+                        retry_count += 1
+                        continue
+                    else:
+                        logger.error(f"Failed to update record in table {table_id}. Status code: {response.status}")
+                        return None
+            except Exception as e:
+                logger.error(f"Error updating record: {e}")
+                if retry_count < max_retries - 1:
+                    wait_time = base_delay * (2 ** retry_count)
+                    logger.warning(f"Retrying in {wait_time} seconds (attempt {retry_count + 1})")
+                    await asyncio.sleep(wait_time)
+                    retry_count += 1
+                else:
+                    logger.error(f"Max retries ({max_retries}) reached. Giving up.")
+                    return None
+        logger.error(f"Max retries ({max_retries}) reached. Failed to update record.")
+        return None
         
 async def get_all_rows_as_dict(table_id: int, key: str = "registration") -> dict:
     """Get all rows from a specified table and return as dictionary with registration as key"""
@@ -263,6 +289,6 @@ async def get_all_rows_as_dict(table_id: int, key: str = "registration") -> dict
     if processed_count == 0:
         logger.error(f"No valid registrations found in table {table_id}")
     else:
-        logger.success(f"Successfully created dict {processed_count} entries from table {table_id}")
+        logger.success(f"Successfully created dict {table_id} {processed_count} entries from table {table_id}")
     
     return data_dict

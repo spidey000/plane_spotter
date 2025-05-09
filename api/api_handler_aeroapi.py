@@ -3,16 +3,18 @@ import asyncio
 from loguru import logger
 import json
 from log.logger_config import logger
+from dotenv import load_dotenv
+import os
 
 
 # delete for production
-
+load_dotenv()
 
 async def fetch_aeroapi_scheduled(move, start_time, end_time):
-    move = "scheduled_" + move
+
     headers = {
         "Accept": "application/json; charset=UTF-8",
-        "x-apikey": "pnOwXcIXPl4JuRo6qOursdOGT4YOxmlc"
+        "x-apikey": os.getenv('AEROAPI_KEY')
     }
     base_url = f"https://aeroapi.flightaware.com/aeroapi/airports/lemd/flights/{move}"
     params = {
@@ -20,7 +22,7 @@ async def fetch_aeroapi_scheduled(move, start_time, end_time):
         "end": end_time,
         "max_pages": 10
     }
-    
+    logger.info(f"AEROAPI {move} Fetching data from API")
     async def fetch_page(session, url):
         n = 0
         retry_count = 0
@@ -38,8 +40,9 @@ async def fetch_aeroapi_scheduled(move, start_time, end_time):
                         retry_count += 1
                         continue
                     
-                    logger.info(f"Received response iteration {n} with status: {response.status}")
+                    logger.debug(f"Received response iteration {n+1} with status: {response.status}")
                     data = await response.json()
+                    logger.info(f"Ratelimit delay: {base_delay}")
                     await asyncio.sleep(base_delay)
                     n += 1
                     return data
@@ -67,7 +70,7 @@ async def fetch_aeroapi_scheduled(move, start_time, end_time):
             data = await fetch_page(session, url)
             params = None
             if len(data.get(move, [])) > 0:
-                logger.success(f"Received {len(data.get(move, []))} flights in this batch")
+                logger.success(f"Received {len(data.get(move, []))} flights in this batch aeropai {move}")
                 all_data[move].extend(data.get(move, []))
                 try:
                     next_url = data.get("links", {})["next"]
@@ -81,7 +84,7 @@ async def fetch_aeroapi_scheduled(move, start_time, end_time):
             else:
                 logger.warning("No data received, stopping pagination")
                 break
-        logger.success(f"Total flights collected: {len(all_data[move])}")
+        logger.success(f"AEROAPI {move} Total flights collected: {len(all_data[move])}")
         with open(f'api/data/aeroapi_data_{move}.json', 'w') as f:
             json.dump(all_data, f, indent=4)
             logger.debug(f"Data saved to api/data/aeroapi_data_{move}.json")

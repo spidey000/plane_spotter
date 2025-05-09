@@ -3,16 +3,15 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 10:50Z",
-                    "local": "2025-05-07 12:50+02:00"
+                    "utc": "2025-05-09 07:15Z",
+                    "local": "2025-05-09 09:15+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 10:50Z",
-                    "local": "2025-05-07 12:50+02:00"
+                    "utc": "2025-05-09 07:15Z",
+                    "local": "2025-05-09 09:15+02:00"
                 },
-                "terminal": "4S",
+                "terminal": "4",
                 "checkInDesk": "850-859",
-                "gate": "M",
                 "quality": [
                     "Basic",
                     "Live"
@@ -20,26 +19,255 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "LEIB",
-                    "iata": "IBZ",
-                    "name": "Ibiza Town",
-                    "timeZone": "Europe/Madrid"
+                    "icao": "LIMF",
+                    "iata": "TRN",
+                    "name": "Torino",
+                    "timeZone": "Europe/Rome"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:10Z",
-                    "local": "2025-05-07 14:10+02:00"
+                    "utc": "2025-05-09 09:25Z",
+                    "local": "2025-05-09 11:25+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "IB 1247",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Bombardier CRJX"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:15Z",
+                    "local": "2025-05-09 09:15+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 12:10Z",
-                    "local": "2025-05-07 14:10+02:00"
+                    "utc": "2025-05-09 07:15Z",
+                    "local": "2025-05-09 09:15+02:00"
                 },
-                "terminal": "IBZ",
+                "terminal": "2",
+                "checkInDesk": "559-560",
+                "gate": "D",
                 "quality": [
                     "Basic",
                     "Live"
                 ]
             },
-            "number": "I2 1697",
+            "arrival": {
+                "airport": {
+                    "icao": "LIMC",
+                    "iata": "MXP",
+                    "name": "Milan",
+                    "timeZone": "Europe/Rome"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:30Z",
+                    "local": "2025-05-09 11:30+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "W4 6312",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A321 NEO"
+            },
+            "airline": {
+                "name": "Wizz Air Malta",
+                "iata": "W4",
+                "icao": "WMT"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:25Z",
+                    "local": "2025-05-09 09:25+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:25Z",
+                    "local": "2025-05-09 09:25+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "K",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LIPE",
+                    "iata": "BLQ",
+                    "name": "Bologna",
+                    "timeZone": "Europe/Rome"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "IB 1237",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Bombardier CRJX"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:25Z",
+                    "local": "2025-05-09 09:25+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:25Z",
+                    "local": "2025-05-09 09:25+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "559-560",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LIPZ",
+                    "iata": "VCE",
+                    "name": "Venice",
+                    "timeZone": "Europe/Rome"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:50Z",
+                    "local": "2025-05-09 11:50+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "W4 6730",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A321 NEO"
+            },
+            "airline": {
+                "name": "Wizz Air Malta",
+                "iata": "W4",
+                "icao": "WMT"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "559-560",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LIRF",
+                    "iata": "FCO",
+                    "name": "Rome",
+                    "timeZone": "Europe/Rome"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:00Z",
+                    "local": "2025-05-09 12:00+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "W4 6012",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A321 NEO"
+            },
+            "airline": {
+                "name": "Wizz Air Malta",
+                "iata": "W4",
+                "icao": "WMT"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "900-906",
+                "gate": "S",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "EGKK",
+                    "iata": "LGW",
+                    "name": "London",
+                    "timeZone": "Europe/London"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:50Z",
+                    "local": "2025-05-09 10:50+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:50Z",
+                    "local": "2025-05-09 10:50+01:00"
+                },
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "I2 1861",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -55,15 +283,459 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "810-829",
+                "gate": "S",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "OTHH",
+                    "iata": "DOH",
+                    "name": "Doha",
+                    "timeZone": "Asia/Qatar"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 14:40Z",
+                    "local": "2025-05-09 17:40+03:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 14:40Z",
+                    "local": "2025-05-09 17:40+03:00"
+                },
+                "baggageBelt": "4",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "IB 391",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A330-200"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:30Z",
+                    "local": "2025-05-09 09:30+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "225-227",
+                "gate": "B",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "GMTT",
+                    "iata": "TNG",
+                    "name": "Tangier",
+                    "timeZone": "Africa/Casablanca"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:00Z",
+                    "local": "2025-05-09 10:00+01:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "3O 392",
+            "callSign": "MAC392",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "reg": "CN-NMP",
+                "modeS": "020175",
+                "model": "Airbus A320"
+            },
+            "airline": {
+                "name": "Air Arabia Maroc",
+                "iata": "3O",
+                "icao": "MAC"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:40Z",
+                    "local": "2025-05-09 09:40+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:40Z",
+                    "local": "2025-05-09 09:40+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "H",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "GCLP",
+                    "iata": "LPA",
+                    "name": "Gran Canaria Island",
+                    "timeZone": "Atlantic/Canary"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:30Z",
+                    "local": "2025-05-09 11:30+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 10:30Z",
+                    "local": "2025-05-09 11:30+01:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "I2 1605",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A321 NEO"
+            },
+            "airline": {
+                "name": "Iberia Express",
+                "iata": "I2",
+                "icao": "IBS"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:45Z",
+                    "local": "2025-05-09 09:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:45Z",
+                    "local": "2025-05-09 09:45+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "C",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LOWW",
+                    "iata": "VIE",
+                    "name": "Vienna",
+                    "timeZone": "Europe/Vienna"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:40Z",
+                    "local": "2025-05-09 12:40+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 10:40Z",
+                    "local": "2025-05-09 12:40+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "FR 690",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:45Z",
+                    "local": "2025-05-09 09:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:45Z",
+                    "local": "2025-05-09 09:45+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "H",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LFPG",
+                    "iata": "CDG",
+                    "name": "Paris",
+                    "timeZone": "Europe/Paris"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:55Z",
+                    "local": "2025-05-09 11:55+02:00"
+                },
+                "terminal": "3",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "IB 585",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A321"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:50Z",
+                    "local": "2025-05-09 09:50+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:50Z",
+                    "local": "2025-05-09 09:50+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "H",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LSGG",
+                    "iata": "GVA",
+                    "name": "Geneva",
+                    "timeZone": "Europe/Zurich"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "terminal": "1",
+                "baggageBelt": "4",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "IB 613",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320 NEO"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:50Z",
+                    "local": "2025-05-09 09:50+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:50Z",
+                    "local": "2025-05-09 09:50+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "760-762",
+                "gate": "J",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LIRQ",
+                    "iata": "FLR",
+                    "name": "Firenze",
+                    "timeZone": "Europe/Rome"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:10Z",
+                    "local": "2025-05-09 12:10+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "VY 1495",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A319"
+            },
+            "airline": {
+                "name": "Vueling",
+                "iata": "VY",
+                "icao": "VLG"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 07:55Z",
+                    "local": "2025-05-09 09:55+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 07:55Z",
+                    "local": "2025-05-09 09:55+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LFPO",
+                    "iata": "ORY",
+                    "name": "Paris",
+                    "timeZone": "Europe/Paris"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:55Z",
+                    "local": "2025-05-09 11:55+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "IB 571",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320 NEO"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:00Z",
+                    "local": "2025-05-09 10:00+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:00Z",
+                    "local": "2025-05-09 10:00+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "930-944",
+                "gate": "S",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "KMIA",
+                    "iata": "MIA",
+                    "name": "Miami",
+                    "timeZone": "America/New_York"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 17:20Z",
+                    "local": "2025-05-09 13:20-04:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "AA 69",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 777-200"
+            },
+            "airline": {
+                "name": "American",
+                "iata": "AA",
+                "icao": "AAL"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
                 },
                 "terminal": "2",
-                "checkInDesk": "516-532",
+                "checkInDesk": "427-431",
                 "gate": "E",
                 "quality": [
                     "Basic",
@@ -72,26 +744,359 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "LEIB",
-                    "iata": "IBZ",
-                    "name": "Ibiza Town",
-                    "timeZone": "Europe/Madrid"
+                    "icao": "LFPG",
+                    "iata": "CDG",
+                    "name": "Paris",
+                    "timeZone": "Europe/Paris"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:05Z",
-                    "local": "2025-05-07 14:05+02:00"
+                    "utc": "2025-05-09 10:10Z",
+                    "local": "2025-05-09 12:10+02:00"
+                },
+                "terminal": "2F",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "AF 1001",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "BCS3"
+            },
+            "airline": {
+                "name": "Air France",
+                "iata": "AF",
+                "icao": "AFR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 12:05Z",
-                    "local": "2025-05-07 14:05+02:00"
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
                 },
-                "terminal": "IBZ",
+                "terminal": "1",
+                "checkInDesk": "129-135",
+                "gate": "A",
                 "quality": [
                     "Basic",
                     "Live"
                 ]
             },
-            "number": "UX 6025",
+            "arrival": {
+                "airport": {
+                    "icao": "KATL",
+                    "iata": "ATL",
+                    "name": "Atlanta",
+                    "timeZone": "America/New_York"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 17:50Z",
+                    "local": "2025-05-09 13:50-04:00"
+                },
+                "terminal": "I",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "DL 109",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A330-300"
+            },
+            "airline": {
+                "name": "Delta Air Lines",
+                "iata": "DL",
+                "icao": "DAL"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LFMN",
+                    "iata": "NCE",
+                    "name": "Nice",
+                    "timeZone": "Europe/Paris"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:00Z",
+                    "local": "2025-05-09 12:00+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "IB 595",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320 NEO"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "K",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LFLL",
+                    "iata": "LYS",
+                    "name": "Lyon",
+                    "timeZone": "Europe/Paris"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:55Z",
+                    "local": "2025-05-09 11:55+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:55Z",
+                    "local": "2025-05-09 11:55+02:00"
+                },
+                "terminal": "1",
+                "baggageBelt": "6",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "IB 1179",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Bombardier CRJX"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "415-419",
+                "gate": "E",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LSZH",
+                    "iata": "ZRH",
+                    "name": "Zurich",
+                    "timeZone": "Europe/Zurich"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:20Z",
+                    "local": "2025-05-09 12:20+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "LX 2021",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Embraer 190"
+            },
+            "airline": {
+                "name": "SWISS",
+                "iata": "LX",
+                "icao": "SWR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:05Z",
+                    "local": "2025-05-09 10:05+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "A",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "EGGP",
+                    "iata": "LPL",
+                    "name": "Liverpool",
+                    "timeZone": "Europe/London"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:35Z",
+                    "local": "2025-05-09 11:35+01:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "FR 2441",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:10Z",
+                    "local": "2025-05-09 10:10+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:10Z",
+                    "local": "2025-05-09 10:10+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "734-736",
+                "gate": "K",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LBSF",
+                    "iata": "SOF",
+                    "name": "Sofia",
+                    "timeZone": "Europe/Sofia"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 11:30Z",
+                    "local": "2025-05-09 14:30+03:00"
+                },
+                "terminal": "2",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "FB 472",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "BCS3"
+            },
+            "airline": {
+                "name": "Bulgaria Air",
+                "iata": "FB",
+                "icao": "LZB"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEPA",
+                    "iata": "PMI",
+                    "name": "Palma De Mallorca",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:35Z",
+                    "local": "2025-05-09 11:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:35Z",
+                    "local": "2025-05-09 11:35+02:00"
+                },
+                "terminal": "N",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 6013",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -107,16 +1112,16 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 10:40Z",
-                    "local": "2025-05-07 12:40+02:00"
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
                 },
-                "terminal": "2",
-                "checkInDesk": "415-419",
-                "gate": "E",
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
                 "quality": [
                     "Basic",
                     "Live"
@@ -124,181 +1129,33 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "EBBR",
-                    "iata": "BRU",
-                    "name": "Brussels",
-                    "timeZone": "Europe/Brussels"
+                    "icao": "ESSA",
+                    "iata": "ARN",
+                    "name": "Stockholm",
+                    "timeZone": "Europe/Stockholm"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:55Z",
-                    "local": "2025-05-07 14:55+02:00"
+                    "utc": "2025-05-09 12:10Z",
+                    "local": "2025-05-09 14:10+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 12:55Z",
-                    "local": "2025-05-07 14:55+02:00"
-                },
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "SN 3722",
-            "status": "Delayed",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A320"
-            },
-            "airline": {
-                "name": "Brussels",
-                "iata": "SN",
-                "icao": "BEL"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
+                    "utc": "2025-05-09 12:10Z",
+                    "local": "2025-05-09 14:10+02:00"
                 },
                 "terminal": "2",
-                "checkInDesk": "422-423",
-                "gate": "E",
+                "baggageBelt": "2",
                 "quality": [
                     "Basic",
                     "Live"
                 ]
             },
-            "arrival": {
-                "airport": {
-                    "icao": "EKCH",
-                    "iata": "CPH",
-                    "name": "Copenhagen",
-                    "timeZone": "Europe/Copenhagen"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 14:10Z",
-                    "local": "2025-05-07 16:10+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 14:10Z",
-                    "local": "2025-05-07 16:10+02:00"
-                },
-                "terminal": "3",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "SK 582",
+            "number": "IB 823",
+            "callSign": "IBE0823",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
                 "model": "Airbus A320 NEO"
-            },
-            "airline": {
-                "name": "SAS",
-                "iata": "SK",
-                "icao": "SAS"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "C",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LEPA",
-                    "iata": "PMI",
-                    "name": "Palma De Mallorca",
-                    "timeZone": "Europe/Madrid"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:30Z",
-                    "local": "2025-05-07 14:30+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:30Z",
-                    "local": "2025-05-07 14:30+02:00"
-                },
-                "terminal": "N",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "FR 3011",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737 MAX 8"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "870-886",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "KLAX",
-                    "iata": "LAX",
-                    "name": "Los Angeles",
-                    "timeZone": "America/Los_Angeles"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:05Z",
-                    "local": "2025-05-07 16:05-07:00"
-                },
-                "terminal": "B",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "IB 351",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A350-900"
             },
             "airline": {
                 "name": "Iberia",
@@ -309,12 +1166,112 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "730-733",
+                "gate": "H",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "EFHK",
+                    "iata": "HEL",
+                    "name": "Helsinki",
+                    "timeZone": "Europe/Helsinki"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 12:25Z",
+                    "local": "2025-05-09 15:25+03:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 12:25Z",
+                    "local": "2025-05-09 15:25+03:00"
+                },
+                "gate": "13",
+                "baggageBelt": "7",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "AY 1662",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A321"
+            },
+            "airline": {
+                "name": "Finnair",
+                "iata": "AY",
+                "icao": "FIN"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "K",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LFML",
+                    "iata": "MRS",
+                    "name": "Marseille",
+                    "timeZone": "Europe/Paris"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:00Z",
+                    "local": "2025-05-09 12:00+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "IB 1169",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Bombardier CRJX"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
                 },
                 "terminal": "4",
                 "checkInDesk": "850-859",
@@ -332,20 +1289,20 @@
                     "timeZone": "Europe/Rome"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:25Z",
-                    "local": "2025-05-07 15:25+02:00"
+                    "utc": "2025-05-09 10:40Z",
+                    "local": "2025-05-09 12:40+02:00"
                 },
                 "terminal": "1",
                 "quality": [
                     "Basic"
                 ]
             },
-            "number": "IB 651",
+            "number": "IB 659",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Airbus A321"
+                "model": "Airbus A320 (sharklets)"
             },
             "airline": {
                 "name": "Iberia",
@@ -356,107 +1313,15 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "810-829",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "SPJC",
-                    "iata": "LIM",
-                    "name": "Lima",
-                    "timeZone": "America/Lima"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:00Z",
-                    "local": "2025-05-07 18:00-05:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "IB 125",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A350-900"
-            },
-            "airline": {
-                "name": "Iberia",
-                "iata": "IB",
-                "icao": "IBE"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "930-949",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "KCLT",
-                    "iata": "CLT",
-                    "name": "Charlotte",
-                    "timeZone": "America/New_York"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 20:05Z",
-                    "local": "2025-05-07 16:05-04:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "AA 749",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 777-200"
-            },
-            "airline": {
-                "name": "American",
-                "iata": "AA",
-                "icao": "AAL"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 10:55Z",
-                    "local": "2025-05-07 12:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:00Z",
-                    "local": "2025-05-07 13:00+02:00"
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
                 },
                 "terminal": "1",
-                "checkInDesk": "355-358",
+                "checkInDesk": "327-330",
                 "gate": "B",
                 "quality": [
                     "Basic",
@@ -465,25 +1330,78 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "EGGP",
-                    "iata": "LPL",
-                    "name": "Liverpool",
+                    "icao": "EGKK",
+                    "iata": "LGW",
+                    "name": "London",
                     "timeZone": "Europe/London"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:25Z",
-                    "local": "2025-05-07 14:25+01:00"
+                    "utc": "2025-05-09 10:35Z",
+                    "local": "2025-05-09 11:35+01:00"
                 },
+                "terminal": "N",
                 "quality": [
                     "Basic"
                 ]
             },
-            "number": "FR 2441",
+            "number": "U2 8020",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Boeing 737 MAX 8"
+                "model": "Airbus A321 NEO"
+            },
+            "airline": {
+                "name": "easyJet",
+                "iata": "U2",
+                "icao": "EZY"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:15Z",
+                    "local": "2025-05-09 10:15+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "C",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LPPR",
+                    "iata": "OPO",
+                    "name": "Porto",
+                    "timeZone": "Europe/Lisbon"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:35Z",
+                    "local": "2025-05-09 10:35+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:35Z",
+                    "local": "2025-05-09 10:35+01:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "FR 5482",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
             },
             "airline": {
                 "name": "Ryanair",
@@ -494,16 +1412,16 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:05Z",
-                    "local": "2025-05-07 13:05+02:00"
+                    "utc": "2025-05-09 07:55Z",
+                    "local": "2025-05-09 09:55+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:05Z",
-                    "local": "2025-05-07 13:05+02:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
-                "terminal": "2",
-                "checkInDesk": "415-419",
-                "gate": "E",
+                "terminal": "1",
+                "checkInDesk": "327-330",
+                "gate": "C",
                 "quality": [
                     "Basic",
                     "Live"
@@ -511,18 +1429,18 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "EDDF",
-                    "iata": "FRA",
-                    "name": "Frankfurt-am-Main",
-                    "timeZone": "Europe/Berlin"
+                    "icao": "LPPT",
+                    "iata": "LIS",
+                    "name": "Lisbon",
+                    "timeZone": "Europe/Lisbon"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:40Z",
-                    "local": "2025-05-07 15:40+02:00"
+                    "utc": "2025-05-09 09:20Z",
+                    "local": "2025-05-09 10:20+01:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 13:40Z",
-                    "local": "2025-05-07 15:40+02:00"
+                    "utc": "2025-05-09 09:20Z",
+                    "local": "2025-05-09 10:20+01:00"
                 },
                 "terminal": "1",
                 "quality": [
@@ -530,30 +1448,28 @@
                     "Live"
                 ]
             },
-            "number": "LH 1113",
-            "status": "Expected",
+            "number": "U2 7652",
+            "status": "Delayed",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "reg": "D-AIDB",
-                "modeS": "3C6482",
-                "model": "Airbus A321"
+                "model": "Airbus A320 (sharklets)"
             },
             "airline": {
-                "name": "Lufthansa",
-                "iata": "LH",
-                "icao": "DLH"
+                "name": "easyJet",
+                "iata": "U2",
+                "icao": "EZY"
             }
         },
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:05Z",
-                    "local": "2025-05-07 13:05+02:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:05Z",
-                    "local": "2025-05-07 13:05+02:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
                 "terminal": "2",
                 "checkInDesk": "427-431",
@@ -571,23 +1487,23 @@
                     "timeZone": "Europe/Amsterdam"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:35Z",
-                    "local": "2025-05-07 15:35+02:00"
+                    "utc": "2025-05-09 11:00Z",
+                    "local": "2025-05-09 13:00+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 13:27Z",
-                    "local": "2025-05-07 15:27+02:00"
+                    "utc": "2025-05-09 10:52Z",
+                    "local": "2025-05-09 12:52+02:00"
                 },
                 "runwayTime": {
-                    "utc": "2025-05-07 13:27Z",
-                    "local": "2025-05-07 15:27+02:00"
+                    "utc": "2025-05-09 10:52Z",
+                    "local": "2025-05-09 12:52+02:00"
                 },
                 "quality": [
                     "Basic",
                     "Live"
                 ]
             },
-            "number": "KL 1504",
+            "number": "KL 1502",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -603,16 +1519,16 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:10Z",
-                    "local": "2025-05-07 13:10+02:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:10Z",
-                    "local": "2025-05-07 13:10+02:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
-                "terminal": "2",
-                "checkInDesk": "537-537",
-                "gate": "E",
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
                 "quality": [
                     "Basic",
                     "Live"
@@ -620,27 +1536,26 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "LFLL",
-                    "iata": "LYS",
-                    "name": "Lyon",
-                    "timeZone": "Europe/Paris"
+                    "icao": "LEPA",
+                    "iata": "PMI",
+                    "name": "Palma De Mallorca",
+                    "timeZone": "Europe/Madrid"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:55Z",
-                    "local": "2025-05-07 14:55+02:00"
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 12:55Z",
-                    "local": "2025-05-07 14:55+02:00"
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
                 },
-                "terminal": "2",
-                "baggageBelt": "2",
+                "terminal": "N",
                 "quality": [
                     "Basic",
                     "Live"
                 ]
             },
-            "number": "V7 2661",
+            "number": "I2 1659",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -648,170 +1563,24 @@
                 "model": "Airbus A320"
             },
             "airline": {
-                "name": "Volotea",
-                "iata": "V7",
-                "icao": "VOE"
+                "name": "Iberia Express",
+                "iata": "I2",
+                "icao": "IBS"
             }
         },
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:10Z",
-                    "local": "2025-05-07 13:10+02:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:10Z",
-                    "local": "2025-05-07 13:10+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "960-964",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "SKBO",
-                    "iata": "BOG",
-                    "name": "Bogot\u00e1",
-                    "timeZone": "America/Bogota"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 21:35Z",
-                    "local": "2025-05-07 16:35-05:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 20:37Z",
-                    "local": "2025-05-07 15:37-05:00"
+                    "utc": "2025-05-09 08:20Z",
+                    "local": "2025-05-09 10:20+02:00"
                 },
                 "terminal": "1",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "AV 183",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 787-8"
-            },
-            "airline": {
-                "name": "Avianca",
-                "iata": "AV",
-                "icao": "AVA"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:10Z",
-                    "local": "2025-05-07 13:10+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:10Z",
-                    "local": "2025-05-07 13:10+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "319-324",
-                "gate": "B",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "ZBAA",
-                    "iata": "PEK",
-                    "name": "Beijing",
-                    "timeZone": "Asia/Shanghai"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 21:40Z",
-                    "local": "2025-05-08 05:40+08:00"
-                },
-                "terminal": "3",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "CA 908",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 787-9"
-            },
-            "airline": {
-                "name": "Air China",
-                "iata": "CA",
-                "icao": "CCA"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "810-829",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "MMMX",
-                    "iata": "MEX",
-                    "name": "Mexico City",
-                    "timeZone": "America/Mexico_City"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:05Z",
-                    "local": "2025-05-07 17:05-06:00"
-                },
-                "terminal": "1",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "IB 307",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A350-900"
-            },
-            "airline": {
-                "name": "Iberia",
-                "iata": "IB",
-                "icao": "IBE"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "terminal": "4",
-                "checkInDesk": "850-859",
-                "gate": "K",
+                "checkInDesk": "355-359",
+                "gate": "C",
                 "quality": [
                     "Basic",
                     "Live"
@@ -825,12 +1594,12 @@
                     "timeZone": "Atlantic/Canary"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 14:10Z",
-                    "local": "2025-05-07 15:10+01:00"
+                    "utc": "2025-05-09 11:20Z",
+                    "local": "2025-05-09 12:20+01:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 14:10Z",
-                    "local": "2025-05-07 15:10+01:00"
+                    "utc": "2025-05-09 11:20Z",
+                    "local": "2025-05-09 12:20+01:00"
                 },
                 "terminal": "1",
                 "quality": [
@@ -838,239 +1607,7 @@
                     "Live"
                 ]
             },
-            "number": "I2 1571",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A321 NEO"
-            },
-            "airline": {
-                "name": "Iberia Express",
-                "iata": "I2",
-                "icao": "IBS"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "terminal": "2",
-                "checkInDesk": "401-402",
-                "gate": "D",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LFPO",
-                    "iata": "ORY",
-                    "name": "Paris",
-                    "timeZone": "Europe/Paris"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 13:20Z",
-                    "local": "2025-05-07 15:20+02:00"
-                },
-                "terminal": "3",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "TO 4633",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Transavia France",
-                "iata": "TO",
-                "icao": "TVF"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:15Z",
-                    "local": "2025-05-07 13:15+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "750-762",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "SKCL",
-                    "iata": "CLO",
-                    "name": "Santiago de Cali",
-                    "timeZone": "America/Bogota"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 21:55Z",
-                    "local": "2025-05-07 16:55-05:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "2W 2093",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A350-900"
-            },
-            "airline": {
-                "name": "Multiple Solutions Limited",
-                "iata": "2W"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:20Z",
-                    "local": "2025-05-07 13:20+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:20Z",
-                    "local": "2025-05-07 13:20+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "810-829",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "SEGU",
-                    "iata": "GYE",
-                    "name": "Guayaquil",
-                    "timeZone": "America/Guayaquil"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:15Z",
-                    "local": "2025-05-07 18:15-05:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "IB 131",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A330-200"
-            },
-            "airline": {
-                "name": "Iberia",
-                "iata": "IB",
-                "icao": "IBE"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:20Z",
-                    "local": "2025-05-07 13:20+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:20Z",
-                    "local": "2025-05-07 13:20+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "155-160",
-                "gate": "A",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "ZSHC",
-                    "iata": "HGH",
-                    "name": "Hangzhou",
-                    "timeZone": "Asia/Shanghai"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:55Z",
-                    "local": "2025-05-08 07:55+08:00"
-                },
-                "terminal": "4",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "JD 606",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A330-300"
-            },
-            "airline": {
-                "name": "Beijing Capital",
-                "iata": "JD",
-                "icao": "CBJ"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:20Z",
-                    "local": "2025-05-07 13:20+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:20Z",
-                    "local": "2025-05-07 13:20+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "D",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LFML",
-                    "iata": "MRS",
-                    "name": "Marseille",
-                    "timeZone": "Europe/Paris"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 13:05Z",
-                    "local": "2025-05-07 15:05+02:00"
-                },
-                "terminal": "2",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "FR 5446",
+            "number": "FR 4199",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -1086,16 +1623,16 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:30Z",
-                    "local": "2025-05-07 13:30+02:00"
+                    "utc": "2025-05-09 08:25Z",
+                    "local": "2025-05-09 10:25+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:30Z",
-                    "local": "2025-05-07 13:30+02:00"
+                    "utc": "2025-05-09 08:25Z",
+                    "local": "2025-05-09 10:25+02:00"
                 },
-                "terminal": "4",
-                "checkInDesk": "850-859",
-                "gate": "J",
+                "terminal": "4S",
+                "checkInDesk": "930-944",
+                "gate": "S",
                 "quality": [
                     "Basic",
                     "Live"
@@ -1103,18 +1640,65 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "GCLP",
-                    "iata": "LPA",
-                    "name": "Gran Canaria Island",
-                    "timeZone": "Atlantic/Canary"
+                    "icao": "KJFK",
+                    "iata": "JFK",
+                    "name": "New York",
+                    "timeZone": "America/New_York"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 14:25Z",
-                    "local": "2025-05-07 15:25+01:00"
+                    "utc": "2025-05-09 16:29Z",
+                    "local": "2025-05-09 12:29-04:00"
+                },
+                "terminal": "8",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "AA 95",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 777-300ER"
+            },
+            "airline": {
+                "name": "American",
+                "iata": "AA",
+                "icao": "AAL"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:25Z",
+                    "local": "2025-05-09 10:25+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 14:25Z",
-                    "local": "2025-05-07 15:25+01:00"
+                    "utc": "2025-05-09 08:25Z",
+                    "local": "2025-05-09 10:25+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LPPT",
+                    "iata": "LIS",
+                    "name": "Lisbon",
+                    "timeZone": "Europe/Lisbon"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 10:45+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 10:45+01:00"
                 },
                 "terminal": "1",
                 "quality": [
@@ -1122,31 +1706,31 @@
                     "Live"
                 ]
             },
-            "number": "I2 1613",
+            "number": "UX 1153",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Airbus A321 NEO"
+                "model": "Boeing 737-800 (winglets)"
             },
             "airline": {
-                "name": "Iberia Express",
-                "iata": "I2",
-                "icao": "IBS"
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
             }
         },
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:30Z",
-                    "local": "2025-05-07 13:30+02:00"
+                    "utc": "2025-05-09 08:25Z",
+                    "local": "2025-05-09 10:25+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:30Z",
-                    "local": "2025-05-07 13:30+02:00"
+                    "utc": "2025-05-09 08:25Z",
+                    "local": "2025-05-09 10:25+02:00"
                 },
                 "terminal": "4S",
-                "checkInDesk": "900-906",
+                "checkInDesk": "737-739",
                 "gate": "S",
                 "quality": [
                     "Basic",
@@ -1161,12 +1745,12 @@
                     "timeZone": "Europe/London"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:55Z",
-                    "local": "2025-05-07 14:55+01:00"
+                    "utc": "2025-05-09 10:50Z",
+                    "local": "2025-05-09 11:50+01:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 13:55Z",
-                    "local": "2025-05-07 14:55+01:00"
+                    "utc": "2025-05-09 10:50Z",
+                    "local": "2025-05-09 11:50+01:00"
                 },
                 "terminal": "5",
                 "quality": [
@@ -1174,7 +1758,59 @@
                     "Live"
                 ]
             },
-            "number": "IB 717",
+            "number": "BA 457",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320"
+            },
+            "airline": {
+                "name": "British",
+                "iata": "BA",
+                "icao": "BAW"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:30Z",
+                    "local": "2025-05-09 10:30+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:30Z",
+                    "local": "2025-05-09 10:30+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LGAV",
+                    "iata": "ATH",
+                    "name": "Athens",
+                    "timeZone": "Europe/Athens"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 12:10Z",
+                    "local": "2025-05-09 15:10+03:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 12:10Z",
+                    "local": "2025-05-09 15:10+03:00"
+                },
+                "baggageBelt": "06",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "IB 833",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -1190,23 +1826,648 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:30Z",
-                    "local": "2025-05-07 13:30+02:00"
+                    "utc": "2025-05-09 08:30Z",
+                    "local": "2025-05-09 10:30+02:00"
                 },
-                "terminal": "1",
+                "revisedTime": {
+                    "utc": "2025-05-09 08:30Z",
+                    "local": "2025-05-09 10:30+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
                 "quality": [
-                    "Basic"
+                    "Basic",
+                    "Live"
                 ]
             },
             "arrival": {
                 "airport": {
-                    "name": "Mexico City"
+                    "icao": "LEBL",
+                    "iata": "BCN",
+                    "name": "Barcelona",
+                    "timeZone": "Europe/Madrid"
                 },
-                "quality": []
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
             },
-            "number": "AM 20",
-            "status": "Unknown",
-            "codeshareStatus": "Unknown",
+            "number": "QR 7246",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320"
+            },
+            "airline": {
+                "name": "Qatar",
+                "iata": "QR",
+                "icao": "QTR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:30Z",
+                    "local": "2025-05-09 10:30+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:30Z",
+                    "local": "2025-05-09 10:30+02:00"
+                },
+                "terminal": "4",
+                "checkInDesk": "990-993",
+                "gate": "J",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEBL",
+                    "iata": "BCN",
+                    "name": "Barcelona",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "IB 409S",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320"
+            },
+            "airline": {
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "E",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEMG",
+                    "iata": "AGP",
+                    "name": "M\u00e1laga",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:50Z",
+                    "local": "2025-05-09 11:50+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:59Z",
+                    "local": "2025-05-09 11:59+02:00"
+                },
+                "terminal": "PAX",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 5043",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "E",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LECO",
+                    "iata": "LCG",
+                    "name": "Culleredo",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 7231",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LPPR",
+                    "iata": "OPO",
+                    "name": "Porto",
+                    "timeZone": "Europe/Lisbon"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:50Z",
+                    "local": "2025-05-09 10:50+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:50Z",
+                    "local": "2025-05-09 10:50+01:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 1145",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "720-728",
+                "gate": "S",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "OMAA",
+                    "iata": "AUH",
+                    "name": "Abu Dhabi Island and Internal Islands City",
+                    "timeZone": "Asia/Dubai"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 15:25Z",
+                    "local": "2025-05-09 19:25+04:00"
+                },
+                "terminal": "A",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "EY 102",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 787-9"
+            },
+            "airline": {
+                "name": "Etihad",
+                "iata": "EY",
+                "icao": "ETD"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "763-765",
+                "gate": "S",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "EIDW",
+                    "iata": "DUB",
+                    "name": "Dublin",
+                    "timeZone": "Europe/Dublin"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 11:10Z",
+                    "local": "2025-05-09 12:10+01:00"
+                },
+                "terminal": "2",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "EI 593",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320"
+            },
+            "airline": {
+                "name": "Aer Lingus",
+                "iata": "EI",
+                "icao": "EIN"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:35Z",
+                    "local": "2025-05-09 10:35+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "A",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "EGSS",
+                    "iata": "STN",
+                    "name": "London",
+                    "timeZone": "Europe/London"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 11:00Z",
+                    "local": "2025-05-09 12:00+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 11:00Z",
+                    "local": "2025-05-09 12:00+01:00"
+                },
+                "terminal": "1",
+                "gate": "56",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "FR 498",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "E",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEVX",
+                    "iata": "VGO",
+                    "name": "Vigo",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 7302",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "C",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEIB",
+                    "iata": "IBZ",
+                    "name": "Ibiza Town",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:10Z",
+                    "local": "2025-05-09 12:10+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 10:10Z",
+                    "local": "2025-05-09 12:10+02:00"
+                },
+                "terminal": "IBZ",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "FR 2084",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "A",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "GMTT",
+                    "iata": "TNG",
+                    "name": "Tangier",
+                    "timeZone": "Africa/Casablanca"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 10:10Z",
+                    "local": "2025-05-09 11:10+01:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "FR 3876",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:40Z",
+                    "local": "2025-05-09 10:40+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "B",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "EGPH",
+                    "iata": "EDI",
+                    "name": "Edinburgh",
+                    "timeZone": "Europe/London"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 11:35Z",
+                    "local": "2025-05-09 12:35+01:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 11:35Z",
+                    "local": "2025-05-09 12:35+01:00"
+                },
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "FR 188",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737 MAX 8"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:45Z",
+                    "local": "2025-05-09 10:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:45Z",
+                    "local": "2025-05-09 10:45+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "163-173",
+                "gate": "A",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "MMMX",
+                    "iata": "MEX",
+                    "name": "Mexico City",
+                    "timeZone": "America/Mexico_City"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 20:35Z",
+                    "local": "2025-05-09 14:35-06:00"
+                },
+                "terminal": "2",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "AM 2",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
                 "model": "Boeing 787-9"
@@ -1220,12 +2481,409 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:35Z",
-                    "local": "2025-05-07 13:35+02:00"
+                    "utc": "2025-05-09 08:45Z",
+                    "local": "2025-05-09 10:45+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:35Z",
-                    "local": "2025-05-07 13:35+02:00"
+                    "utc": "2025-05-09 08:45Z",
+                    "local": "2025-05-09 10:45+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "E",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEVC",
+                    "iata": "VLC",
+                    "name": "Valencia",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:45Z",
+                    "local": "2025-05-09 11:45+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 4063",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:50Z",
+                    "local": "2025-05-09 10:50+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:50Z",
+                    "local": "2025-05-09 10:50+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "140-144",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "KEWR",
+                    "iata": "EWR",
+                    "name": "Newark",
+                    "timeZone": "America/New_York"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 17:25Z",
+                    "local": "2025-05-09 13:25-04:00"
+                },
+                "terminal": "B",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "UA 50",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 767-400"
+            },
+            "airline": {
+                "name": "United",
+                "iata": "UA",
+                "icao": "UAL"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "156-160",
+                "gate": "B",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "SAEZ",
+                    "iata": "EZE",
+                    "name": "Buenos Aires",
+                    "timeZone": "America/Argentina/Buenos_Aires"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 22:00Z",
+                    "local": "2025-05-09 19:00-03:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 22:00Z",
+                    "local": "2025-05-09 19:00-03:00"
+                },
+                "terminal": "INT",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "AR 1135",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "reg": "LV-FVH",
+                "modeS": "E06588",
+                "model": "Airbus A330-200"
+            },
+            "airline": {
+                "name": "Aerolineas Argentinas",
+                "iata": "AR",
+                "icao": "ARG"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "516-532",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LEBB",
+                    "iata": "BIO",
+                    "name": "Bilbao",
+                    "timeZone": "Europe/Madrid"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:55Z",
+                    "local": "2025-05-09 11:55+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:55Z",
+                    "local": "2025-05-09 11:55+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "UX 7157",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Air Europa",
+                "iata": "UX",
+                "icao": "AEA"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "355-359",
+                "gate": "C",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LIRF",
+                    "iata": "FCO",
+                    "name": "Rome",
+                    "timeZone": "Europe/Rome"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 11:20Z",
+                    "local": "2025-05-09 13:20+02:00"
+                },
+                "terminal": "1",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "FR 2436",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 737 MAX 8"
+            },
+            "airline": {
+                "name": "Ryanair",
+                "iata": "FR",
+                "icao": "RYR"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 08:50Z",
+                    "local": "2025-05-09 10:50+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 08:55Z",
+                    "local": "2025-05-09 10:55+02:00"
+                },
+                "terminal": "2",
+                "checkInDesk": "537-538",
+                "gate": "D",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "ENGM",
+                    "iata": "OSL",
+                    "name": "Oslo",
+                    "timeZone": "Europe/Oslo"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 12:25Z",
+                    "local": "2025-05-09 14:25+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 12:25Z",
+                    "local": "2025-05-09 14:25+02:00"
+                },
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "number": "DY 1719",
+            "callSign": "NOZ1719",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "reg": "SE-RXC",
+                "modeS": "4ACB03",
+                "model": "Boeing 737-800 (winglets)"
+            },
+            "airline": {
+                "name": "Norwegian Air Shuttle",
+                "iata": "DY",
+                "icao": "NOZ"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:00Z",
+                    "local": "2025-05-09 11:00+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:00Z",
+                    "local": "2025-05-09 11:00+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "973-979",
+                "gate": "S130",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "SPJC",
+                    "iata": "LIM",
+                    "name": "Lima",
+                    "timeZone": "America/Lima"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 21:10Z",
+                    "local": "2025-05-09 16:10-05:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "PU 301",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A330-200"
+            },
+            "airline": {
+                "name": "Plus Ultra",
+                "iata": "PU",
+                "icao": "PUE"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:00Z",
+                    "local": "2025-05-09 11:00+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:00Z",
+                    "local": "2025-05-09 11:00+02:00"
+                },
+                "terminal": "1",
+                "checkInDesk": "126-128",
+                "gate": "C",
+                "quality": [
+                    "Basic",
+                    "Live"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "LMML",
+                    "iata": "MLA",
+                    "name": "Luqa",
+                    "timeZone": "Europe/Malta"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-09 11:45Z",
+                    "local": "2025-05-09 13:45+02:00"
+                },
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "KM 587",
+            "status": "Expected",
+            "codeshareStatus": "IsOperator",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Airbus A320 NEO"
+            },
+            "airline": {
+                "name": "KM Malta",
+                "iata": "KM",
+                "icao": "KMM"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "terminal": "2",
                 "checkInDesk": "405-407",
@@ -1243,12 +2901,12 @@
                     "timeZone": "Europe/Lisbon"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:00Z",
-                    "local": "2025-05-07 14:00+01:00"
+                    "utc": "2025-05-09 10:30Z",
+                    "local": "2025-05-09 11:30+01:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 13:00Z",
-                    "local": "2025-05-07 14:00+01:00"
+                    "utc": "2025-05-09 10:30Z",
+                    "local": "2025-05-09 11:30+01:00"
                 },
                 "terminal": "1",
                 "quality": [
@@ -1256,12 +2914,12 @@
                     "Live"
                 ]
             },
-            "number": "TP 1013",
+            "number": "TP 1011",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Embraer 190"
+                "model": "Airbus A321"
             },
             "airline": {
                 "name": "TAP Air Portugal",
@@ -1272,16 +2930,16 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:35Z",
-                    "local": "2025-05-07 13:35+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:35Z",
-                    "local": "2025-05-07 13:35+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
-                "terminal": "4S",
-                "checkInDesk": "730-733",
-                "gate": "S",
+                "terminal": "4",
+                "checkInDesk": "850-859",
+                "gate": "J",
                 "quality": [
                     "Basic",
                     "Live"
@@ -1289,125 +2947,26 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "GMMN",
-                    "iata": "CMN",
-                    "name": "Casablanca",
-                    "timeZone": "Africa/Casablanca"
+                    "icao": "GCXO",
+                    "iata": "TFN",
+                    "name": "Tenerife Island",
+                    "timeZone": "Atlantic/Canary"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 13:25Z",
-                    "local": "2025-05-07 14:25+01:00"
-                },
-                "terminal": "2",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "AT 973",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Royal Air Maroc",
-                "iata": "AT",
-                "icao": "RAM"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:35Z",
-                    "local": "2025-05-07 13:35+02:00"
+                    "utc": "2025-05-09 12:00Z",
+                    "local": "2025-05-09 13:00+01:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:35Z",
-                    "local": "2025-05-07 13:35+02:00"
+                    "utc": "2025-05-09 12:00Z",
+                    "local": "2025-05-09 13:00+01:00"
                 },
                 "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "C",
                 "quality": [
                     "Basic",
                     "Live"
                 ]
             },
-            "arrival": {
-                "airport": {
-                    "icao": "LEIB",
-                    "iata": "IBZ",
-                    "name": "Ibiza Town",
-                    "timeZone": "Europe/Madrid"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:55Z",
-                    "local": "2025-05-07 14:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:55Z",
-                    "local": "2025-05-07 14:55+02:00"
-                },
-                "terminal": "IBZ",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "FR 394",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:40Z",
-                    "local": "2025-05-07 13:40+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:40Z",
-                    "local": "2025-05-07 13:40+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "850-859",
-                "gate": "M",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LEPA",
-                    "iata": "PMI",
-                    "name": "Palma De Mallorca",
-                    "timeZone": "Europe/Madrid"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 13:10Z",
-                    "local": "2025-05-07 15:10+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 13:10Z",
-                    "local": "2025-05-07 15:10+02:00"
-                },
-                "terminal": "N",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "I2 1665",
+            "number": "I2 1569",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
@@ -1423,548 +2982,16 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 11:40Z",
-                    "local": "2025-05-07 13:40+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 11:40Z",
-                    "local": "2025-05-07 13:40+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "D",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LIPE",
-                    "iata": "BLQ",
-                    "name": "Bologna",
-                    "timeZone": "Europe/Rome"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 13:55Z",
-                    "local": "2025-05-07 15:55+02:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "FR 3814",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:45Z",
-                    "local": "2025-05-07 13:45+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:45Z",
-                    "local": "2025-05-07 13:45+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "930-949",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "KPHL",
-                    "iata": "PHL",
-                    "name": "Philadelphia",
-                    "timeZone": "America/New_York"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 19:50Z",
-                    "local": "2025-05-07 15:50-04:00"
-                },
-                "terminal": "A",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "AA 741",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 787-8"
-            },
-            "airline": {
-                "name": "American",
-                "iata": "AA",
-                "icao": "AAL"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:55Z",
-                    "local": "2025-05-07 13:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:55Z",
-                    "local": "2025-05-07 13:55+02:00"
-                },
-                "terminal": "2",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LKPR",
-                    "iata": "PRG",
-                    "name": "Prague",
-                    "timeZone": "Europe/Prague"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 14:45Z",
-                    "local": "2025-05-07 16:45+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 14:45Z",
-                    "local": "2025-05-07 16:45+02:00"
-                },
-                "terminal": "2",
-                "baggageBelt": "23",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "QS 1057",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-900 (winglets)"
-            },
-            "airline": {
-                "name": "SmartWings",
-                "iata": "QS",
-                "icao": "TVS"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 11:55Z",
-                    "local": "2025-05-07 13:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 11:55Z",
-                    "local": "2025-05-07 13:55+02:00"
-                },
-                "terminal": "2",
-                "checkInDesk": "538-540",
-                "gate": "C",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LKPR",
-                    "iata": "PRG",
-                    "name": "Prague",
-                    "timeZone": "Europe/Prague"
-                },
-                "quality": []
-            },
-            "number": "7O 1057",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-900 (winglets)"
-            },
-            "airline": {
-                "name": "Smartwings Hungary Kft",
-                "iata": "7O",
-                "icao": "TVL"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:05Z",
-                    "local": "2025-05-07 14:05+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:05Z",
-                    "local": "2025-05-07 14:05+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "C",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LEST",
-                    "iata": "SCQ",
-                    "name": "Santiago de Compostela",
-                    "timeZone": "Europe/Madrid"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 13:25Z",
-                    "local": "2025-05-07 15:25+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 13:05Z",
-                    "local": "2025-05-07 15:05+02:00"
-                },
-                "terminal": "1",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "FR 5317",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:05Z",
-                    "local": "2025-05-07 14:05+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:05Z",
-                    "local": "2025-05-07 14:05+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "C",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "GCXO",
-                    "iata": "TFN",
-                    "name": "Tenerife Island",
-                    "timeZone": "Atlantic/Canary"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 15:05Z",
-                    "local": "2025-05-07 16:05+01:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 15:05Z",
-                    "local": "2025-05-07 16:05+01:00"
-                },
-                "terminal": "1",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "FR 4199",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737 MAX 8"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:20Z",
-                    "local": "2025-05-07 14:20+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:20Z",
-                    "local": "2025-05-07 14:20+02:00"
-                },
-                "terminal": "2",
-                "checkInDesk": "508-532",
-                "gate": "E",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LFPO",
-                    "iata": "ORY",
-                    "name": "Paris",
-                    "timeZone": "Europe/Paris"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 14:15Z",
-                    "local": "2025-05-07 16:15+02:00"
-                },
-                "terminal": "1",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "UX 1029",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Air Europa",
-                "iata": "UX",
-                "icao": "AEA"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:30Z",
-                    "local": "2025-05-07 14:30+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:30Z",
-                    "local": "2025-05-07 14:30+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "980-985",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "SBGR",
-                    "iata": "GRU",
-                    "name": "S\u00e3o Paulo",
-                    "timeZone": "America/Sao_Paulo"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:00Z",
-                    "local": "2025-05-07 20:00-03:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 23:00Z",
-                    "local": "2025-05-07 20:00-03:00"
-                },
-                "terminal": "3",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "JJ 8075",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 777-300ER"
-            },
-            "airline": {
-                "name": "LATAM Brasil",
-                "iata": "JJ",
-                "icao": "TAM"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:30Z",
-                    "local": "2025-05-07 14:30+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:30Z",
-                    "local": "2025-05-07 14:30+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "333-337",
-                "gate": "A",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LTFJ",
-                    "iata": "SAW",
-                    "name": "Istanbul",
-                    "timeZone": "Europe/Istanbul"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 16:40Z",
-                    "local": "2025-05-07 19:40+03:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "PC 1100",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A321 NEO"
-            },
-            "airline": {
-                "name": "Pegasus",
-                "iata": "PC",
-                "icao": "PGT"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:35Z",
-                    "local": "2025-05-07 14:35+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:35Z",
-                    "local": "2025-05-07 14:35+02:00"
-                },
-                "terminal": "2",
-                "checkInDesk": "508-532",
-                "gate": "E",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LEPA",
-                    "iata": "PMI",
-                    "name": "Palma De Mallorca",
-                    "timeZone": "Europe/Madrid"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 13:55Z",
-                    "local": "2025-05-07 15:55+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 13:55Z",
-                    "local": "2025-05-07 15:55+02:00"
-                },
-                "terminal": "N",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "UX 6067",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737-800 (winglets)"
-            },
-            "airline": {
-                "name": "Air Europa",
-                "iata": "UX",
-                "icao": "AEA"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:35Z",
-                    "local": "2025-05-07 14:35+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:35Z",
-                    "local": "2025-05-07 14:35+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "168-173",
-                "gate": "A",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "MMGL",
-                    "iata": "GDL",
-                    "name": "Guadalajara",
-                    "timeZone": "America/Mexico_City"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-08 00:50Z",
-                    "local": "2025-05-07 18:50-06:00"
-                },
-                "terminal": "1",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "AM 39",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 787-9"
-            },
-            "airline": {
-                "name": "Aeromexico",
-                "iata": "AM",
-                "icao": "AMX"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "terminal": "4",
                 "checkInDesk": "850-859",
-                "gate": "J",
+                "gate": "K",
                 "quality": [
                     "Basic",
                     "Live"
@@ -1972,26 +2999,25 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "LFPO",
-                    "iata": "ORY",
-                    "name": "Paris",
-                    "timeZone": "Europe/Paris"
+                    "icao": "LECH",
+                    "iata": "CDT",
+                    "name": "Castell\u00f3n de la Plana",
+                    "timeZone": "Europe/Madrid"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 14:30Z",
-                    "local": "2025-05-07 16:30+02:00"
+                    "utc": "2025-05-09 10:10Z",
+                    "local": "2025-05-09 12:10+02:00"
                 },
-                "terminal": "1",
                 "quality": [
                     "Basic"
                 ]
             },
-            "number": "IB 577",
+            "number": "IB 2318",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Airbus A321"
+                "model": "Bombardier CRJ200"
             },
             "airline": {
                 "name": "Iberia",
@@ -2002,165 +3028,15 @@
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
-                },
-                "terminal": "4S",
-                "checkInDesk": "970-974",
-                "gate": "S",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "SLVR",
-                    "iata": "VVI",
-                    "name": "Santa Cruz de la Sierra",
-                    "timeZone": "America/La_Paz"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:40Z",
-                    "local": "2025-05-07 19:40-04:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "OB 773",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Airbus A330-200"
-            },
-            "airline": {
-                "name": "BoA",
-                "iata": "OB",
-                "icao": "BOV"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "C",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LPPR",
-                    "iata": "OPO",
-                    "name": "Porto",
-                    "timeZone": "Europe/Lisbon"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 14:00Z",
-                    "local": "2025-05-07 15:00+01:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 14:00Z",
-                    "local": "2025-05-07 15:00+01:00"
-                },
-                "terminal": "1",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "FR 5482",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737 MAX 8"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:35Z",
-                    "local": "2025-05-07 14:35+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:40Z",
-                    "local": "2025-05-07 14:40+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "355-358",
-                "gate": "C",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "LEPA",
-                    "iata": "PMI",
-                    "name": "Palma De Mallorca",
-                    "timeZone": "Europe/Madrid"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 14:10Z",
-                    "local": "2025-05-07 16:10+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 14:10Z",
-                    "local": "2025-05-07 16:10+02:00"
-                },
-                "terminal": "N",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "number": "FR 404",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 737 MAX 8"
-            },
-            "airline": {
-                "name": "Ryanair",
-                "iata": "FR",
-                "icao": "RYR"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "231-234",
+                "checkInDesk": "120-125",
                 "gate": "A",
                 "quality": [
                     "Basic",
@@ -2169,91 +3045,35 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "OLBA",
-                    "iata": "BEY",
-                    "name": "Beirut",
-                    "timeZone": "Asia/Beirut"
+                    "name": "Chengdu/Tianfu"
                 },
-                "scheduledTime": {
-                    "utc": "2025-05-07 17:25Z",
-                    "local": "2025-05-07 20:25+03:00"
-                },
-                "quality": [
-                    "Basic"
-                ]
+                "quality": []
             },
-            "number": "ME 242",
+            "number": "3U 3804",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Airbus A321 NEO"
+                "model": "Airbus A350-900"
             },
             "airline": {
-                "name": "Middle East",
-                "iata": "ME",
-                "icao": "MEA"
+                "name": "Sichuan",
+                "iata": "3U",
+                "icao": "CSC"
             }
         },
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "revisedTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "terminal": "1",
-                "checkInDesk": "313-318",
-                "gate": "B",
-                "quality": [
-                    "Basic",
-                    "Live"
-                ]
-            },
-            "arrival": {
-                "airport": {
-                    "icao": "MUHA",
-                    "iata": "HAV",
-                    "name": "Havana",
-                    "timeZone": "America/Havana"
-                },
-                "scheduledTime": {
-                    "utc": "2025-05-07 23:10Z",
-                    "local": "2025-05-07 19:10-04:00"
-                },
-                "terminal": "3",
-                "quality": [
-                    "Basic"
-                ]
-            },
-            "number": "CA 865",
-            "status": "Expected",
-            "codeshareStatus": "IsOperator",
-            "isCargo": false,
-            "aircraft": {
-                "model": "Boeing 787-9"
-            },
-            "airline": {
-                "name": "Air China",
-                "iata": "CA",
-                "icao": "CCA"
-            }
-        },
-        {
-            "departure": {
-                "scheduledTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
-                },
-                "terminal": "1",
-                "checkInDesk": "308-312",
+                "checkInDesk": "240-250",
                 "gate": "A",
                 "quality": [
                     "Basic",
@@ -2262,44 +3082,85 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "LTFM",
-                    "iata": "IST",
-                    "name": "Istanbul",
-                    "timeZone": "Europe/Istanbul"
+                    "icao": "ZSPD",
+                    "iata": "PVG",
+                    "name": "Shanghai",
+                    "timeZone": "Asia/Shanghai"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 17:00Z",
-                    "local": "2025-05-07 20:00+03:00"
+                    "utc": "2025-05-09 21:40Z",
+                    "local": "2025-05-10 05:40+08:00"
                 },
+                "terminal": "1",
                 "quality": [
                     "Basic"
                 ]
             },
-            "number": "TK 1358",
+            "number": "MU 710",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Airbus A321 NEO"
+                "model": "Airbus A350-900"
             },
             "airline": {
-                "name": "Turkish",
-                "iata": "TK",
-                "icao": "THY"
+                "name": "China Eastern",
+                "iata": "MU",
+                "icao": "CES"
             }
         },
         {
             "departure": {
                 "scheduledTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
-                },
-                "revisedTime": {
-                    "utc": "2025-05-07 12:45Z",
-                    "local": "2025-05-07 14:45+02:00"
+                    "utc": "2025-05-09 09:05Z",
+                    "local": "2025-05-09 11:05+02:00"
                 },
                 "terminal": "4S",
-                "checkInDesk": "754-765",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "arrival": {
+                "airport": {
+                    "icao": "SCEL",
+                    "iata": "SCL",
+                    "name": "Santiago",
+                    "timeZone": "America/Santiago"
+                },
+                "scheduledTime": {
+                    "utc": "2025-05-10 00:50Z",
+                    "local": "2025-05-09 20:50-04:00"
+                },
+                "terminal": "2",
+                "quality": [
+                    "Basic"
+                ]
+            },
+            "number": "LA 707",
+            "status": "Unknown",
+            "codeshareStatus": "Unknown",
+            "isCargo": false,
+            "aircraft": {
+                "model": "Boeing 787-8"
+            },
+            "airline": {
+                "name": "LATAM",
+                "iata": "LA",
+                "icao": "LAN"
+            }
+        },
+        {
+            "departure": {
+                "scheduledTime": {
+                    "utc": "2025-05-09 09:10Z",
+                    "local": "2025-05-09 11:10+02:00"
+                },
+                "revisedTime": {
+                    "utc": "2025-05-09 09:10Z",
+                    "local": "2025-05-09 11:10+02:00"
+                },
+                "terminal": "4S",
+                "checkInDesk": "850-859",
                 "gate": "S",
                 "quality": [
                     "Basic",
@@ -2308,30 +3169,31 @@
             },
             "arrival": {
                 "airport": {
-                    "icao": "MUHA",
-                    "iata": "HAV",
-                    "name": "Havana",
-                    "timeZone": "America/Havana"
+                    "icao": "GMMN",
+                    "iata": "CMN",
+                    "name": "Casablanca",
+                    "timeZone": "Africa/Casablanca"
                 },
                 "scheduledTime": {
-                    "utc": "2025-05-07 22:30Z",
-                    "local": "2025-05-07 18:30-04:00"
+                    "utc": "2025-05-09 11:05Z",
+                    "local": "2025-05-09 12:05+01:00"
                 },
-                "terminal": "3",
+                "terminal": "1",
                 "quality": [
                     "Basic"
                 ]
             },
-            "number": "2W 1505",
+            "number": "IB 1355",
             "status": "Expected",
             "codeshareStatus": "IsOperator",
             "isCargo": false,
             "aircraft": {
-                "model": "Airbus A330-300"
+                "model": "Bombardier CRJX"
             },
             "airline": {
-                "name": "Multiple Solutions Limited",
-                "iata": "2W"
+                "name": "Iberia",
+                "iata": "IB",
+                "icao": "IBE"
             }
         }
     ]

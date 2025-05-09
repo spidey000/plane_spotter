@@ -27,38 +27,6 @@ config = config_manager.load_config()
 # Load environment variables from .env file
 env_path = Path(__file__).parent.parent / 'config' / '.env'
 load_dotenv(env_path)
-    
-# FLIGHT_TIME_RANGE_HOURS = config['flight']['time_range_hours']
-# DATABASE_REGISTRATION_TABLE_ID = config['baserow']['tables']['registrations'] # has all the registrations
-# DATABASE_MODEL_TABLE_ID = config['baserow']['tables']['interesting_models'] # has all the models
-# DATABASE_INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations'] # has only interesting registrations
-# EXECUTION_INTERVAL = config['execution']['interval']
-
-# # Get logger configuration from config
-# LOG_FILE = config['logging']['log_file']
-# WARN_LOG_FILE = config['logging']['warning_log_file']
-# LOG_LEVEL = config['logging']['log_level']
-# LOG_ROTATION = config['logging']['log_rotation']
-
-# # --- Logger Setup ---
-# try:
-#     logger.remove() # Remove default handler
-#     # Ensure logs directory exists
-#     Path(LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
-#     logger.add(LOG_FILE, level=LOG_LEVEL.upper(), enqueue=True, rotation=LOG_ROTATION)
-#     if WARN_LOG_FILE != LOG_FILE:
-#          Path(WARN_LOG_FILE).parent.mkdir(parents=True, exist_ok=True)
-#          logger.add(WARN_LOG_FILE, level="WARNING", enqueue=True, rotation=LOG_ROTATION)
-#     logger.add(sys.stdout, level="INFO") # Keep console output for INFO+
-#     logger.info("Logger initialized.")
-
-# except Exception as e:
-#     print(f"Error initializing logger: {e}", file=sys.stderr)
-#     # Fallback basic logger
-#     logger.remove()
-#     logger.add(sys.stderr, level="INFO")
-#     logger.error("Failed to configure logger from config file.")
-# # --- End Logger Setup ---
 
 # --- Main Application Logic ---
 
@@ -156,6 +124,49 @@ async def fetch_and_process_flights():
 
     logger.info(f"Total unique flights identified in cycle: {len(all_flights)}")
 
+    # Use os.path.join for cross-platform path handling
+    with open(os.path.join(os.getcwd(), ".all_flights.json"), 'w') as f:
+        json.dump(all_flights, f, indent=4, default=str)
+    logger.info(f"Saved all flights data to .all_flights.json")
+
+    # --- create a set with all common airlines ---
+        # Create set of airline ICAO codes
+    airline_icao_set = {flight.get('airline', '').upper() for flight in all_flights.values() if flight.get('airline') not in [None, 'null']}
+    
+    # Path to common_airlines file using os.path.join for cross-platform compatibility
+    common_airlines_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'twitter_spotter_v4', 'database', 'common_airlines.json')
+    #C:\Users\hp\Documents\CODE\twitter_spotter_v4\logs\lemd_spotter.log
+    try:
+        # Load existing airlines if file exists
+        existing_airlines = set()
+        if not os.path.exists(common_airlines_path):
+            # Create the directory if it does not exist
+            os.makedirs(os.path.dirname(common_airlines_path), exist_ok=True)
+            # Create the file and write an empty list to it
+            with open(common_airlines_path, 'w') as f:
+                json.dump([], f, indent=2)
+        
+        with open(common_airlines_path, 'r') as f:
+            existing_airlines = set(json.load(f))
+        # Combine existing airlines with the new ones
+        combined_airlines = existing_airlines.union(airline_icao_set)
+
+        logger.info(f"New airlines: {len(existing_airlines)-len(airline_icao_set)}")
+        logger.info(f"Combined airlines: {len(combined_airlines)}")
+        
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(common_airlines_path), exist_ok=True)
+        
+        # Save the combined set back to the file
+        try:
+            with open(common_airlines_path, 'w') as f:
+                json.dump(list(combined_airlines), f, indent=2)
+                logger.info(f"Updated common airlines file with {len(airline_icao_set)} new ICAO codes. Total unique airlines: {len(combined_airlines)}")
+        except Exception as write_error:
+            logger.error(f"Failed to write to common airlines file: {write_error}")
+    except Exception as e:
+        logger.error(f"Failed to update common airlines file: {e}")
+
     # --- Database Interaction and Social Posting ---
     if not all_flights:
         logger.info("No flights processed in this cycle.")
@@ -164,8 +175,9 @@ async def fetch_and_process_flights():
     try:
         # Get DB data (consider caching this for short periods if performance is an issue)
         reg_table_id = config['baserow']['tables']['registrations']
-        model_table_id = config['baserow']['tables']['interesting_models']
+        model_table_id = config['baserow']['tables']['models'] # we use the complete model table not the interesting ones
         model_table_key = config.get('database', {}).get('model_table_key', 'model') # Default key
+        interesting_model_table_id = config['baserow']['tables']['interesting_models']
         interesting_reg_table_id = config['baserow']['tables']['interesting_registrations']
 
         if not reg_table_id or not model_table_id:
@@ -174,8 +186,9 @@ async def fetch_and_process_flights():
 
         reg_db_task = bm.get_all_rows_as_dict(reg_table_id)
         model_db_task = bm.get_all_rows_as_dict(model_table_id, key=model_table_key)
+        interesting_model_table_task = bm.get_all_rows_as_dict(interesting_model_table_id, key=model_table_key)
         interesting_reg_table_task = bm.get_all_rows_as_dict(interesting_reg_table_id)
-        db_results = await asyncio.gather(reg_db_task, model_db_task, interesting_reg_table_task, return_exceptions=True)
+        db_results = await asyncio.gather(reg_db_task, model_db_task, interesting_reg_table_task, interesting_model_table_task, return_exceptions=True)
 
         if isinstance(db_results[0], Exception):
             logger.error(f"Error fetching registration DB data: {db_results[0]}")
@@ -189,19 +202,26 @@ async def fetch_and_process_flights():
         else:
             model_db_copy = db_results[1]
 
-        if isinstance(db_results[1], Exception):
+        if isinstance(db_results[2], Exception):
             logger.error(f"Error fetching model DB data: {db_results[1]}")
             interesting_reg_db_copy = {}
         else:
             interesting_reg_db_copy = db_results[2]
 
+        if isinstance(db_results[3], Exception):
+            logger.error(f"Error fetching interesting model DB data: {db_results[3]}")
+            interesting_model_db_copy = {}
+        else:
+            interesting_model_db_copy = db_results[3]
+
         logger.info(f"Checking {len(all_flights)} flights against database...")
         social_tasks = []
+
         for flight_key, flight_details in all_flights.items():
             try:
                 # Check flight against DB rules
-                flight_data, interesting_registration, interesting_model, first_seen = await dp.check_flight(
-                    flight_details, reg_db_copy, interesting_reg_db_copy, model_db_copy
+                flight_data, interesting_registration, interesting_model, first_seen, reason= await dp.check_flight(
+                    flight_details, reg_db_copy, interesting_reg_db_copy, model_db_copy, interesting_model_db_copy
                 )
 
                 # Determine if interesting
@@ -209,13 +229,14 @@ async def fetch_and_process_flights():
                     "MODEL": interesting_model,
                     "REGISTRATION": interesting_registration,
                     "FIRST_SEEN": first_seen,
-                    "DIVERTED": False if flight_data.get("diverted", "null") == "null" else flight_data["diverted"]
+                    "DIVERTED": False if flight_data.get("diverted", "null") == "null" else flight_data["diverted"],
+                    "REASON": reason
                 }
                 is_interesting = any(interesting_reasons.values())
 
-                if is_interesting:
+                if is_interesting and (flight_data.get('registration') not in [None, 'null']):
                     reasons_str = ", ".join([k for k, v in interesting_reasons.items() if v])
-                    flight_name_display = flight_data.get('flight_name') or flight_data.get('flight_name_iata', 'N/A')
+                    flight_name_display = flight_data.get('flight_name') if flight_data.get('flight_name') != 'null' else flight_data.get('flight_name_iata', 'N/A')
                     logger.info(f"Flight {flight_name_display} is interesting ({reasons_str}). Queueing social post.")
                     # Queue the social media posting task
                     social_tasks.append(sp.call_socials(flight_data, interesting_reasons)) # Pass config

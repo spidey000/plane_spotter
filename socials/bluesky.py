@@ -1,6 +1,11 @@
 # uswe https://docs.bsky.app/docs/get-started
 
 # uses threads api https://developers.facebook.com/docs/threads
+import sys
+from pathlib import Path
+# Add project root to Python path
+sys.path.append(str(Path(__file__).parent.parent))
+
 import os
 import requests
 import argparse
@@ -11,84 +16,94 @@ from PIL import Image
 import io
 from config import config_manager
 from log.logger_config import logger
+from socials.telegram_msg_bot import generate_flight_message
 
-def generate_flight_message(flight_data):
-    """Generate a formatted message from flight data"""
-    logger.info(f"Generating Bluesky message for flight {flight_data['flight_name']}")
-    message = f"✈️ Flight Information:\n\n"
-    message += f"Flight: {flight_data['flight_name']}\n"
-    message += f"Registration: {flight_data['registration']}\n"
-    message += f"Aircraft: {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']}\n"
-    message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"
-    message += f"Route: {flight_data['origin_name']} ({flight_data['origin_icao']}) → "
-    message += f"{flight_data['destination_name']} ({flight_data['destination_icao']})\n"
-    message += f"Scheduled Time: {flight_data['scheduled_time']}\n"
-    message += f"Terminal: {flight_data['terminal']}\n"
-    if flight_data['diverted'] not in [None, False, 'null']:
-        message += "\n⚠️ This flight has been diverted"
-    message += "\n\n"
-    message += "Check all our socials in https://linktr.ee/ctrl_plataforma"
-    return message
+# def generate_flight_message(flight_data):
+#     flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
+#     """Generate a formatted message from flight data"""
+#     logger.info(f"Generating Bluesky message for flight {flight_name}")
+#     message = f"✈️ Flight Information:\n\n"
+#     message += f"Flight: {flight_name}\n"
+#     message += f"Registration: {flight_data['registration']}\n"
+#     message += f"Aircraft: {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']}\n"
+#     message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"
+#     message += f"Route: {flight_data['origin_name']} ({flight_data['origin_icao']}) → "
+#     message += f"{flight_data['destination_name']} ({flight_data['destination_icao']})\n"
+#     message += f"Scheduled Time: {flight_data['scheduled_time']}\n"
+#     message += f"Terminal: {flight_data['terminal']}\n"
+#     if flight_data['diverted'] not in [None, False, 'null']:
+#         message += "\n⚠️ This flight has been diverted"
+#     message += "\n\n"
+#     message += "Check all our socials in https://linktr.ee/ctrl_plataforma"
+#     return message
 
-def post_flight_to_bluesky(flight_data, image_path=None):
+def post_flight_to_bluesky(flight_data, image_path=None, interesting_reasons=None):
     """Post flight information to Bluesky"""
-    logger.info(f"Posting flight {flight_data['flight_name']} to Bluesky")
+    flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
+    logger.info(f"Posting flight {flight_name} to Bluesky")
     config = config_manager.load_config()
     ATP_AUTH_HANDLE = os.getenv('BLUESKY_HANDLE')
     ATP_AUTH_PASSWORD = os.getenv('BLUESKY_PASSWORD')
-    message = generate_flight_message(flight_data)
+    message = generate_flight_message(flight_data, interesting_reasons)
     
-    if image_path and flight_data['registration']:
-        logger.info(f"Posting with image from {image_path}")
-        try:
-            # First check if original image is larger than 1MB
-            if os.path.getsize(image_path) > 1000000:
-                with Image.open(image_path) as img:
-                    # Create BytesIO buffer for compression
-                    # First attempt with 85% quality
-                    output = io.BytesIO()
-                    img.convert('RGB').save(output, format='JPEG', quality=85, optimize=True)
-                    
-                    # Check if compressed image is still too large
-                    #if output.tell() > 1000000:
-                    # Calculate half resolution
-                    new_size = (img.width // 2, img.height // 2)
-                    img = img.resize(new_size, Image.Resampling.LANCZOS)
-
-                    # If still too large, reduce quality further
-                    if output.tell() > 1000000:
-                        quality = 80
-                        while quality >= 50:  # Don't go below 50 quality
-                            output.seek(0)
-                            img.convert('RGB').save(output, format='JPEG', quality=quality, optimize=True)
-                            if output.tell() <= 1000000:  # 1MB in bytes
-                                break
-                            quality -= 5
+    if os.path.getsize(image_path) > 1000000:
+        with Image.open(image_path) as img:
+            # Create BytesIO buffer for compression
+            output = io.BytesIO()
+            
+            # First attempt with 85% quality
+            img.convert('RGB').save(output, format='JPEG', quality=85, optimize=True)
+            
+            # If the image is already below 1MB, save it and exit
+            if output.tell() <= 1000000:
+                compression_successful = True
+            else:
+                # If still too large, reduce resolution
+                new_size = (img.width // 2, img.height // 2)
+                img = img.resize(new_size, Image.Resampling.LANCZOS)
                 
+                # Reduce quality further if needed
+                q = 80  # Initialize q
+                compression_successful = False
+                while q >= 50:  # Don't go below 50 quality
+                    output.seek(0)
+                    img.convert('RGB').save(output, format='JPEG', quality=q, optimize=True)
+                    if output.tell() <= 1000000:  # 1MB in bytes
+                        compression_successful = True
+                        break
+                    q -= 10
+
+            # Save the compressed image if successful
+            if compression_successful:
                 # Save compressed image to temporary file
-                    image_path = f"{image_path}_compressed.jpg"
-                    with open(image_path, 'wb') as f:
-                        f.write(output.getbuffer())
-                
-                    logger.debug(f"Compressed image to {output.tell()} bytes (resized to {new_size}, quality {quality})")
+                image_path = f"{image_path}_compressed.jpg"
+                with open(image_path, 'wb') as f:
+                    f.write(output.getbuffer())
+                logger.debug(f"Compressed image to {output.tell()} bytes (resized to {new_size}, quality {q})")
 
-            args = argparse.Namespace(
-                pds_url="https://bsky.social",
-                handle=ATP_AUTH_HANDLE,
-                password=ATP_AUTH_PASSWORD,
-                text=message,
-                image=[image_path],
-                alt_text=f"Aircraft photo of {flight_data['registration']}",
-                lang=None,
-                reply_to=None,
-                embed_url=f"https://www.flightradar24.com/{flight_data['flight_name']}",
-                embed_ref=None
-            )
-            create_post(args)
-            logger.success(f"Successfully posted flight {flight_data['flight_name']} with image to Bluesky")
-        except Exception as e:
-            logger.error(f"Failed to post flight with image: {e}")
-            raise
+            else:
+                logger.error("Unable to compress image below 1MB even at minimum quality")
+
+                logger.info("Posting without image")
+                try:
+                    args = argparse.Namespace(
+                        pds_url="https://bsky.social",
+                        handle=ATP_AUTH_HANDLE,
+                        password=ATP_AUTH_PASSWORD,
+                        text=message,
+                        image=None,
+                        alt_text=None,
+                        lang=None,
+                        reply_to=None,
+                        embed_url="",
+                        embed_ref=None
+                    )
+                    create_post(args)
+                    logger.success(f"Successfully posted flight {flight_name} without image to Bluesky")
+                except Exception as e:
+                    logger.error(f"Failed to post flight without image: {e}")
+                    raise
+
     else:
         logger.info("Posting without image")
         try:
@@ -101,11 +116,11 @@ def post_flight_to_bluesky(flight_data, image_path=None):
                 alt_text=None,
                 lang=None,
                 reply_to=None,
-                embed_url=f"https://www.flightradar24.com/{flight_data['flight_name']}",
+                embed_url="",
                 embed_ref=None
             )
             create_post(args)
-            logger.success(f"Successfully posted flight {flight_data['flight_name']} without image to Bluesky")
+            logger.success(f"Successfully posted flight {flight_name} without image to Bluesky")
         except Exception as e:
             logger.error(f"Failed to post flight without image: {e}")
             raise

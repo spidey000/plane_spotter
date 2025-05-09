@@ -6,7 +6,7 @@
     },
     "flight": {
         "time_range_hours": 2,
-        "preview_data": false,
+        "preview_data": true,
         "retries": 3,
         "retry_delay": 2
     },
@@ -44,10 +44,13 @@
     },
     "social_networks": {
         "telegram": true,
-        "bluesky": true,
+        "bluesky": false,
         "twitter": false,
         "threads": false,
         "instagram": false,
         "linkedin": false
+    },
+    "settings": {
+        "airport": "LEMD"
     }
 }

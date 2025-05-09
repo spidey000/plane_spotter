@@ -10,6 +10,8 @@ from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
 import os
 from dotenv import load_dotenv
 from log.logger_config import logger
+import random
+
 
 
 
@@ -26,10 +28,50 @@ load_dotenv()
 # Initialize Telegram application with longer timeout
 application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
 
-def generate_flight_message(flight_data):
+def generate_flight_message(flight_data, interesting_reasons):
     """Generate a formatted message from flight data"""
-    message = f"✈️ Flight Information:\n\n"
-    message += f"Flight: {flight_data['flight_name_iata']}{"/" + flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else ''}\n"
+    introducciones = [
+    "📡 ¡Atentos spotters! Hoy Barajas trae sorpresas:",
+    "✈️ Algo curioso se ha dejado ver por Barajas hoy:",
+    "📸 Spotters, sacad las cámaras que esto merece foto:",
+    "🚨 ¡Ojo al cielo! Tenemos visitas interesantes en Barajas:",
+    "🤯 Barajas nos regala joyitas hoy, atentos:",
+    "👁️ ¡Spotting del bueno hoy en Barajas!",
+    "🗞️ Noticias frescas desde las pistas de Barajas:",
+    "🛬 Barajas recibe vuelos interesantes hoy:",
+    "🌤️ El cielo de Madrid viene cargado de cosas interesantes hoy:",
+    "📷 ¡Preparad teleobjetivo que hay material jugoso!",
+    "📍 Desde las pistas de Barajas… ¡mirad esto!",
+    "💥 Barajas está on fire con lo que ha llegado hoy:",
+    "⏱️ Un momento interesante para los spotters en Barajas:",
+    "🔔 Atención torre: tráfico especial entrando en escena."
+]
+
+    message = ""
+    # #                interesting_reasons = {
+    #                 "MODEL": interesting_model,
+    #                 "REGISTRATION": interesting_registration,
+    #                 "FIRST_SEEN": first_seen,
+    #                 "DIVERTED": False if flight_data.get("diverted", "null") == "null" else flight_data["diverted"],
+    #                 "REASON": reason
+    #             }
+
+    if interesting_reasons:
+        message = random.choice(introducciones) + "\n"
+
+        if interesting_reasons.get("MODEL", False):
+            message += f"- Se deja ver un {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']} de {flight_data['airline_name'] if flight_data['airline_name'] not in [None, 'null'] else flight_data['airline']} que siempre da gusto ver.\n"
+            
+        if interesting_reasons.get("REGISTRATION", False):
+            message += f"- Es un avion interesante porque {interesting_reasons.get('REASON')}.\n"
+            
+        if interesting_reasons.get("FIRST_SEEN", False):
+            message += f"- Es la primera vez que vemos este avión de {flight_data['airline_name'] if flight_data['airline_name'] not in [None, 'null'] else flight_data['airline']} en Barajas con matrícula {flight_data['registration']}.\n"
+            
+        if interesting_reasons.get("DIVERTED", False):
+            message += "- Este vuelo ha llegado aquí por desvío inesperado. 🧭\n\n"
+
+    message += f"\n\nFlight: {flight_data['flight_name_iata']}{"/" + flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else ''}\n"
     message += f"Registration: {flight_data['registration'] if flight_data['registration'] not in [None, 'null'] else 'Unkown'}\n"
     message += f"Aircraft: {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']}\n"
     message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"
@@ -39,13 +81,16 @@ def generate_flight_message(flight_data):
     message += f"Terminal: {flight_data['terminal']}\n"
     if flight_data['diverted'] not in [None, False, 'null']:
         message += "\n⚠️ This flight has been diverted"
+    
+    flight_name = flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else flight_data['flight_name_iata']
+    message += f"https://www.flightradar24.com/data/flights/{flight_name.replace(' ','')}"
     message += "\n\n"
-    message += "Check all our socials in linktr.ee/ctrl_plataforma"
+    message += "Consulta nuestras redes en https://linktr.ee/ctrl_plataforma"
     return message
 
-async def send_flight_update(chat_id, flight_data, image_path=None):
+async def send_flight_update(chat_id, flight_data, image_path=None, interesting_reasons=None):
     """Send flight update to specified chat with retry logic"""
-    message = generate_flight_message(flight_data)
+    message = generate_flight_message(flight_data, interesting_reasons)
     retries = 3
     flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
     for attempt in range(retries):
@@ -61,7 +106,7 @@ async def send_flight_update(chat_id, flight_data, image_path=None):
                         reply_markup={
                             'inline_keyboard': [[{
                                 'text': 'Flightradar',
-                                'url': f"https://www.flightradar24.com/data/flights/{flight_name}"
+                                'url': f"https://www.flightradar24.com/data/flights/{flight_name.replace(' ','')}"
                             }]]
                         }
                     )
@@ -75,11 +120,11 @@ async def send_flight_update(chat_id, flight_data, image_path=None):
                     reply_markup={
                         'inline_keyboard': [[{
                             'text': 'Flightradar',
-                            'url': f"https://www.flightradar24.com/data/flights/{flight_name}"
+                            'url': f"https://www.flightradar24.com/data/flights/{flight_name.replace(' ','')}"
                         }]]
                     }
                 )
-            logger.success(f"Successfully sent Telegram message for flight {flight_name}")
+            logger.success(f"Successfully sent Telegram message for flight {flight_name.replace(' ','')}")
             return
         except telegram.error.TimedOut:
             if attempt < retries - 1:  # Don't wait on the last attempt

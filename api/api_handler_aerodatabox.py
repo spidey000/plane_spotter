@@ -5,6 +5,10 @@ import json
 import http.client
 import os
 from log.logger_config import logger
+from dotenv import load_dotenv
+
+# delete for production
+load_dotenv()
 
 
 async def fetch_adb_data(move, start_time, end_time):
@@ -29,11 +33,11 @@ async def fetch_adb_data(move, start_time, end_time):
 
     headers = {
         "accept": "application/json",
-        "x-magicapi-key": "cm6nng5bg0001kw03izfzi9ua"
+        "x-magicapi-key": os.getenv('ADBOX_KEY')
     }
     
     url = f"https://api.magicapi.dev/api/v1/aedbx/aerodatabox/flights/airports/Icao/LEMD/{start_time.replace(':', '%3A')}/{end_time.replace(':', '%3A')}"
-    logger.info(f"Fetching data from ADB API")
+    logger.info(f"ADB {move} Fetching data from API")
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url, headers=headers, params=querystring) as response:
@@ -46,7 +50,7 @@ async def fetch_adb_data(move, start_time, end_time):
                     with open(file_path, 'w') as f:
                         json.dump(data, f, indent=4)
                     logger.debug(f"Data saved to {file_path}")
-                    logger.success(f"Total flights collected: {len(data[move])}")
+                    logger.success(f"ADB {move} Total flights collected: {len(data[move])}")
                 else:
                     logger.error(f"API request failed with status code: {response.status}")
                 return data

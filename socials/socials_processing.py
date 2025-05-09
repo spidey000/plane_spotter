@@ -21,7 +21,7 @@ from loguru import logger
 from log.logger_config import logger
 
 
-async def call_socials(flight_data, interesting):
+async def call_socials(flight_data, interesting_reasons):
     logger.debug(f"Starting socials processing for flight {flight_data['flight_name']}")
     temp_image_path = None
     
@@ -48,12 +48,12 @@ async def call_socials(flight_data, interesting):
         # Post to enabled social networks
         if config['social_networks'].get('telegram', False):
             logger.info(f"Sending Telegram post for flight {flight_data['flight_name']}")
-            await tg.send_flight_update(config['telemetry']['chat_id'], flight_data, image_path=temp_image_path)
+            await tg.send_flight_update(config['telemetry']['chat_id'], flight_data, temp_image_path, interesting_reasons)
             logger.success(f"Successfully sent Telegram post for flight {flight_data['flight_name']}")
             
         if config['social_networks'].get('bluesky', False):
             logger.info(f"Sending Bluesky post for flight {flight_data['flight_name']}")
-            bs.post_flight_to_bluesky(flight_data, image_path=temp_image_path)
+            bs.post_flight_to_bluesky(flight_data, temp_image_path, interesting_reasons)
             logger.success(f"Successfully sent Bluesky post for flight {flight_data['flight_name']}")
             
         if config['social_networks'].get('twitter', False):
