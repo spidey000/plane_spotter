@@ -34,8 +34,9 @@ def stop_process(process):
     """Stop a subprocess gracefully."""
     process.terminate()
     process.wait()
-
+#test commit
 def main():
+    logger.info("Starting processes...")
     # Start the main application
     from pathlib import Path
     env_path = Path(__file__).resolve().parent.parent / 'config' / '.env'  # Use the determined project_root
