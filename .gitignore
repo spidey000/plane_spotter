@@ -1,5 +1,6 @@
 # Python
-__pycache__/
+*__pycache__*/
+socials/__pycache__
 .pytest_cache/
 *.py[cod]
 *.so
@@ -28,7 +29,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-C:\Users\hp\Documents\CODE\twitter_spotter_v4\cookies.json
+C:/Users/hp/Documents/CODE/twitter_spotter_v4/cookies.json
 cookies.json
 
 # Logs
@@ -42,6 +43,7 @@ test/aeroapi_data_arrivals.json
 test/aeropai_data_departures.json
 test/airline table.csv
 test/debug.log
+api/data
 
 # API data
 api/data/
