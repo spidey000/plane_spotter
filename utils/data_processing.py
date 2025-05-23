@@ -6,10 +6,28 @@ from datetime import datetime
 import database.baserow_manager as bm
 from loguru import logger
 from log.logger_config import logger
+from pytz import timezone
 
 from config import config_manager
 
 config = config_manager.load_config()
+# Load callsigns database
+try:
+    with open('database/callsigns.json', 'r', encoding='utf-8') as f:
+        callsigns_data = json.load(f)
+        # Convert list of dicts to a dictionary with 3-Letter ID as key
+        callsigns_dict = {item['3-Letter ID']: item for item in callsigns_data}
+    logger.info("Successfully loaded and converted callsigns database")
+except FileNotFoundError:
+    logger.warning("Callsigns database not found, using empty dict")
+    callsigns_dict = {}
+except json.JSONDecodeError as e:
+    logger.error(f"Error decoding callsigns database: {e}")
+    callsigns_dict = {}
+except Exception as e:
+    logger.error(f"Unexpected error loading callsigns database: {e}")
+    callsigns_dict = {}
+
 
 def process_flight_data_adb(flight, movement):
     # Extract flight information
@@ -31,19 +49,19 @@ def process_flight_data_adb(flight, movement):
     
     # Get airline name from ICAO if available, otherwise use existing name
     airline_name = airlines_db.get(airline, {}).get('Name', airline_name)
-    country = airlines_db.get(airline, {}).get('Country', 'null')
-    callsign = airlines_db.get(airline, {}).get('Callsign', 'null')
+    country = callsigns_dict.get(airline, airlines_db.get(airline, {})).get('Country', 'null')
+    callsign = callsigns_dict.get(airline, airlines_db.get(airline, {})).get('Callsign', 'null')
 
     if movement == 'departures':
         destination_icao = flight.get('arrival', {}).get('airport', {}).get('icao', 'null')
         destination_name = flight.get('arrival', {}).get('airport', {}).get('name', 'null')
-        origin_icao = "LEMD"
-        origin_name = "Madrid"
+        origin_icao = config['settings']['airport']
+        origin_name = config['settings']['airport_name']
     else:
         origin_icao = flight.get('departure', {}).get('airport', {}).get('icao', 'null')
         origin_name = flight.get('departure', {}).get('airport', {}).get('name', 'null')
-        destination_icao = "LEMD"
-        destination_name = "Madrid"
+        destination_icao = config['settings']['airport']
+        destination_name = config['settings']['airport_name']
 
     terminal = flight[movement.removesuffix('s')].get('terminal', 'null')
     diverted = 'null'
@@ -60,15 +78,15 @@ def process_flight_data_adb(flight, movement):
     last_update = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     single_flight_data = {
-        'callsign': callsign,
-        'flight_name': "".join(flight_name.split()),
-        'flight_name_iata': flight_name_iata,
+        'callsign': callsign.capitalize(),
+        'flight_name': "".join(flight_name.split()) if flight_name else 'null',
+        'flight_name_iata': "".join(flight_name_iata.split()) if flight_name_iata else 'null',
         'registration': registration,
         'aircraft_name': aircraft_name.strip(),
         'aircraft_icao': None,
         'airline': airline,
         'airline_name': airline_name,
-        'country': country,
+        'country': country.capitalize(),
         'origin_icao': origin_icao,
         'origin_name': origin_name,
         'destination_icao': destination_icao,
@@ -93,21 +111,28 @@ def process_flight_data_aeroapi(flight):
         logger.warning(f"Failed to get registration: {e}")
         return None
     
-    is_departure = flight.get("origin", {}).get("code_icao") == "LEMD"
+    is_departure = flight.get("origin", {}).get("code_icao").lower() == config['settings']['airport'].lower()
     
     if is_departure:
         scheduled_time = get_valid_value(flight, ["actual_off", "estimated_off", "scheduled_off"])
         terminal = flight.get("terminal_origin", 'null')
-        origin_icao, origin_name = 'LEMD', 'Madrid'
+        origin_icao, origin_name = config['settings']['airport'], config['settings']['airport_name']
         destination_icao = flight.get("destination", {}).get("code_icao", 'null')
         destination_name = flight.get("destination", {}).get("name", 'null')
     else:
-        scheduled_time = get_valid_value(flight, [ "estimated_on", "scheduled_on", "scheduled_in, estimated_in"])
+        scheduled_time = get_valid_value(flight, [ "estimated_on", "estimated_in", "scheduled_on",  "scheduled_in"])
         terminal = flight.get("terminal_destination", 'null')
         origin_icao = flight.get("origin", {}).get("code_icao", 'null')
         origin_name = flight.get("origin", {}).get("name", 'null')
-        destination_icao, destination_name = 'LEMD', 'Madrid'
+        destination_icao, destination_name = config['settings']['airport'], config['settings']['airport_name']
     
+    # Convert UTC to Madrid time (CET/CEST)
+    if scheduled_time != 'null':
+        utc_time = datetime.strptime(scheduled_time[:-4], "%Y-%m-%dT%H:%M")
+        utc_time = utc_time.replace(tzinfo=timezone('UTC'))
+        madrid_time = utc_time.astimezone(timezone('Europe/Madrid'))
+        scheduled_time = madrid_time.strftime("%Y-%m-%d %H:%M")
+
     flight_name = get_valid_value(flight, ['atc_ident', 'ident_icao'])
     flight_name_iata = get_valid_value(flight, ['ident_iata', 'null'])
     aircraft = flight.get("aircraft_type", 'null')
@@ -121,29 +146,29 @@ def process_flight_data_aeroapi(flight):
     
     # Get airline name from ICAO if available, otherwise use existing name
     airline_name = airlines_db.get(airline, {}).get('Name', airline_name)
-    country = airlines_db.get(airline, {}).get('Country', 'null')
-    callsign = airlines_db.get(airline, {}).get('Callsign', 'null')
+    country = callsigns_dict.get(airline, airlines_db.get(airline, {})).get('Country', 'null')
+    callsign = callsigns_dict.get(airline, airlines_db.get(airline, {})).get('Callsign', 'null')
     diverted = flight.get("diverted", 'null')
 
     # Get last update time
     last_update = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     single_flight_data = {
-        'callsign': callsign,
+        'callsign': callsign.capitalize(),
         'flight_name': "".join(flight_name.split()),
         'flight_name_iata': flight_name_iata,
         'registration': registration,
         'aircraft_name': None,
-        'aircraft_icao': aircraft.strip(),
+        'aircraft_icao': aircraft.strip() if aircraft != None else 'null',
         'airline': airline,
         'airline_name': airline_name,
-        'country': country,
+        'country': country.capitalize(),
         'origin_icao': origin_icao,
         'origin_name': origin_name,
         'destination_icao': destination_icao,
         'destination_name': destination_name,
         'terminal': terminal,
-        'scheduled_time': datetime.strptime(scheduled_time[:-4], "%Y-%m-%dT%H:%M"),
+        'scheduled_time': scheduled_time,
         'last_update': last_update,
         'diverted': diverted
     }
@@ -197,8 +222,9 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             }
             
             try:
-                await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
-                logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
+                logger.debug(f"Won;t update record {flight['registration']} for now")
+                #await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
+                #logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
             except Exception as e:
                 logger.error(f"Failed to update record for {flight['registration']}: {e}")
 

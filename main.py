@@ -10,6 +10,7 @@ from config import config_manager
 # from dotenv import load_dotenv
 import os
 from log.logger_config import logger
+from pytz import timezone
 
 
 # Add project root to Python path if necessary (adjust if your structure differs)
@@ -42,13 +43,16 @@ async def fetch_and_process_flights():
     time_range_hours = config.get('flight', {}).get('time_range_hours', 2)
     use_preloaded = config.get('flight', {}).get('preview_data', False) # Default to False if not set
 
-    now = datetime.now()
-    start_time_dt = now # Start from now
-    end_time_dt = now + timedelta(hours=time_range_hours)
-    start_time_str = start_time_dt.strftime('%Y-%m-%dT%H:%M')
-    end_time_str = end_time_dt.strftime('%Y-%m-%dT%H:%M')
+    now = datetime.utcnow()  # Use timezone-aware UTC time (UTC)
+    utc_start_time_dt = now.replace(tzinfo=timezone('UTC'))  # Start from now
+    utc_end_time_dt = (now + timedelta(hours=time_range_hours)).replace(tzinfo=timezone('UTC'))
+    utc_start_time_str = utc_start_time_dt.strftime('%Y-%m-%dT%H:%M')
+    utc_end_time_str = utc_end_time_dt.strftime('%Y-%m-%dT%H:%M')
 
-    logger.info(f"Processing time range: {start_time_str} to {end_time_str}")
+    madrid_tz = timezone('Europe/Madrid')
+    madrid_start_time_str = utc_start_time_dt.astimezone(madrid_tz).strftime('%Y-%m-%dT%H:%M')
+    madrid_end_time_str = utc_end_time_dt.astimezone(madrid_tz).strftime('%Y-%m-%dT%H:%M')
+    logger.info(f"Processing time range: {madrid_start_time_str} to {madrid_end_time_str} (Spain time)")
 
     for movement in ['arrivals', 'departures']:
         aeroapi_movement_key = 'scheduled_arrivals' if movement == 'arrivals' else 'scheduled_departures'
@@ -82,11 +86,13 @@ async def fetch_and_process_flights():
                 use_preloaded = False # Fallback to API if loading failed
 
         if not temp_aeroapi_data or not temp_adb_data: # Fetch if not preloaded or preloading failed
-             logger.info(f"Fetching live API data for {movement} ({start_time_str} to {end_time_str})")
+             logger.info(f"Fetching live API data for {movement}")
              try:
                  # Use await for async API calls
-                 aero_task = api_handler_aeroapi.fetch_aeroapi_scheduled(aeroapi_movement_key, start_time_str, end_time_str)
-                 adb_task = api_handler_aerodatabox.fetch_adb_data(movement, start_time_str, end_time_str)
+                 logger.info(f"Fetching AeroAPI data for {utc_start_time_str} to {utc_end_time_str}")
+                 aero_task = api_handler_aeroapi.fetch_aeroapi_scheduled(aeroapi_movement_key, utc_start_time_str, utc_end_time_str)
+                 logger.info(f"Fetching AeroDataBox data for {madrid_start_time_str} to {madrid_end_time_str}")
+                 adb_task = api_handler_aerodatabox.fetch_adb_data(movement, madrid_start_time_str, madrid_end_time_str)
                  results = await asyncio.gather(aero_task, adb_task, return_exceptions=True)
 
                  if isinstance(results[0], Exception):
@@ -121,7 +127,7 @@ async def fetch_and_process_flights():
                      processed_data = dp.process_flight_data_aeroapi(flight)
                      dp.check_existing(all_flights, processed_data) # Add/update
                  except Exception as e:
-                     logger.error(f"Error processing AeroAPI flight {flight.get('ident', 'N/A')}: {e}")
+                     logger.error(f"Error processing AeroAPI flight {flight.get('ident', 'N/A')}: {e}\nError details: {str(e)}\nFlight data: {json.dumps(flight, indent=2)}")
                      continue # Skip this flight
 
     logger.info(f"Total unique flights identified in cycle: {len(all_flights)}")
@@ -137,7 +143,6 @@ async def fetch_and_process_flights():
     
     # Path to common_airlines file using os.path.join for cross-platform compatibility
     common_airlines_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'twitter_spotter_v4', 'database', 'common_airlines.json')
-    #C:\Users\hp\Documents\CODE\twitter_spotter_v4\logs\lemd_spotter.log
     try:
         # Load existing airlines if file exists
         existing_airlines = set()
@@ -236,7 +241,7 @@ async def fetch_and_process_flights():
                 }
                 is_interesting = any(interesting_reasons.values())
 
-                if is_interesting and (flight_data.get('registration') not in [None, 'null']):
+                if is_interesting:# and (flight_data.get('registration') not in [None, 'null']):
                     reasons_str = ", ".join([k for k, v in interesting_reasons.items() if v])
                     flight_name_display = flight_data.get('flight_name') if flight_data.get('flight_name') != 'null' else flight_data.get('flight_name_iata', 'N/A')
                     logger.info(f"Flight {flight_name_display} is interesting ({reasons_str}). Queueing social post.")
@@ -264,16 +269,39 @@ async def fetch_and_process_flights():
 
     logger.info("Finished flight processing cycle.")
 
+async def sleep_until_4am(hour_24h_format):
+    """Sleep until with a countdown display."""
+    now = datetime.utcnow()
+
+    # Calculate wake time for the target hour
+    wake_time = now.replace(hour=hour_24h_format, minute=0, second=0, microsecond=0)
+    # If current time is already past the target hour, schedule for next day
+    # Calculate total seconds to sleep
+    sleep_duration = (wake_time - now).total_seconds()
+
+    logger.info(f"Sleeping until {hour_24h_format}UTC ({wake_time.strftime('%H:%M')})")
+    print(f"Timecheck: {now.strftime('%H:%M')}")
+    print(f"Total sleep duration: {timedelta(seconds=sleep_duration)}")
+
 async def main_loop():
-    """Runs the main flight processing cycle periodically."""
+    """Runs the main flight processing cycle periodically with a pause between 0am and 4am."""
     while True:
+        # current_hour = datetime.utcnow().hour
+        # # hours are in utc time
+        # hour_gap = config['settings']['hour_gap']
+        # if hour_gap[0] <= current_hour < hour_gap[1]:
+        #     await sleep_until_4am(hour_gap[1])
+        #     continue
+        # else:
         await fetch_and_process_flights()
+
         # Get interval from config *inside* the loop to pick up changes
         interval = config['execution']['interval']
         if not isinstance(interval, (int, float)) or interval <= 0:
-            logger.warning(f"Invalid or missing execution.interval in config. Using default 110 minutes.")
-            interval = (2 * 60 * 60) - 600  # Default: 2 hours minus 10 minutes
-        logger.info(f"Next processing cycle starts in {timedelta(seconds=interval)}.")
+            logger.warning(f"Invalid or missing execution.interval in config. Using default 120 minutes.")
+            interval = 7200  # Default to 120 minutes in seconds
+        
+        logger.info(f"Next processing cycle starts in {timedelta(seconds=interval)} at {(datetime.now()+timedelta(seconds=interval)).strftime('%H:%M')}")
         await asyncio.sleep(interval)
-
+    
 asyncio.run(main_loop())

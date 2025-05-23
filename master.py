@@ -4,9 +4,13 @@ import sys
 from loguru import logger
 from config import config_manager
 # Removed dotenv import as we will rely on environment variables passed to the container
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from log.logger_config import logger
 import os
+# logger.info("--- All Environment Variables from os.environ ---")
+# for key, value in os.environ.items():
+#     logger.info(f"OS ENV: {key} = {value}")
+# logger.info("--- Loaded Configuration ---")
 
 # Load configuration
 config = config_manager.load_config()
@@ -38,11 +42,7 @@ def stop_process(process):
     process.wait()
 #test commit
 def main():
-    logger.info("Starting processes...")
-    # Start the main application
-    # Print all environment variables
-    for key, value in os.environ.items():
-        print(f"{key}: {value}")
+    load_dotenv()
 
     main_process = start_process("python main.py")
     logger.info("Main application started.")

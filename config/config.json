@@ -6,7 +6,7 @@
     },
     "flight": {
         "time_range_hours": 2,
-        "preview_data": true,
+        "preview_data": false,
         "retries": 3,
         "retry_delay": 2
     },
@@ -20,13 +20,13 @@
         "send_delay": 7200
     },
     "logging": {
-        "log_file": "log/lemd_spotter.log",
-        "warning_log_file": "log/lemd_spotter_warning.log",
+        "log_file": "log/spotter.log",
+        "warning_log_file": "log/spotter_warning.log",
         "log_level": "DEBUG",
         "log_rotation": "10MB",
         "default_log_level": "DEBUG",
-        "default_log_file": "logs/lemd_spotter.log",
-        "default_warning_log_file": "logs/lemd_spotter_warning.log",
+        "default_log_file": "logs/spotter.log",
+        "default_warning_log_file": "logs/spotter_warning.log",
         "default_log_rotation": "10 MB"
     },
     "baserow": {
@@ -44,13 +44,16 @@
     },
     "social_networks": {
         "telegram": true,
-        "bluesky": false,
+        "bluesky": true,
         "twitter": false,
         "threads": false,
         "instagram": false,
         "linkedin": false
     },
     "settings": {
-        "airport": "LEMD"
+        "airport": "LEMD",
+        "airport_name": "Madrid",
+        "aeroapi_cost_limit": 5,
+        "hour_gap": [0,4]
     }
 }

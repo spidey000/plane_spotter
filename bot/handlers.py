@@ -5,6 +5,7 @@ import json
 import os
 import sys
 from pathlib import Path
+import subprocess
 # Removed dotenv import as we will rely on environment variables passed to the container
 # from dotenv import load_dotenv
 from log.logger_config import logger
@@ -51,6 +52,8 @@ except Exception as e:
 
 # --- Command Handlers ---
 
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle /start command and show configuration edit buttons."""
     # Reload config each time start is called to show current values
@@ -68,6 +71,26 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text('Select a parameter to edit:', reply_markup=reply_markup)
+
+async def update_callsigns(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /update_callsigns command to update the callsigns database."""
+    await update.message.reply_text("Updating callsigns... This may take a moment.")
+    
+    try:
+        # Execute the update_callsigns.py script
+        result = subprocess.run(
+            ["python", "utils/update_callsigns.py"],
+            capture_output=True,
+            text=True
+        )
+        
+        if result.returncode == 0:
+            await update.message.reply_text("Callsigns updated successfully!")
+        else:
+            await update.message.reply_text(f"Error updating callsigns:\n{result.stderr}")
+    except Exception as e:
+        await update.message.reply_text(f"An error occurred while updating callsigns: {e}")
+
 
 # --- Keyboard Builder ---
 
@@ -121,8 +144,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle new value entered by user."""
-    if context.user_data is None:
-        context.user_data = {}  # Initialize user_data if it's None
+    # context.user_data is managed by the library and should not be reassigned.
+    # It's guaranteed to be a dict-like object.
 
     key_path = context.user_data.get('edit_key_path')
 
@@ -224,11 +247,24 @@ def main() -> None:
         raise ValueError("TELEGRAM_BOT_TOKEN not configured")
 
     # Use ApplicationBuilder for v20+
+    if 'SSL_CERT_FILE' in os.environ:
+        try:
+            # Intenta verificar si es un archivo válido, si no, elimínala
+            # Esta es una verificación simple, podría ser más robusta
+            if not os.path.isfile(os.environ['SSL_CERT_FILE']):
+                logger.warning(f"SSL_CERT_FILE environment variable points to a non-existent file: {os.environ['SSL_CERT_FILE']}. Unsetting it.")
+                del os.environ['SSL_CERT_FILE']
+            # Podrías añadir más chequeos aquí si fuera necesario
+        except Exception as e:
+            logger.warning(f"Error checking SSL_CERT_FILE, unsetting it: {e}")
+            del os.environ['SSL_CERT_FILE']
+
     application = ApplicationBuilder().token(telegram_token).build()
     logger.info("Telegram Application built.")
 
     # Add command and message handlers
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("update_callsigns", update_callsigns))
     application.add_handler(CallbackQueryHandler(button_callback))
     # !!! Add the MessageHandler for text input, excluding commands !!!
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))

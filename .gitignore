@@ -21,7 +21,7 @@ wheels/
 *.egg
 
 # Environment
-.env
+*.env
 .venv
 env/
 venv/
@@ -61,3 +61,5 @@ socials/temp_image.jpg_compressed.jpg
 .DS_Store
 Thumbs.db
 .*
+*.sh
+*.tar

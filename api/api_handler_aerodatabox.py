@@ -5,12 +5,38 @@ import json
 import http.client
 import os
 from log.logger_config import logger
+from config import config_manager
+config = config_manager.load_config()
 # Removed dotenv import as we will rely on environment variables passed to the container
 # from dotenv import load_dotenv
 
 # delete for production
 #load_dotenv()
 
+async def get_valid_adb_key():
+    """Return the first API key that successfully hits the health endpoint, or None if all are exhausted."""
+    url = "https://prod.api.market/api/v1/aedbx/aerodatabox/health/services/feeds/FlightSchedules/airports"
+    for key_env in ['ADBOX_KEY0', 'ADBOX_KEY1', 'ADBOX_KEY2']:
+        api_key = os.getenv(key_env)
+        if not api_key:
+            logger.warning(f"No API key found for {key_env}")
+            continue
+        headers = {
+            "Accept": "application/json",
+            "x-magicapi-key": api_key,
+        }
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.get(url, headers=headers) as response:
+                    if response.status == 200:
+                        logger.success(f"{key_env} is valid and responsive")
+                        return api_key  # Found a valid key
+                    else:
+                        logger.warning(f"{key_env} failed with status code: {response.status}")
+            except Exception as e:
+                logger.error(f"Error checking health for {key_env}: {e}")
+    logger.error("All API keys are exhausted or invalid.")
+    return None
 
 async def fetch_adb_data(move, start_time, end_time):
 
@@ -34,11 +60,12 @@ async def fetch_adb_data(move, start_time, end_time):
 
     headers = {
         "accept": "application/json",
-        "x-magicapi-key": os.getenv('ADBOX_KEY')
+        "x-magicapi-key": await get_valid_adb_key()
     }
     
-    url = f"https://api.magicapi.dev/api/v1/aedbx/aerodatabox/flights/airports/Icao/LEMD/{start_time.replace(':', '%3A')}/{end_time.replace(':', '%3A')}"
+    url = f"https://prod.api.market/api/v1/aedbx/aerodatabox/flights/airports/Icao/{config['settings']['airport']}/{start_time}/{end_time}"    
     logger.info(f"ADB {move} Fetching data from API")
+    logger.debug(f"Final URL: {url}")
     async with aiohttp.ClientSession() as session:
         try:
             async with session.get(url, headers=headers, params=querystring) as response:
@@ -53,11 +80,9 @@ async def fetch_adb_data(move, start_time, end_time):
                     logger.debug(f"Data saved to {file_path}")
                     logger.success(f"ADB {move} Total flights collected: {len(data[move])}")
                 else:
-                    logger.error(f"API request failed with status code: {response.status}")
+                    logger.error(f"ADB API request failed with status code: {response.status}")
                 return data
         except aiohttp.ClientError as e:
             logger.error(f"Client error occurred: {e}")
         except Exception as e:
             logger.error(f"An unexpected error occurred: {e}")
-
-#asyncio.run(fetch_adb_data('departures',  '2025-02-10T06:00', '2025-02-10T07:00'))

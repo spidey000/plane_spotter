@@ -30,7 +30,7 @@ RUN mkdir -p /app/logs && chown -R nobody:nogroup /app/logs
 # You will need to uncomment and adjust this if your application listens on a specific port.
 
 # Command to run the application.
-# This assumes 'main.py' is the entry point of your application.
+# This assumes 'master.py' is the entry point of your application.
 # If your application is started differently (e.g., using gunicorn for a web app),
 # you'll need to change this command.
 CMD ["python", "master.py"]

@@ -335,8 +335,14 @@ def create_post(args):
     elif args.embed_ref:
         post["embed"] = get_embed_ref(args.pds_url, args.embed_ref)
 
-    #print("creating post:", file=sys.stderr)
-    #print(json.dumps(post, indent=2), file=sys.stderr)
+    # print("creating post:", file=sys.stderr)
+    # print(json.dumps(post, indent=2), file=sys.stderr)
+    # print("JSON payload:", file=sys.stderr)  # Agregado
+    # print(json.dumps({                   # Agregado
+    #     "repo": session["did"],          # Agregado
+    #     "collection": "app.bsky.feed.post", # Agregado
+    #     "record": post                   # Agregado
+    # }, indent=2), file=sys.stderr)          # Agregado
 
     resp = requests.post(
         args.pds_url + "/xrpc/com.atproto.repo.createRecord",

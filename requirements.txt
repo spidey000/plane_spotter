@@ -12,3 +12,5 @@ twikit
 aiohttp
 python-dotenv
 Pillow
+pytz
+html-to-json

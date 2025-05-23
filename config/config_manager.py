@@ -59,7 +59,7 @@ def load_config(config_path='config/config.json'):
     try:
         with open(config_path, 'r') as file:
             config = json.load(file)
-        logger.info(f"Configuration loaded successfully from JSON file: '{config_path}'.")
+        #logger.info(f"Configuration loaded successfully from JSON file: '{config_path}'.")
     except FileNotFoundError:
         logger.warning(f"The configuration file '{config_path}' was not found. Proceeding with environment variables and defaults if any.")
     except json.JSONDecodeError:

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 from loguru import logger
-from log.logger_config import logger
+#from log.logger_config import logger
 
 
 def get_first_image_url_jp(registration):
@@ -47,35 +47,38 @@ def get_first_image_url_jp(registration):
                     continue
                 else:
                     logger.error("Max retries reached for rate limiting")
-                    return None
+                    return None, None
             elif response.status_code != 200: #response.status_code
                 logger.error(f"Failed: HTTP {response.status_code}")
-                return None
+                return None, None
             break
 
         if "CAPTCHA" in response.text:
             logger.debug("CAPTCHA detected. Manual intervention required.")
-            return None
+            return None, None
 
         soup = BeautifulSoup(response.text, 'lxml')
         img_tag = soup.find('img', class_='result__photo')
         
         if img_tag and img_tag.get('src'):
             img_url = f"https:{img_tag['src']}" if img_tag['src'].startswith('//') else img_tag['src']
-            logger.success(f'Image found {img_url}')
-            return img_url.replace('/400/', '/full/')
+            # Find photographer name
+            photographer_tag = soup.find('span', class_='result__infoListText result__infoListText--photographer')
+            photographer = photographer_tag.find('a').text.strip() if photographer_tag and photographer_tag.find('a') else 'Unknown'
+            logger.success(f'Image found {img_url} by {photographer}')
+            return img_url.replace('/400/', '/full/'), photographer
         
         logger.warning("JP No image found.")
-        return None
+        return None, None
 
     except Exception as e:
         logger.error(f"Error: {e}")
-        return None
+        return None, None
 def get_first_image_url_pp(registration):
     params = {
          "sort": "latest"
     }
-    url = f"https://www.planespotters.net/photos/reg/{registration}"
+    url = f"https://www.planespotters.net/photos/reg/{registration}?sort=latest"
     
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -90,26 +93,30 @@ def get_first_image_url_pp(registration):
         
         if response.status_code != 200:
             logger.error(f"Failed: HTTP {response.status_code}")
-            return None
+            return None, None
 
         if "CAPTCHA" in response.text:
             logger.debug("CAPTCHA detected. Manual intervention required.")
-            return None
+            return None, None
 
         soup = BeautifulSoup(response.text, 'lxml')
         img_tag = soup.find('img', class_='photo_card__photo')
         
         if img_tag and img_tag.get('src'):
             img_url = img_tag['src']
-            logger.success(f'Image found {img_url}')
-            return img_url
+            # Find photographer name using the correct selector
+            photographer_tag = soup.find('div', class_='photo_card__data photo_card__data_photographer')
+            photographer = photographer_tag.text.strip() if photographer_tag else 'Unknown'
+            logger.success(f'Image found {img_url} by {photographer}')
+            
+            return img_url, photographer
         
         logger.warning("PP No image found.")
-        return None
+        return None, None
 
     except Exception as e:
         logger.error(f"Error: {e}")
-        return None
+        return None, None
     
 
 def main():
@@ -123,4 +130,18 @@ def main():
         print("No image URL found.")
 
 if __name__ == "__main__":
-    main()
+    # Test with sample aircraft registrations
+    test_regs = ["N12345", "SP-RSH", "PH-BHA"]  # Example registrations
+    for reg in test_regs:
+        print(f"\nTesting registration: {reg}")
+        jp_url, jp_photog = get_first_image_url_jp(reg)
+        if jp_url:
+            print(f"JetPhotos: Found image at {jp_url} by {jp_photog}")
+        else:
+            print("JetPhotos: No image found")
+        
+        pp_url, pp_photog = get_first_image_url_pp(reg)
+        if pp_url:
+            print(f"PlaneSpotters: Found image at {pp_url} by {pp_photog}")
+        else:
+            print("PlaneSpotters: No image found")

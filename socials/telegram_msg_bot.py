@@ -12,29 +12,51 @@ import os
 # from dotenv import load_dotenv
 from log.logger_config import logger
 import random
+from config import config_manager
+config = config_manager.load_config()
 
 
 # Initialize Telegram application with longer timeout
 # Relying on TELEGRAM_BOT_TOKEN being set as an environment variable
+if 'SSL_CERT_FILE' in os.environ:
+    try:
+        # Intenta verificar si es un archivo válido, si no, elimínala
+        # Esta es una verificación simple, podría ser más robusta
+        if not os.path.isfile(os.environ['SSL_CERT_FILE']):
+            logger.warning(f"SSL_CERT_FILE environment variable points to a non-existent file: {os.environ['SSL_CERT_FILE']}. Unsetting it.")
+            del os.environ['SSL_CERT_FILE']
+        # Podrías añadir más chequeos aquí si fuera necesario
+    except Exception as e:
+        logger.warning(f"Error checking SSL_CERT_FILE, unsetting it: {e}")
+        del os.environ['SSL_CERT_FILE']
+
 application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
 
 def generate_flight_message(flight_data, interesting_reasons):
     """Generate a formatted message from flight data"""
+    scheduled_time = datetime.strptime(flight_data['scheduled_time'], "%Y-%m-%d %H:%M")
+    time_alert = f"hoy día {scheduled_time.strftime('%d a las %H:%M')}"
+    airline_text = f"{flight_data['airline_name'] if flight_data['airline_name'] not in [None, 'null'] else flight_data['airline']}"
+
+    if flight_data['origin_name'] == config['settings']['airport_name']:
+        move = 'salida'
+    else:
+        move = 'llegada'
+        
     introducciones = [
-    "📡 ¡Atentos spotters! Hoy Barajas trae sorpresas:",
-    "✈️ Algo curioso se ha dejado ver por Barajas hoy:",
-    "📸 Spotters, sacad las cámaras que esto merece foto:",
-    "🚨 ¡Ojo al cielo! Tenemos visitas interesantes en Barajas:",
-    "🤯 Barajas nos regala joyitas hoy, atentos:",
-    "👁️ ¡Spotting del bueno hoy en Barajas!",
-    "🗞️ Noticias frescas desde las pistas de Barajas:",
-    "🛬 Barajas recibe vuelos interesantes hoy:",
-    "🌤️ El cielo de Madrid viene cargado de cosas interesantes hoy:",
-    "📷 ¡Preparad teleobjetivo que hay material jugoso!",
-    "📍 Desde las pistas de Barajas… ¡mirad esto!",
-    "💥 Barajas está on fire con lo que ha llegado hoy:",
-    "⏱️ Un momento interesante para los spotters en Barajas:",
-    "🔔 Atención torre: tráfico especial entrando en escena."
+    f"📡 ¡Atentos spotters! {config['settings']['airport_name']} trae sorpresas con un tráfico de {move} {time_alert} con {airline_text}",
+    f"✈️ Algo curioso se ha dejado ver por {config['settings']['airport_name']}, {move} de {airline_text} {time_alert}",
+    f"📸 Spotters, sacad las cámaras que esta {move} de {airline_text} merece foto {time_alert}",
+    f"🚨 ¡Ojo al cielo! Tráfico de {move} de {airline_text} {time_alert} Tenemos visitas interesantes en {config['settings']['airport_name']}",
+    f"🤯 {config['settings']['airport_name']} nos regala joyitas, Tráfico de {move} de {airline_text} {time_alert}, atentos",
+    f"👁️ ¡Spotting del bueno en {config['settings']['airport_name']}! con esta {move} de {airline_text} {time_alert}",
+    f"🗞️ Noticias frescas desde las pistas de {move} de {airline_text} {config['settings']['airport_name']} {time_alert}",
+    f"🛬 {config['settings']['airport_name']} recibe un vuelo interesante de {move} de {airline_text} {time_alert}",
+    f"🌤️ El cielo de {config['settings']['airport_name']} viene cargado de cosas interesantes, Tráfico de {move} de {airline_text} {time_alert}",
+    f"📷 ¡Preparad teleobjetivo, hay material jugoso {time_alert} de {move} de {airline_text}!",
+    f"📍 Desde las pistas de {config['settings']['airport_name']} podremos ver la {move} de {airline_text} {time_alert}… ¡mirad esto!",
+    f"⏱️ Un momento interesante para los spotters en {config['settings']['airport_name']}. Tráfico de {move} de {airline_text} {time_alert}",
+    f"🔔 Atención torre, Tráfico de {airline_text} de {move} {time_alert}: tráfico especial entrando en escena"
 ]
 
     message = ""
@@ -47,21 +69,22 @@ def generate_flight_message(flight_data, interesting_reasons):
     #             }
 
     if interesting_reasons:
-        message = random.choice(introducciones) + "\n"
+        message = random.choice(introducciones) + "\n\n"
 
         if interesting_reasons.get("MODEL", False):
-            message += f"- Se deja ver un {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']} de {flight_data['airline_name'] if flight_data['airline_name'] not in [None, 'null'] else flight_data['airline']} que siempre da gusto ver.\n"
+            message += f"Se deja ver un {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']} de {flight_data['airline_name'] if flight_data['airline_name'] not in [None, 'null'] else flight_data['airline']} que siempre da gusto ver.\n"
             
         if interesting_reasons.get("REGISTRATION", False):
-            message += f"- Es un avion interesante porque {interesting_reasons.get('REASON')}.\n"
+            message += f"Es interesante porque {interesting_reasons.get('REASON')}.\n"
             
         if interesting_reasons.get("FIRST_SEEN", False):
-            message += f"- Es la primera vez que vemos este avión de {flight_data['airline_name'] if flight_data['airline_name'] not in [None, 'null'] else flight_data['airline']} en Barajas con matrícula {flight_data['registration']}.\n"
+            message += f"Es la primera vez que vemos este avión en {config['settings']['airport_name']} con matrícula {flight_data['registration'] if flight_data['registration'] not in [None, 'null'] else 'Unkown'}.\n"
             
         if interesting_reasons.get("DIVERTED", False):
-            message += "- Este vuelo ha llegado aquí por desvío inesperado. 🧭\n\n"
+            message += "Este vuelo ha llegado aquí por un desvío inesperado. 🧭\n\n"
 
     message += f"\n\nFlight: {flight_data['flight_name_iata']}{'/' + flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else ''}\n"
+    message += f"Callsign: {flight_data['callsign']} {flight_data['flight_name'][3:] if flight_data.get('flight_name') else ''}\n" if flight_data.get('callsign') not in [None, 'null'] else ''
     message += f"Registration: {flight_data['registration'] if flight_data['registration'] not in [None, 'null'] else 'Unkown'}\n"
     message += f"Aircraft: {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']}\n"
     message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"
@@ -72,7 +95,7 @@ def generate_flight_message(flight_data, interesting_reasons):
     if flight_data['diverted'] not in [None, False, 'null']:
         message += "\n⚠️ This flight has been diverted"
     
-    flight_name = flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else flight_data['flight_name_iata']
+    flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
     message += f"https://www.flightradar24.com/data/flights/{flight_name.replace(' ','')}"
     message += "\n\n"
     message += "Consulta nuestras redes en https://linktr.ee/ctrl_plataforma"
@@ -86,7 +109,7 @@ async def send_flight_update(chat_id, flight_data, image_path=None, interesting_
     for attempt in range(retries):
         try:
             # image path is a local image path
-            if image_path and flight_data['registration']:
+            if image_path:
                 # Send message with photo
                 with open(image_path, 'rb') as photo_file:
                     await application.bot.send_photo(
@@ -189,5 +212,8 @@ if __name__ == "__main__":
     
     # Send test message
     import asyncio
-    asyncio.run(send_flight_update(chat_id='-1002116996158', flight_data=dummy_data))
+    print(config['telemetry']['chat_id'])
+    print(os.getenv('TELEGRAM_BOT_TOKEN'))
+    
+    asyncio.run(send_flight_update(chat_id=config['telemetry']['chat_id'], flight_data=dummy_data))
     logger.info("Sent test Telegram message with dummy data")

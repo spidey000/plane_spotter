@@ -14,6 +14,9 @@ services:
       - ./logs:/app/logs # Mounts a local 'logs' directory to '/app/logs' in the container
                          # This allows log files to persist even if the container is removed.
 
+    env_file:
+      - .env # Loads environment variables from the .env file
+
     # Environment variables should be managed by the deployment service.
     # Ensure your deployment service is configured to pass the necessary environment variables
     # (e.g., TELEGRAM_BOT_TOKEN, AEROAPI_KEY, AERODATABOX_KEY, BASEROW_TOKEN) to the container.
