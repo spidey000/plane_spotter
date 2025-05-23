@@ -44,7 +44,7 @@
     },
     "social_networks": {
         "telegram": true,
-        "bluesky": false,
+        "bluesky": true,
         "twitter": false,
         "threads": false,
         "instagram": false,

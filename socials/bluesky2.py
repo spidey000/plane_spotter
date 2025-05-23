@@ -56,7 +56,7 @@ def generate_flight_message_bluesky(flight_data, interesting_reasons, max_size=2
     message = f"✈️ Track this flight\n\n"  # This will be our clickable text
     
     first_seen_part = f"Primera visita de {flight_data['registration'] if flight_data['registration'] not in [None, 'null'] else 'Unkown'}, " if interesting_reasons.get("FIRST_SEEN", False) else ""
-    model_part = f"Un {flight_data['aircraft_name']}"# if flight_data['aircraft_name'] else flight_data['aircraft_icao']}. " if interesting_reasons.get("MODEL", False) else ""
+    model_part = f"Un {flight_data['aircraft_name']}"#deploy if flight_data['aircraft_name'] else flight_data['aircraft_icao']}. " if interesting_reasons.get("MODEL", False) else ""
     message += f"{first_seen_part}{model_part}{move.capitalize()} de {airline_text} {time_alert} en {config['settings']['airport_name']}\n\n"
         
     if interesting_reasons.get("REGISTRATION", False):
