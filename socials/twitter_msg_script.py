@@ -28,8 +28,7 @@ except ImportError:
 # Their functionality will be stubbed or used with placeholders
 # as their actual implementation is not provided.
 import utils.image_finder as image_finder
-from config import config_manager
-config = config_manager.load_config()
+from config import config_manager # Keep import for type hinting or if other functions need it
 
 # --- Helper Functions ---
 
@@ -111,7 +110,7 @@ async def _initialize_and_login_client() -> Client:
         logger.error(f"An unexpected error occurred during login: {e_login_unexpected}")
         raise
 
-def generate_flight_message_twitter(flight_data, interesting_reasons, max_size=280):
+def generate_flight_message_twitter(flight_data, interesting_reasons, config, max_size=280):
     """Generate a formatted message from flight data"""
     scheduled_time = datetime.strptime(flight_data['scheduled_time'], "%Y-%m-%d %H:%M")
     time_alert = f"hoy día {scheduled_time.strftime('%d a las %H:%M')}"
@@ -222,7 +221,7 @@ async def _upload_image(client: Client, image_path: str) -> Optional[str]:
 
 # --- Main Handler ---
 
-async def create_tweet(flight_data: Dict[str, Any], image_path_override: Optional[str] = None, interesting_reasons: Optional[List[str]] = None) -> Optional[str]:
+async def create_tweet(flight_data: Dict[str, Any], image_path_override: Optional[str] = None, interesting_reasons: Optional[List[str]] = None, config: Dict[str, Any] = None) -> Optional[str]:
     """
     Creates a tweet using Twikit with enhanced error handling, logging,
     cookie management, and placeholder integration for image finding and text formatting.
@@ -232,6 +231,7 @@ async def create_tweet(flight_data: Dict[str, Any], image_path_override: Optiona
                                       Must be a non-empty dictionary.
         image_path_override (Optional[str]): Path to an image to attach. If None,
                                              `utils.image_finder` will be attempted.
+        config (Dict[str, Any]): The configuration dictionary.
 
     Returns:
         Optional[str]: The ID of the created tweet if successful, otherwise None.
@@ -247,9 +247,13 @@ async def create_tweet(flight_data: Dict[str, Any], image_path_override: Optiona
         logger.error(msg)
         raise ValueError(msg)
 
+    if config is None:
+        logger.error("Configuration (config) must be provided to create_tweet.")
+        raise ValueError("Configuration is missing.")
+
     logger.info("Starting tweet creation process...")
     # Create the tweet text
-    tweet_text = generate_flight_message_twitter(flight_data, interesting_reasons)
+    tweet_text = generate_flight_message_twitter(flight_data, interesting_reasons, config)
 
 
     client = None # Initialize to None for robust error handling in finally block (if needed)
@@ -378,7 +382,9 @@ async def main_example() -> None:
             logger.warning(f"Failed to create dummy image: {e_pil}")
 
     try:
-        tweet_id = await create_tweet(flight_data_example, image_path_example, interesting_reasons)
+        # Load a dummy config for testing purposes in the __main__ block
+        test_config = config_manager.load_config()
+        tweet_id = await create_tweet(flight_data_example, image_path_example, interesting_reasons, test_config)
         if tweet_id:
             logger.info(f"Demo tweet successfully posted. Tweet ID: {tweet_id}")
         else:

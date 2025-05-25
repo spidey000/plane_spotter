@@ -11,7 +11,7 @@ import datetime
 # from dotenv import load_dotenv
 import os
 import json
-from config import config_manager
+from config import config_manager # Keep import for type hinting or if other functions need it
 from log.logger_config import logger
 import asyncio
 
@@ -26,22 +26,7 @@ import asyncio
 
 # Load the .env file
 
-# Load the config file
-config = config_manager.load_config()
-
-# Use the Baserow token from .env
-# BASEROW_TOKEN = os.getenv('BASEROW_TOKEN')
-
-# headers = {
-#     "Authorization": f"Token {BASEROW_TOKEN}",
-#     "Content-Type": "application/json"
-# }
-
-# Use configurable table IDs and API URL from config.json
-REGISTRATIONS_TABLE_ID = config['baserow']['tables']['registrations']
-INTERESTING_MODELS_TABLE_ID = config['baserow']['tables']['interesting_models']
-INTERESTING_REGISTRATIONS_TABLE_ID = config['baserow']['tables']['interesting_registrations']
-BASEROW_API_URL = config['baserow']['api_url']
+# Load the config file (removed global load)
 
 def get_baserow_headers():
     """
@@ -54,14 +39,18 @@ def get_baserow_headers():
         "Content-Type": "application/json"
     }
 
-async def query_table(table_id, filters=None, user_field_names=True):
+async def query_table(table_id, config, filters=None, user_field_names=True):
     """
     Generic function to query any Baserow table
     :param table_id: ID of the table to query
+    :param config: The configuration dictionary
     :param filters: Dictionary of filters to apply
     :param user_field_names: Whether to use human-readable field names
     :return: Response data or None if not found
     """
+    if config is None:
+        logger.error("Configuration (config) must be provided to query_table.")
+        raise ValueError("Configuration is missing.")
 
     url = f"{config['baserow']['api_url']}{table_id}/"
     params = {"user_field_names": "true" if user_field_names else "false"}
@@ -90,26 +79,29 @@ async def query_table(table_id, filters=None, user_field_names=True):
                 logger.warning(f"Error response {response.status} for table {table_id} for filters {filters}")
                 return None
         
-async def query_registrations_table(flight):
+async def query_registrations_table(flight, config):
     logger.debug(f"Querying registrations table for flight {flight['registration']}")
     return await query_table(
-        table_id=REGISTRATIONS_TABLE_ID,  # Registrations table ID
+        table_id=config['baserow']['tables']['registrations'],  # Registrations table ID
+        config=config,
         filters={"registration": flight['registration']}
     )
 
-async def query_interesting_registrations_table(flight):
+async def query_interesting_registrations_table(flight, config):
     logger.debug(f"Querying interesting registrations table for flight {flight['registration']}")
     return await query_table(
-        table_id=INTERESTING_REGISTRATIONS_TABLE_ID,  # Interesting registrations table ID
+        table_id=config['baserow']['tables']['interesting_registrations'],  # Interesting registrations table ID
+        config=config,
         filters={"registration": flight['registration']}
     )
 
-async def query_interesting_models_table(flight):
+async def query_interesting_models_table(flight, config):
     model = flight['aircraft_name']
     if model:
         logger.debug(f"Querying interesting models table for model {model}")
         model_query = await query_table(
-            table_id=INTERESTING_MODELS_TABLE_ID,  # Interesting models table ID
+            table_id=config['baserow']['tables']['interesting_models'],  # Interesting models table ID
+            config=config,
             filters={"name": model}
         )
         return model_query
@@ -117,19 +109,25 @@ async def query_interesting_models_table(flight):
         model = flight['aircraft_icao']
         logger.debug(f"Querying interesting models table for model {model}")
         model_query = await query_table(
-            table_id=INTERESTING_MODELS_TABLE_ID,  # Interesting models table ID
+            table_id=config['baserow']['tables']['interesting_models'],  # Interesting models table ID
+            config=config,
             filters={"model": model}
         )
         return model_query
 
 
-async def create_record(table_id, data):
+async def create_record(table_id, data, config):
     """
     Generic function to create a record in any Baserow table
     :param table_id: ID of the table to create record in
     :param data: Dictionary of data to create
+    :param config: The configuration dictionary
     :return: Created record data or None if failed
     """
+    if config is None:
+        logger.error("Configuration (config) must be provided to create_record.")
+        raise ValueError("Configuration is missing.")
+
     url = f"{config['baserow']['api_url']}{table_id}/"
 
     params = {"user_field_names": "true"}
@@ -150,12 +148,13 @@ async def create_record(table_id, data):
             return None
         
 
-async def get_rows(table_id, user_field_names=True, page=1, size=100, search=None, 
+async def get_rows(table_id, config, user_field_names=True, page=1, size=100, search=None, 
                   order_by=None, filters=None, filter_type='AND', include=None, 
                   exclude=None, view_id=None):
     """
     Get all rows from a Baserow table with pagination and filtering
     :param table_id: ID of the table to query
+    :param config: The configuration dictionary
     :param user_field_names: Whether to use human-readable field names
     :param page: Page number to retrieve
     :param size: Number of rows per page
@@ -168,6 +167,10 @@ async def get_rows(table_id, user_field_names=True, page=1, size=100, search=Non
     :param view_id: View ID to apply
     :return: List of rows or None if failed
     """
+    if config is None:
+        logger.error("Configuration (config) must be provided to get_rows.")
+        raise ValueError("Configuration is missing.")
+
     url = f"{config['baserow']['api_url']}{table_id}/"
     params = {
         "user_field_names": "true" if user_field_names else "false",
@@ -205,17 +208,22 @@ async def get_rows(table_id, user_field_names=True, page=1, size=100, search=Non
                 return data['results']
             else:
                 logger.error(f"Failed to get rows from table {table_id}. Status code: {response.status}")
-                return None
-
-async def update_record(table_id, data_to_update, data):
+        return None
+        
+async def update_record(table_id, data_to_update, data, config):
     """
     Generic function to update a record in any Baserow table
     :param table_id: ID of the table containing the record
     :param row_id: ID of the row to update
     :param data: Dictionary of fields to update
+    :param config: The configuration dictionary
     :return: Updated record data or None if failed
     """
-    row_id = await query_table(table_id, filters={'registration': data['registration']})
+    if config is None:
+        logger.error("Configuration (config) must be provided to update_record.")
+        raise ValueError("Configuration is missing.")
+
+    row_id = await query_table(table_id, config, filters={'registration': data['registration']})
     url = f"{config['baserow']['api_url']}{table_id}/{row_id['id']}/"
 
     params = {"user_field_names": "true"}
@@ -260,15 +268,19 @@ async def update_record(table_id, data_to_update, data):
         logger.error(f"Max retries ({max_retries}) reached. Failed to update record.")
         return None
         
-async def get_all_rows_as_dict(table_id: int, key: str = "registration") -> dict:
+async def get_all_rows_as_dict(table_id: int, config, key: str = "registration") -> dict:
     """Get all rows from a specified table and return as dictionary with registration as key"""
+    if config is None:
+        logger.error("Configuration (config) must be provided to get_all_rows_as_dict.")
+        raise ValueError("Configuration is missing.")
+
     logger.info(f"Starting to get all rows from table {table_id}")
     page = 1
     all_rows = []
     
     while True:
         logger.debug(f"Fetching page {page} of table {table_id}")
-        rows = await get_rows(table_id, page=page, size=100)
+        rows = await get_rows(table_id, config, page=page, size=100)
         if not rows:
             logger.warning(f"No more rows found in table {table_id} rows: {len(all_rows)}")
             break

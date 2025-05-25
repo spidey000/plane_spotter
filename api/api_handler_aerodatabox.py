@@ -5,8 +5,7 @@ import json
 import http.client
 import os
 from log.logger_config import logger
-from config import config_manager
-config = config_manager.load_config()
+from config import config_manager # Keep import for type hinting or if other functions need it
 # Removed dotenv import as we will rely on environment variables passed to the container
 # from dotenv import load_dotenv
 
@@ -38,7 +37,10 @@ async def get_valid_adb_key():
     logger.error("All API keys are exhausted or invalid.")
     return None
 
-async def fetch_adb_data(move, start_time, end_time):
+async def fetch_adb_data(move, start_time, end_time, config):
+    if config is None:
+        logger.error("Configuration (config) must be provided to fetch_adb_data.")
+        raise ValueError("Configuration is missing.")
 
     querystring_arrival = {"withLeg":"true",
                            "direction":"Arrival",

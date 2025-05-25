@@ -14,8 +14,7 @@ try:
 except ImportError:
     print("No logger found")
 
-from config import config_manager
-config = config_manager.load_config()
+from config import config_manager # Keep import for type hinting or if other functions need it
 
 # Constants
 MAX_IMAGE_SIZE_BYTES = 1000000  # 1MB
@@ -38,7 +37,7 @@ class BlueskyPostError(Exception):
 class ImageProcessingError(Exception):
     pass
 
-def generate_flight_message_bluesky(flight_data, interesting_reasons, max_size=280):
+def generate_flight_message_bluesky(flight_data, interesting_reasons, config, max_size=280):
     """Generate a formatted message with rich text for Bluesky"""
     scheduled_time = datetime.strptime(flight_data['scheduled_time'], "%Y-%m-%d %H:%M")
     time_alert = f"hoy día {scheduled_time.strftime('%d a las %H:%M')}"
@@ -162,10 +161,14 @@ def _compress_image(image_path, max_size_bytes=MAX_IMAGE_SIZE_BYTES):
 #     """Generate a message for the flight post."""
 #     return f"Flight {flight_data['flight_name']} from {flight_data['origin_name']} to {flight_data['destination_name']}"
 
-def post_flight_to_bluesky(flight_data, image_path, interesting_reasons):
+def post_flight_to_bluesky(flight_data, image_path, interesting_reasons, config):
     """Post flight data to Bluesky with proper formatting"""
     if image_path and not os.path.exists(image_path):
         raise FileNotFoundError(f"Image file not found: {image_path}")
+
+    if config is None:
+        logger.error("Configuration (config) must be provided to post_flight_to_bluesky.")
+        raise ValueError("Configuration is missing.")
 
     # Validate environment variables
     handle = os.getenv('BLUESKY_HANDLE')
@@ -187,7 +190,7 @@ def post_flight_to_bluesky(flight_data, image_path, interesting_reasons):
                 print("Image compression failed, posting without image")
 
         # Generate message and facets
-        text, facets = generate_flight_message_bluesky(flight_data, interesting_reasons)
+        text, facets = generate_flight_message_bluesky(flight_data, interesting_reasons, config)
 
         # Create post (with or without image)
         if compressed_image_path:
@@ -439,7 +442,8 @@ if __name__ == '__main__':
 
         # Post a test flight
         print("Posting test flight to Bluesky...")
-        result = post_flight_to_bluesky(FLIGHT_DATA_SAMPLE, None, None)
+        test_config = config_manager.load_config() # Load a dummy config for testing
+        result = post_flight_to_bluesky(FLIGHT_DATA_SAMPLE, None, None, test_config)
         print(f"Post successful! URI: {result['uri']}, CID: {result['cid']}")
 
     except Exception as e:

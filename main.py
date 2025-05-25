@@ -23,20 +23,14 @@ import database.baserow_manager as bm
 import socials.socials_processing as sp
 
 
-# Load initial config to get log settings
-# Load configuration
-config = config_manager.load_config()
-# Removed dotenv loading logic
-# Load environment variables from .env file
-# env_path = Path(__file__).parent.parent / 'config' / '.env'
-# load_dotenv(env_path)
+# Load initial config to get log settings (this line is kept for initial logger setup if needed, but config will be reloaded)
+# config = config_manager.load_config() # This line is removed as config will be loaded in the loop
 
 # --- Main Application Logic ---
 
-async def fetch_and_process_flights():
+async def fetch_and_process_flights(config):
     """Fetches flight data, processes it, checks for interesting flights, and posts to socials."""
     logger.info("Starting flight processing cycle...")
-    # Load fresh config for this cycle to get latest settings
     all_flights = {} # Reset for each cycle
 
     # Get time range from config
@@ -90,9 +84,9 @@ async def fetch_and_process_flights():
              try:
                  # Use await for async API calls
                  logger.info(f"Fetching AeroAPI data for {utc_start_time_str} to {utc_end_time_str}")
-                 aero_task = api_handler_aeroapi.fetch_aeroapi_scheduled(aeroapi_movement_key, utc_start_time_str, utc_end_time_str)
+                 aero_task = api_handler_aeroapi.fetch_aeroapi_scheduled(aeroapi_movement_key, utc_start_time_str, utc_end_time_str, config)
                  logger.info(f"Fetching AeroDataBox data for {madrid_start_time_str} to {madrid_end_time_str}")
-                 adb_task = api_handler_aerodatabox.fetch_adb_data(movement, madrid_start_time_str, madrid_end_time_str)
+                 adb_task = api_handler_aerodatabox.fetch_adb_data(movement, madrid_start_time_str, madrid_end_time_str, config)
                  results = await asyncio.gather(aero_task, adb_task, return_exceptions=True)
 
                  if isinstance(results[0], Exception):
@@ -114,7 +108,7 @@ async def fetch_and_process_flights():
             logger.info(f"Processing {len(temp_adb_data[movement])} flights from AeroDataBox for {movement}")
             for flight in temp_adb_data[movement]:
                 try:
-                    processed_data = dp.process_flight_data_adb(flight, movement)
+                    processed_data = dp.process_flight_data_adb(flight, movement, config)
                     dp.check_existing(all_flights, processed_data) # Add/update in our combined dict
                 except Exception as e:
                     logger.error(f"Error processing ADB flight {flight.get('number', 'N/A')}: {e}")
@@ -124,7 +118,7 @@ async def fetch_and_process_flights():
              logger.info(f"Processing {len(temp_aeroapi_data[aeroapi_movement_key])} flights from AeroAPI for {movement}")
              for flight in temp_aeroapi_data[aeroapi_movement_key]:
                  try:
-                     processed_data = dp.process_flight_data_aeroapi(flight)
+                     processed_data = dp.process_flight_data_aeroapi(flight, config)
                      dp.check_existing(all_flights, processed_data) # Add/update
                  except Exception as e:
                      logger.error(f"Error processing AeroAPI flight {flight.get('ident', 'N/A')}: {e}\nError details: {str(e)}\nFlight data: {json.dumps(flight, indent=2)}")
@@ -191,10 +185,10 @@ async def fetch_and_process_flights():
              logger.error("Database table IDs not configured. Cannot check flights.")
              return
 
-        reg_db_task = bm.get_all_rows_as_dict(reg_table_id)
-        model_db_task = bm.get_all_rows_as_dict(model_table_id, key=model_table_key)
-        interesting_model_table_task = bm.get_all_rows_as_dict(interesting_model_table_id, key=model_table_key)
-        interesting_reg_table_task = bm.get_all_rows_as_dict(interesting_reg_table_id)
+        reg_db_task = bm.get_all_rows_as_dict(reg_table_id, config)
+        model_db_task = bm.get_all_rows_as_dict(model_table_id, config, key=model_table_key)
+        interesting_model_table_task = bm.get_all_rows_as_dict(interesting_model_table_id, config, key=model_table_key)
+        interesting_reg_table_task = bm.get_all_rows_as_dict(interesting_reg_table_id, config)
         db_results = await asyncio.gather(reg_db_task, model_db_task, interesting_reg_table_task, interesting_model_table_task, return_exceptions=True)
 
         if isinstance(db_results[0], Exception):
@@ -228,7 +222,7 @@ async def fetch_and_process_flights():
             try:
                 # Check flight against DB rules
                 flight_data, interesting_registration, interesting_model, first_seen, reason= await dp.check_flight(
-                    flight_details, reg_db_copy, interesting_reg_db_copy, model_db_copy, interesting_model_db_copy
+                    flight_details, reg_db_copy, interesting_reg_db_copy, model_db_copy, interesting_model_db_copy, config
                 )
 
                 # Determine if interesting
@@ -246,7 +240,7 @@ async def fetch_and_process_flights():
                     flight_name_display = flight_data.get('flight_name') if flight_data.get('flight_name') != 'null' else flight_data.get('flight_name_iata', 'N/A')
                     logger.info(f"Flight {flight_name_display} is interesting ({reasons_str}). Queueing social post.")
                     # Queue the social media posting task
-                    social_tasks.append(sp.call_socials(flight_data, interesting_reasons)) # Pass config
+                    social_tasks.append(sp.call_socials(flight_data, interesting_reasons, config)) # Pass config
 
             except Exception as e:
                 logger.exception(f"Error checking flight {flight_key}: {e}")
@@ -293,10 +287,12 @@ async def main_loop():
         #     await sleep_until_4am(hour_gap[1])
         #     continue
         # else:
-        await fetch_and_process_flights()
+        # Reload config inside the loop to pick up changes
+        current_config = config_manager.load_config()
+        await fetch_and_process_flights(current_config)
 
         # Get interval from config *inside* the loop to pick up changes
-        interval = config['execution']['interval']
+        interval = current_config['execution']['interval']
         if not isinstance(interval, (int, float)) or interval <= 0:
             logger.warning(f"Invalid or missing execution.interval in config. Using default 120 minutes.")
             interval = 7200  # Default to 120 minutes in seconds

@@ -1,6 +1,6 @@
 {
     "telemetry": {
-        "chat_id": "-1002304087398",
+        "chat_id": "-1002116996158",
         "read_timeout": 30,
         "write_timeout": 30
     },
@@ -11,8 +11,8 @@
         "retry_delay": 2
     },
     "database": {
-        "registration_table_id": 538314,
-        "model_table_id": 538315,
+        "registration_table_id": 441094,
+        "model_table_id": 441097,
         "model_table_key": "model"
     },
     "execution": {
@@ -32,11 +32,11 @@
     "baserow": {
         "api_url": "https://api.baserow.io/api/database/rows/table/",
         "tables": {
-            "registrations": 538314,
+            "registrations": 441094,
             "registrations_key": "registration",
-            "models": 538315,
+            "models": 441095,
             "models_key": "name",
-            "interesting_models": 538316,
+            "interesting_models": 441097,
             "interesting_models_key": "name",
             "interesting_registrations": 441099,
             "interesting_registrations_key": "registration"
@@ -44,15 +44,15 @@
     },
     "social_networks": {
         "telegram": true,
-        "bluesky": false,
+        "bluesky": true,
         "twitter": false,
         "threads": false,
         "instagram": false,
         "linkedin": false
     },
     "settings": {
-        "airport": "LEBL",
-        "airport_name": "Barcelona",
+        "airport": "LEMD",
+        "airport_name": "Madrid",
         "aeroapi_cost_limit": 5,
         "hour_gap": [0,4]
     }

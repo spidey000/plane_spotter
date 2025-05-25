@@ -12,8 +12,7 @@ import os
 # from dotenv import load_dotenv
 from log.logger_config import logger
 import random
-from config import config_manager
-config = config_manager.load_config()
+from config import config_manager # Keep import for type hinting or if other functions need it
 
 
 # Initialize Telegram application with longer timeout
@@ -32,7 +31,7 @@ if 'SSL_CERT_FILE' in os.environ:
 
 application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
 
-def generate_flight_message(flight_data, interesting_reasons):
+def generate_flight_message(flight_data, interesting_reasons, config):
     """Generate a formatted message from flight data"""
     scheduled_time = datetime.strptime(flight_data['scheduled_time'], "%Y-%m-%d %H:%M")
     time_alert = f"hoy día {scheduled_time.strftime('%d a las %H:%M')}"
@@ -101,9 +100,13 @@ def generate_flight_message(flight_data, interesting_reasons):
     message += "Consulta nuestras redes en https://linktr.ee/ctrl_plataforma"
     return message
 
-async def send_flight_update(chat_id, flight_data, image_path=None, interesting_reasons=None):
+async def send_flight_update(chat_id, flight_data, image_path=None, interesting_reasons=None, config=None):
     """Send flight update to specified chat with retry logic"""
-    message = generate_flight_message(flight_data, interesting_reasons)
+    if config is None:
+        logger.error("Configuration (config) must be provided to send_flight_update.")
+        raise ValueError("Configuration is missing.")
+
+    message = generate_flight_message(flight_data, interesting_reasons, config)
     retries = 3
     flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
     for attempt in range(retries):
@@ -212,8 +215,10 @@ if __name__ == "__main__":
     
     # Send test message
     import asyncio
-    print(config['telemetry']['chat_id'])
+    # Load a dummy config for testing purposes in the __main__ block
+    test_config = config_manager.load_config()
+    print(test_config['telemetry']['chat_id'])
     print(os.getenv('TELEGRAM_BOT_TOKEN'))
     
-    asyncio.run(send_flight_update(chat_id=config['telemetry']['chat_id'], flight_data=dummy_data))
+    asyncio.run(send_flight_update(chat_id=test_config['telemetry']['chat_id'], flight_data=dummy_data, config=test_config))
     logger.info("Sent test Telegram message with dummy data")

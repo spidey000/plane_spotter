@@ -5,8 +5,7 @@ from pathlib import Path
 
 # Add project root to Python path
 sys.path.append(str(Path(__file__).parent.parent))
-from config import config_manager
-config = config_manager.load_config()
+from config import config_manager # Keep import for type hinting or if other functions need it
 
 import socials.bluesky2 as bs
 import socials.telegram_msg_bot as tg
@@ -22,7 +21,7 @@ from log.logger_config import logger
 from PIL import Image, ImageDraw, ImageFont
 
 
-async def call_socials(flight_data, interesting_reasons):
+async def call_socials(flight_data, interesting_reasons, config):
     logger.debug(f"Starting socials processing for flight {flight_data['flight_name']}")
     temp_image_path = None
     
@@ -94,7 +93,7 @@ async def call_socials(flight_data, interesting_reasons):
         if config['social_networks'].get('telegram', False):
             try:
                 logger.info(f"Sending Telegram post for flight {flight_data['flight_name']}")
-                await tg.send_flight_update(config['telemetry']['chat_id'], flight_data, temp_image_path, interesting_reasons)
+                await tg.send_flight_update(config['telemetry']['chat_id'], flight_data, temp_image_path, interesting_reasons, config)
                 logger.success(f"Successfully sent Telegram post for flight {flight_data['flight_name']}")
             except Exception as e:
                 logger.error(f"Failed to send Telegram post: {e}")
@@ -102,7 +101,7 @@ async def call_socials(flight_data, interesting_reasons):
         if config['social_networks'].get('bluesky', False):
             try:
                 logger.info(f"Sending Bluesky post for flight {flight_data['flight_name']}")
-                bs.post_flight_to_bluesky(flight_data, temp_image_path, interesting_reasons)
+                bs.post_flight_to_bluesky(flight_data, temp_image_path, interesting_reasons, config)
                 logger.success(f"Successfully sent Bluesky post for flight {flight_data['flight_name']}")
             except Exception as e:
                 logger.error(f"Failed to send Bluesky post: {e}")
@@ -110,7 +109,7 @@ async def call_socials(flight_data, interesting_reasons):
         if config['social_networks'].get('twitter', False):
             try:
                 logger.info(f"Sending Twitter post for flight {flight_data['flight_name']}")
-                await tw.create_tweet(flight_data, temp_image_path, interesting_reasons)
+                await tw.create_tweet(flight_data, temp_image_path, interesting_reasons, config)
                 logger.success(f"Successfully sent Twitter post for flight {flight_data['flight_name']}")
             except Exception as e:
                 logger.error(f"Failed to send Twitter post: {e}")
@@ -173,5 +172,7 @@ if __name__ == "__main__":
     }
     # Send test message
     import asyncio
-    asyncio.run(call_socials(dummy_data, interesting_reasons))
+    # Load a dummy config for testing purposes in the __main__ block
+    test_config = config_manager.load_config() 
+    asyncio.run(call_socials(dummy_data, interesting_reasons, test_config))
     logger.info("Sent test message with dummy data")

@@ -8,10 +8,9 @@ from loguru import logger
 from log.logger_config import logger
 from pytz import timezone
 
-from config import config_manager
+from config import config_manager # Keep import for type hinting or if other functions need it
 
-config = config_manager.load_config()
-# Load callsigns database
+# Load callsigns database (this is static data, not part of dynamic config)
 try:
     with open('database/callsigns.json', 'r', encoding='utf-8') as f:
         callsigns_data = json.load(f)
@@ -29,7 +28,7 @@ except Exception as e:
     callsigns_dict = {}
 
 
-def process_flight_data_adb(flight, movement):
+def process_flight_data_adb(flight, movement, config):
     # Extract flight information
     registration = flight['aircraft'].get('reg', 'null')
 
@@ -104,7 +103,7 @@ def get_valid_value(flight, keys, default='null'):
     """Returns the first non-null and non-'null' value from the flight dictionary."""
     return next((flight.get(k) for k in keys if flight.get(k) not in [None, 'null']), default)
 
-def process_flight_data_aeroapi(flight):
+def process_flight_data_aeroapi(flight, config):
     try:
         registration = flight["registration"]
     except Exception as e:
@@ -176,7 +175,7 @@ def process_flight_data_aeroapi(flight):
     logger.debug(f"Processed AeroAPI flight data: {single_flight_data}")
     return single_flight_data
 
-async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting_model_db_copy):
+async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting_model_db_copy, config):
     interesting_registration = False
     interesting_model = False
     first_seen = False        

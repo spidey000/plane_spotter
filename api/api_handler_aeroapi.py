@@ -6,8 +6,7 @@ from log.logger_config import logger
 # Removed dotenv import as we will rely on environment variables passed to the container
 # from dotenv import load_dotenv
 import os
-from config import config_manager
-config = config_manager.load_config()
+from config import config_manager # Keep import for type hinting or if other functions need it
 
 
 
@@ -15,8 +14,12 @@ config = config_manager.load_config()
 # Removed dotenv loading logic
 # load_dotenv()
 
-async def get_valid_aeroapi_key():
+async def get_valid_aeroapi_key(config):
     """Return the first API key whose usage is below the threshold minus 10c, or None if all are exhausted."""
+    if config is None:
+        logger.error("Configuration (config) must be provided to get_valid_aeroapi_key.")
+        raise ValueError("Configuration is missing.")
+
     import asyncio
     from datetime import datetime, timedelta
 
@@ -70,11 +73,14 @@ async def get_valid_aeroapi_key():
     logger.error("All API keys are exhausted or invalid.")
     return None
 
-async def fetch_aeroapi_scheduled(move, start_time, end_time):
+async def fetch_aeroapi_scheduled(move, start_time, end_time, config):
+    if config is None:
+        logger.error("Configuration (config) must be provided to fetch_aeroapi_scheduled.")
+        raise ValueError("Configuration is missing.")
 
     headers = {
         "Accept": "application/json; charset=UTF-8",
-        "x-apikey": await get_valid_aeroapi_key() #gets the first valid key within cost limit
+        "x-apikey": await get_valid_aeroapi_key(config) #gets the first valid key within cost limit
     }
     base_url = f"https://aeroapi.flightaware.com/aeroapi/airports/{config['settings']['airport']}/flights/{move}"
 
@@ -151,4 +157,3 @@ async def fetch_aeroapi_scheduled(move, start_time, end_time):
             json.dump(all_data, f, indent=4)
             logger.debug(f"Data saved to api/data/aeroapi_data_{move}.json")
         return all_data
-
