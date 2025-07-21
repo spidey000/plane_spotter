@@ -67,3 +67,6 @@ Thumbs.db
 .*
 *.sh
 *.tar
+
+# Claude Memory System
+claude_memory_*.csv

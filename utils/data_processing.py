@@ -178,12 +178,16 @@ def process_flight_data_aeroapi(flight, config):
 async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting_model_db_copy, config):
     interesting_registration = False
     interesting_model = False
-    first_seen = False        
+    first_seen = False
+    seen_recently = False
 
     # Convert scheduled_time to string if needed
     if not isinstance(flight['scheduled_time'], str):
         flight['scheduled_time'] = flight['scheduled_time'].strftime("%Y-%m-%d %H:%M")
         logger.debug(f"Converted scheduled_time to string format")
+
+    # Get posting cooldown from config (default 6 months in hours)
+    posting_cooldown_hours = config.get('flight', {}).get('posting_cooldown_hours', 6 * 30 * 24)  # 6 months
 
     # if we have a registration proceed with the evaluation
     # if the registration is in the general reg db then its not new
@@ -208,6 +212,26 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             db_reg = reg_db[flight['registration']]
             logger.debug(f"Flight {flight['registration']} has been seen before")
             
+            # Check if aircraft was seen recently (within cooldown period)
+            # If it was last seen more than 6 months ago, treat it as interesting to post again
+            last_seen_db = db_reg.get('last_seen', None)
+            if last_seen_db and last_seen_db not in [None, 'null', '']:
+                try:
+                    from datetime import datetime, timedelta
+                    last_seen_dt = datetime.strptime(last_seen_db, "%Y-%m-%d %H:%M")
+                    current_dt = datetime.strptime(flight['scheduled_time'], "%Y-%m-%d %H:%M")
+                    time_diff = current_dt - last_seen_dt
+                    
+                    if time_diff.total_seconds() < (posting_cooldown_hours * 3600):
+                        seen_recently = True
+                        logger.debug(f"Aircraft {flight['registration']} was last seen {time_diff} ago, within cooldown period")
+                    else:
+                        # Aircraft hasn't been seen in 6+ months, treat as interesting again
+                        seen_recently = False
+                        logger.info(f"Aircraft {flight['registration']} last seen {time_diff} ago (>{posting_cooldown_hours/24:.0f} days), treating as interesting")
+                except Exception as e:
+                    logger.warning(f"Error parsing last_seen time for {flight['registration']}: {e}")
+            
             if (db_reg['reason'] not in ['null', None]) or flight['registration'] in interesting_reg_db: # if the reg has a reason field or is in the interesting reg table
                 logger.info(f"Flight {flight['registration']} is in interesting registrations table")
                 reason = db_reg.get('reason', None)
@@ -221,9 +245,8 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             }
             
             try:
-                logger.debug(f"Won;t update record {flight['registration']} for now")
-                #await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
-                #logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
+                await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
+                logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
             except Exception as e:
                 logger.error(f"Failed to update record for {flight['registration']}: {e}")
 
@@ -279,7 +302,7 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
     if first_seen: 
         logger.info(f"Flight {flight['registration'] if flight.get('registration') != 'null' else flight.get('flight_name') if flight.get('flight_name') != 'null' else flight.get('flight_name_iata', 'N/A')} is first seen")
 
-    return flight, interesting_registration, interesting_model, first_seen, reason
+    return flight, interesting_registration, interesting_model, first_seen, reason, seen_recently
 
 # If flight already exists, merge data
 def check_existing(all_flights, processed_data):

@@ -221,26 +221,42 @@ async def fetch_and_process_flights(config):
         for flight_key, flight_details in all_flights.items():
             try:
                 # Check flight against DB rules
-                flight_data, interesting_registration, interesting_model, first_seen, reason= await dp.check_flight(
+                flight_data, interesting_registration, interesting_model, first_seen, reason, seen_recently = await dp.check_flight(
                     flight_details, reg_db_copy, interesting_reg_db_copy, model_db_copy, interesting_model_db_copy, config
                 )
 
-                # Determine if interesting
+                # Determine if interesting based on aircraft type, registration, or timing
                 interesting_reasons = {
                     "MODEL": interesting_model,
                     "REGISTRATION": interesting_registration,
                     "FIRST_SEEN": first_seen,
                     "DIVERTED": False if flight_data.get("diverted", "null") == "null" else flight_data["diverted"],
+                    "RETURNED_AFTER_6_MONTHS": not seen_recently and not first_seen,  # Aircraft hasn't been seen in 6+ months
                     "REASON": reason
                 }
-                is_interesting = any(interesting_reasons.values())
+                
+                # Check if we should post this aircraft
+                should_post = (
+                    first_seen or  # Always post new aircraft
+                    interesting_registration or  # Always post interesting registrations
+                    interesting_model or  # Always post interesting models
+                    (interesting_reasons["DIVERTED"]) or  # Always post diverted flights
+                    (not seen_recently and not first_seen)  # Post if not seen in 6+ months
+                )
 
-                if is_interesting:# and (flight_data.get('registration') not in [None, 'null']):
-                    reasons_str = ", ".join([k for k, v in interesting_reasons.items() if v])
+                # Handle posting decision
+                if should_post:
+                    reasons_str = ", ".join([k for k, v in interesting_reasons.items() if v and k != "REASON"])
+                    if reason:
+                        reasons_str += f", {reason}"
                     flight_name_display = flight_data.get('flight_name') if flight_data.get('flight_name') != 'null' else flight_data.get('flight_name_iata', 'N/A')
-                    logger.info(f"Flight {flight_name_display} is interesting ({reasons_str}). Queueing social post.")
+                    logger.info(f"Flight {flight_name_display} ({flight_data.get('registration', 'N/A')}) is interesting ({reasons_str}). Queueing social post.")
+                    
                     # Queue the social media posting task
                     social_tasks.append(sp.call_socials(flight_data, interesting_reasons, config)) # Pass config
+                elif seen_recently:
+                    flight_name_display = flight_data.get('flight_name') if flight_data.get('flight_name') != 'null' else flight_data.get('flight_name_iata', 'N/A')
+                    logger.info(f"Skipping {flight_name_display} ({flight_data.get('registration', 'N/A')}) - seen recently within 6 months")
 
             except Exception as e:
                 logger.exception(f"Error checking flight {flight_key}: {e}")

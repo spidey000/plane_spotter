@@ -8,7 +8,8 @@
         "time_range_hours": 2,
         "preview_data": false,
         "retries": 3,
-        "retry_delay": 2
+        "retry_delay": 2,
+        "posting_cooldown_hours": 4320
     },
     "database": {
         "registration_table_id": 441094,
