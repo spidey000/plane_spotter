@@ -7,6 +7,8 @@ from config import config_manager
 from dotenv import load_dotenv
 from log.logger_config import logger
 import os
+import asyncio
+
 # logger.info("--- All Environment Variables from os.environ ---")
 # for key, value in os.environ.items():
 #     logger.info(f"OS ENV: {key} = {value}")
@@ -40,9 +42,28 @@ def stop_process(process):
     """Stop a subprocess gracefully."""
     process.terminate()
     process.wait()
+
+async def cache_cleanup_worker():
+    """Run cache cleanup in background"""
+    try:
+        from database.cache_manager import cache_cleanup_task
+        await cache_cleanup_task(interval_seconds=60)
+    except Exception as e:
+        logger.error(f"Cache cleanup worker failed: {e}")
+
 #test commit
 def main():
     load_dotenv()
+
+    # Start cache cleanup in background
+    cache_process = subprocess.Popen([sys.executable, "-c", """
+import asyncio
+import sys
+sys.path.append('.')
+from database.cache_manager import cache_cleanup_task
+asyncio.run(cache_cleanup_task(interval_seconds=60))
+"""])
+    logger.info("Cache cleanup worker started.")
 
     main_process = start_process("python main.py")
     logger.info("Main application started.")
@@ -63,12 +84,23 @@ def main():
                 logger.warning("Telegram bot has stopped. Restarting...")
                 bot_process = start_process("python bot/handlers.py")
 
+            if cache_process.poll() is not None:
+                logger.warning("Cache cleanup worker has stopped. Restarting...")
+                cache_process = subprocess.Popen([sys.executable, "-c", """
+import asyncio
+import sys
+sys.path.append('.')
+from database.cache_manager import cache_cleanup_task
+asyncio.run(cache_cleanup_task(interval_seconds=60))
+"""])
+
             time.sleep(10)  # Check every 10 seconds
 
     except KeyboardInterrupt:
         logger.info("Shutting down processes...")
         stop_process(main_process)
         stop_process(bot_process)
+        stop_process(cache_process)
         logger.info("Processes stopped.")
 
 if __name__ == "__main__":

@@ -14,7 +14,9 @@
     "database": {
         "registration_table_id": 441094,
         "model_table_id": 441097,
-        "model_table_key": "model"
+        "model_table_key": "model",
+        "cache_ttl_seconds": 300,
+        "enable_caching": true
     },
     "execution": {
         "interval": 7200,

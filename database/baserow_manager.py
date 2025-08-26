@@ -15,6 +15,9 @@ from config import config_manager # Keep import for type hinting or if other fun
 from log.logger_config import logger
 import asyncio
 
+# Import cache manager
+from database.cache_manager import cached_db_call, get_cached_rows_as_dict, get_cached_single_row
+
 
 # import the credentials for the baserow
 
@@ -78,6 +81,18 @@ async def query_table(table_id, config, filters=None, user_field_names=True):
             else:
                 logger.warning(f"Error response {response.status} for table {table_id} for filters {filters}")
                 return None
+
+async def query_cached_table(table_id, config, filters=None, user_field_names=True, ttl_seconds: int = 300):
+    """
+    Generic function to query any Baserow table with caching support
+    :param table_id: ID of the table to query
+    :param config: The configuration dictionary
+    :param filters: Dictionary of filters to apply
+    :param user_field_names: Whether to use human-readable field names
+    :param ttl_seconds: Cache TTL in seconds
+    :return: Response data or None if not found
+    """
+    return await get_cached_single_row(table_id, config, filters, ttl_seconds)
         
 async def query_registrations_table(flight, config):
     logger.debug(f"Querying registrations table for flight {flight['registration']}")
@@ -305,3 +320,7 @@ async def get_all_rows_as_dict(table_id: int, config, key: str = "registration")
         logger.success(f"Successfully created dict {table_id} {processed_count} entries from table {table_id}")
     
     return data_dict
+
+async def get_cached_all_rows_as_dict(table_id: int, config, key: str = "registration", ttl_seconds: int = 300) -> dict:
+    """Get all rows from a specified table with caching support"""
+    return await get_cached_rows_as_dict(table_id, config, key, ttl_seconds)

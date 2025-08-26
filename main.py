@@ -185,10 +185,23 @@ async def fetch_and_process_flights(config):
              logger.error("Database table IDs not configured. Cannot check flights.")
              return
 
-        reg_db_task = bm.get_all_rows_as_dict(reg_table_id, config)
-        model_db_task = bm.get_all_rows_as_dict(model_table_id, config, key=model_table_key)
-        interesting_model_table_task = bm.get_all_rows_as_dict(interesting_model_table_id, config, key=model_table_key)
-        interesting_reg_table_task = bm.get_all_rows_as_dict(interesting_reg_table_id, config)
+        # Check if caching is enabled
+        enable_caching = config.get('database', {}).get('enable_caching', True)
+        cache_ttl = config.get('database', {}).get('cache_ttl_seconds', 300)
+        
+        if enable_caching:
+            logger.info(f"Using cached database queries with TTL of {cache_ttl} seconds")
+            reg_db_task = bm.get_cached_all_rows_as_dict(reg_table_id, config, ttl_seconds=cache_ttl)
+            model_db_task = bm.get_cached_all_rows_as_dict(model_table_id, config, key=model_table_key, ttl_seconds=cache_ttl)
+            interesting_model_table_task = bm.get_cached_all_rows_as_dict(interesting_model_table_id, config, key=model_table_key, ttl_seconds=cache_ttl)
+            interesting_reg_table_task = bm.get_cached_all_rows_as_dict(interesting_reg_table_id, config, ttl_seconds=cache_ttl)
+        else:
+            logger.info("Caching disabled, using direct database queries")
+            reg_db_task = bm.get_all_rows_as_dict(reg_table_id, config)
+            model_db_task = bm.get_all_rows_as_dict(model_table_id, config, key=model_table_key)
+            interesting_model_table_task = bm.get_all_rows_as_dict(interesting_model_table_id, config, key=model_table_key)
+            interesting_reg_table_task = bm.get_all_rows_as_dict(interesting_reg_table_id, config)
+            
         db_results = await asyncio.gather(reg_db_task, model_db_task, interesting_reg_table_task, interesting_model_table_task, return_exceptions=True)
 
         if isinstance(db_results[0], Exception):
@@ -214,6 +227,14 @@ async def fetch_and_process_flights(config):
             interesting_model_db_copy = {}
         else:
             interesting_model_db_copy = db_results[3]
+
+        # Log cache statistics
+        try:
+            from database.cache_manager import cache_manager
+            cache_stats = cache_manager.get_stats()
+            logger.info(f"Database cache statistics: {cache_stats}")
+        except Exception as e:
+            logger.debug(f"Could not retrieve cache statistics: {e}")
 
         logger.info(f"Checking {len(all_flights)} flights against database...")
         social_tasks = []

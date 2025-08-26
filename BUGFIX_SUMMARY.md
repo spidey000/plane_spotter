@@ -37,6 +37,20 @@ logger.debug(f"Updated record for {flight['registration']} in table {config['bas
 - Compare with current time and 6-month cooldown period
 - Post aircraft that return after 6+ months as "RETURNED_AFTER_6_MONTHS"
 
+### 4. **Incorrect Database Access in Interesting Registrations** ✅
+**Problem**: The system was incorrectly accessing the interesting registrations database, causing previously seen aircraft to be flagged as new.
+**Solution**: Fixed database access pattern to correctly retrieve registration-specific data.
+
+**Before**:
+```python
+reason = interesting_reg_db['registration']['reason']  # Incorrect
+```
+
+**After**:
+```python
+reason = interesting_reg_db[flight['registration']].get('reason', None)  # Correct
+```
+
 ## Code Changes Made
 
 ### Files Modified:
@@ -44,6 +58,8 @@ logger.debug(f"Updated record for {flight['registration']} in table {config['bas
    - Re-enabled database updates (line 224)
    - Added 6-month cooldown checking logic using `last_seen` (lines 189-232)
    - Added `seen_recently` return value (line 305)
+   - **FIXED**: Corrected database access pattern for interesting registrations (line 208)
+   - **FIXED**: Improved logic for retrieving reason field from appropriate database (lines 235-240)
 
 2. **`main.py`**:
    - Updated function call to handle `seen_recently` return value (line 224)
@@ -89,6 +105,7 @@ To verify the fixes work:
 2. **Test Cooldown Logic**: Verify aircraft isn't posted twice within the cooldown period
 3. **Test Interesting Override**: Verify interesting registrations are always posted
 4. **Test First Seen**: Verify new aircraft are properly marked as first seen and posted
+5. **Test Previously Seen Aircraft**: Verify that previously seen aircraft are correctly identified and not flagged as new
 
 ## Configuration Example
 
@@ -111,3 +128,4 @@ To verify the fixes work:
 - ✅ **Configurable cooldown period** for different tracking needs
 - ✅ **Better logging** for debugging posting decisions
 - ✅ **Long-term historical tracking** for spotting patterns
+- ✅ **Fixed critical bug** that was causing previously seen aircraft to be flagged as new

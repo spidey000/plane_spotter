@@ -205,7 +205,7 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
         if flight['registration'] in interesting_reg_db: #its a interesting plane
             
             interesting_registration = True # set the interesting reason as true for registration
-            reason = interesting_reg_db['registration']['reason']
+            reason = interesting_reg_db[flight['registration']].get('reason', None)
             logger.info(f"Flight {flight['registration']} is in interesting registrations table: {reason}")
 
         if flight['registration'] in reg_db: # if the registration is in the general reg db then its not new
@@ -232,9 +232,12 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
                 except Exception as e:
                     logger.warning(f"Error parsing last_seen time for {flight['registration']}: {e}")
             
-            if (db_reg['reason'] not in ['null', None]) or flight['registration'] in interesting_reg_db: # if the reg has a reason field or is in the interesting reg table
+            if (db_reg.get('reason') not in ['null', None]) or flight['registration'] in interesting_reg_db: # if the reg has a reason field or is in the interesting reg table
                 logger.info(f"Flight {flight['registration']} is in interesting registrations table")
-                reason = db_reg.get('reason', None)
+                if flight['registration'] in interesting_reg_db:
+                    reason = interesting_reg_db[flight['registration']].get('reason', None)
+                else:
+                    reason = db_reg.get('reason', None)
                 interesting_registration = True # set the interesting reason as true for registration
                 
             # Update last seen value
@@ -245,10 +248,15 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             }
             
             try:
-                await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
-                logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
+                result = await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
+                if result:
+                    logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
+                else:
+                    logger.warning(f"Failed to update record for {flight['registration']} - no error raised but result was None")
             except Exception as e:
                 logger.error(f"Failed to update record for {flight['registration']}: {e}")
+                # Log the payload for debugging
+                logger.debug(f"Payload for update: {payload}")
 
         else:
             # New registration so we create the record in the db
@@ -261,11 +269,16 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             }
             try: # its new, lets add it to the db
                 table_name = config['baserow']['tables']['registrations']
-                await bm.create_record(f'{table_name}', payload)
-                logger.success(f"Created new record for {flight['registration']} in table {table_name}")
-                first_seen = True
+                result = await bm.create_record(f'{table_name}', payload)
+                if result:
+                    logger.success(f"Created new record for {flight['registration']} in table {table_name}")
+                    first_seen = True
+                else:
+                    logger.warning(f"Failed to create record for {flight['registration']} - no error raised but result was None")
             except Exception as e:
                 logger.error(f"Failed to create record for {flight['registration']}: {e}")
+                # Log the payload for debugging
+                logger.debug(f"Payload for creation: {payload}")
     
 
     # model_db is a dictionary where values are model entries

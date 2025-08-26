@@ -1,0 +1,17 @@
+{
+  "selectedAuthType": "qwen-oauth",
+  "preferredEditor": "cursor",
+  "mcpServers": {
+    
+	"Baserow MCP": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "mcp-remote",
+        "https://api.baserow.io/mcp/PV0wNYkafH9EUxOzQ48QT3uM4rAeVC4C/sse"
+      ]
+    }
+  }
+}
