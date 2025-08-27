@@ -251,7 +251,7 @@ async def fetch_and_process_flights(config):
                     "MODEL": interesting_model,
                     "REGISTRATION": interesting_registration,
                     "FIRST_SEEN": first_seen,
-                    "DIVERTED": False if flight_data.get("diverted", "null") == "null" else flight_data["diverted"],
+                    "DIVERTED": bool(flight_data.get("diverted")) if flight_data.get("diverted") not in [None, 'null', False] else False,
                     "RETURNED_AFTER_6_MONTHS": not seen_recently and not first_seen,  # Aircraft hasn't been seen in 6+ months
                     "REASON": reason
                 }

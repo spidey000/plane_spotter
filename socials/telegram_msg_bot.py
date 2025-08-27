@@ -91,7 +91,7 @@ def generate_flight_message(flight_data, interesting_reasons, config):
     message += f"{flight_data['destination_name']} ({flight_data['destination_icao']})\n"
     message += f"Scheduled Time: {flight_data['scheduled_time']}\n"
     message += f"Terminal: {flight_data['terminal']}\n"
-    if flight_data['diverted'] not in [None, False, 'null']:
+    if flight_data.get('diverted') and flight_data['diverted'] not in [None, False, 'null']:
         message += "\n⚠️ This flight has been diverted"
     
     flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']

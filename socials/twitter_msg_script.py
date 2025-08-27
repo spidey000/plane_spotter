@@ -173,7 +173,7 @@ def generate_flight_message_twitter(flight_data, interesting_reasons, config, ma
     message += f"{flight_data['destination_name']} \n"
     # message += f"Scheduled Time: {flight_data['scheduled_time']}\n"
     message += f"Terminal: {flight_data['terminal']}\n"
-    if flight_data['diverted'] not in [None, False, 'null']:
+    if flight_data.get('diverted') and flight_data['diverted'] not in [None, False, 'null']:
         message += "\n⚠️ This flight has been diverted"
     
     

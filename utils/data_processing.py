@@ -10,6 +10,16 @@ from pytz import timezone
 
 from config import config_manager # Keep import for type hinting or if other functions need it
 
+def normalize_diverted_value(diverted_val):
+    """Normalize diverted value to a consistent boolean or None"""
+    if diverted_val in [True, False]:
+        return diverted_val
+    elif diverted_val == 'null' or diverted_val is None:
+        return None
+    elif isinstance(diverted_val, str):
+        return diverted_val.lower() in ['true', 'yes', '1']
+    return None
+
 # Load callsigns database (this is static data, not part of dynamic config)
 try:
     with open('database/callsigns.json', 'r', encoding='utf-8') as f:
@@ -63,7 +73,8 @@ def process_flight_data_adb(flight, movement, config):
         destination_name = config['settings']['airport_name']
 
     terminal = flight[movement.removesuffix('s')].get('terminal', 'null')
-    diverted = 'null'
+    diverted = flight.get('diverted', 'null')
+    diverted = normalize_diverted_value(diverted)
     
     # Get scheduled time and convert to datetime object
     try:
@@ -148,6 +159,7 @@ def process_flight_data_aeroapi(flight, config):
     country = callsigns_dict.get(airline, airlines_db.get(airline, {})).get('Country', 'null')
     callsign = callsigns_dict.get(airline, airlines_db.get(airline, {})).get('Callsign', 'null')
     diverted = flight.get("diverted", 'null')
+    diverted = normalize_diverted_value(diverted)
 
     # Get last update time
     last_update = datetime.now().strftime("%Y-%m-%d %H:%M")
