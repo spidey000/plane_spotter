@@ -36,8 +36,8 @@ The following tables are used in the project:
 ## Key Functionality
 
 *   **Querying Tables:** The `query_table(table_id, filters=None, user_field_names=True)` function queries a Baserow table with optional filters.
-*   **Creating Records:** The `create_record(table_id, data)` function creates a new record in a Baserow table.
-*   **Updating Records:** The `update_record(table_id, data_to_update, data)` function updates an existing record in a Baserow table.
+*   **Creating Records:** The `create_record(table_id, data, config)` function creates a new record in a Baserow table.
+*   **Updating Records:** The `update_record(table_id, data_to_update, data, config)` function updates an existing record in a Baserow table. It first queries for the record using the registration from the `data` parameter, then updates it with the fields in `data_to_update`.
 *   **Getting Rows:** The `get_rows(table_id, user_field_names=True, page=1, size=100, search=None, order_by=None, filters=None, filter_type='AND', include=None, exclude=None, view_id=None)` function retrieves rows from a Baserow table with pagination and filtering.
 *   **Getting All Rows as Dictionary:** The `get_all_rows_as_dict(table_id: int, key: str = "registration")` function retrieves all rows from a Baserow table and returns them as a dictionary.
 

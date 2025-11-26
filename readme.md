@@ -53,6 +53,23 @@ twitter_spotter_v4/
 -   Configurable via a JSON file.
 -   Comprehensive logging using Loguru.
 
+## Documentation
+
+Detailed documentation can be found in the `docs/` directory:
+
+-   **Technical Documentation**: `docs/technical/`
+    -   [Aircraft Tracking Logic](docs/technical/AIRCRAFT_TRACKING.md)
+    -   [Cache System](docs/technical/CACHE_SYSTEM.md)
+    -   [Database Schema](docs/technical/DATABASE_SCHEMA.md)
+    -   [Error Handling](docs/technical/ERROR_HANDLING_PLAN.md)
+    -   [Creating Social Plugins](docs/technical/creating_social_plugins.md)
+-   **External Libraries**: `docs/external_libs/`
+    -   [Bluesky Documentation](docs/external_libs/bluesky_documentation.md)
+    -   [Twikit Documentation](docs/external_libs/twikit_documentation.md)
+-   **Project History**: `docs/project_history/`
+    -   [Changelog](docs/project_history/CHANGELOG.md)
+    -   [Bugfix Summary](docs/project_history/BUGFIX_SUMMARY.md)
+
 ## API Integrations
 
 ### AeroAPI Handler (`api/api_handler_aeroapi.py`)

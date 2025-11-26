@@ -69,18 +69,27 @@ async def query_table(table_id, config, filters=None, user_field_names=True):
     headers = get_baserow_headers()
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers, params=params) as response:
-            if response.status == 200:
-                data = await response.json()
-                if len(data['results'])>0:
-                    logger.debug(f"Successfully queried table {table_id} for filters {filters}")
-                    return data['results'][0]
-                else:
-                    logger.warning(f"No results found for table {table_id} for filters {filters}")
-                    return None
-            else:
-                logger.warning(f"Error response {response.status} for table {table_id} for filters {filters}")
-                return None
+        for attempt in range(3):
+            try:
+                async with session.get(url, headers=headers, params=params) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        if len(data['results'])>0:
+                            logger.debug(f"Successfully queried table {table_id} for filters {filters}")
+                            return data['results'][0]
+                        else:
+                            logger.warning(f"No results found for table {table_id} for filters {filters}")
+                            return None
+                    else:
+                        logger.warning(f"Error response {response.status} for table {table_id} for filters {filters}")
+                        # Don't retry on 4xx errors (except maybe 429, but let's keep it simple)
+                        if response.status < 500 and response.status != 429:
+                            return None
+            except Exception as e:
+                logger.warning(f"Attempt {attempt+1}/3 failed for table {table_id}: {e}")
+                if attempt < 2:
+                    await asyncio.sleep(2 ** attempt)
+        return None
 
 async def query_cached_table(table_id, config, filters=None, user_field_names=True, ttl_seconds: int = 300):
     """
@@ -159,8 +168,27 @@ async def create_record(table_id, data, config):
             if response.status == 200:
                 logger.success(f"Successfully created record {data} in table {table_id}")
                 return await response.json()
-            logger.error(f"Failed to create record in table {table_id}. Status code: {response.status}")
-            return None
+            else:
+                # Try to get error details from response
+                try:
+                    error_details = await response.text()
+                except:
+                    error_details = "No additional error details available"
+                    
+                logger.error(f"Failed to create record in table {table_id}. Status code: {response.status}")
+                logger.error(f"Error details: {error_details}")
+                
+                # Specific handling for common issues
+                if response.status == 403:
+                    logger.error("403 Forbidden - Check your Baserow API token permissions")
+                elif response.status == 400:
+                    logger.error("400 Bad Request - Check your data format and field names")
+                elif response.status == 401:
+                    logger.error("401 Unauthorized - Check your Baserow API token")
+                elif response.status == 413:
+                    logger.error("413 Payload Too Large - Check if your data exceeds limits")
+                    
+                return None
         
 
 async def get_rows(table_id, config, user_field_names=True, page=1, size=100, search=None, 
@@ -216,21 +244,29 @@ async def get_rows(table_id, config, user_field_names=True, page=1, size=100, se
         params.update(filter_params)
     headers = get_baserow_headers() 
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, headers=headers, params=params) as response:
-            if response.status == 200:
-                data = await response.json()
-                logger.debug(f"Successfully retrieved rows from table {table_id}")
-                return data['results']
-            else:
-                logger.error(f"Failed to get rows from table {table_id}. Status code: {response.status}")
+        for attempt in range(3):
+            try:
+                async with session.get(url, headers=headers, params=params) as response:
+                    if response.status == 200:
+                        data = await response.json()
+                        logger.debug(f"Successfully retrieved rows from table {table_id}")
+                        return data['results']
+                    else:
+                        logger.error(f"Failed to get rows from table {table_id}. Status code: {response.status}")
+                        if response.status < 500 and response.status != 429:
+                            return None
+            except Exception as e:
+                logger.warning(f"Attempt {attempt+1}/3 failed to get rows from {table_id}: {e}")
+                if attempt < 2:
+                    await asyncio.sleep(2 ** attempt)
         return None
         
 async def update_record(table_id, data_to_update, data, config):
     """
     Generic function to update a record in any Baserow table
     :param table_id: ID of the table containing the record
-    :param row_id: ID of the row to update
-    :param data: Dictionary of fields to update
+    :param data_to_update: Dictionary of fields to update
+    :param data: Dictionary containing the flight data (used to find the record)
     :param config: The configuration dictionary
     :return: Updated record data or None if failed
     """
@@ -238,8 +274,16 @@ async def update_record(table_id, data_to_update, data, config):
         logger.error("Configuration (config) must be provided to update_record.")
         raise ValueError("Configuration is missing.")
 
-    row_id = await query_table(table_id, config, filters={'registration': data['registration']})
-    url = f"{config['baserow']['api_url']}{table_id}/{row_id['id']}/"
+    # Find the record to update
+    row_data = await query_table(table_id, config, filters={'registration': data['registration']})
+    
+    # If no record found, we can't update it
+    if row_data is None:
+        logger.warning(f"No record found for registration {data['registration']} in table {table_id}. Cannot update.")
+        return None
+        
+    row_id = row_data['id']
+    url = f"{config['baserow']['api_url']}{table_id}/{row_id}/"
 
     params = {"user_field_names": "true"}
     headers = get_baserow_headers()
@@ -268,7 +312,27 @@ async def update_record(table_id, data_to_update, data, config):
                         retry_count += 1
                         continue
                     else:
+                        # Try to get error details from response
+                        try:
+                            error_details = await response.text()
+                        except:
+                            error_details = "No additional error details available"
+                            
                         logger.error(f"Failed to update record in table {table_id}. Status code: {response.status}")
+                        logger.error(f"Error details: {error_details}")
+                        
+                        # Specific handling for common issues
+                        if response.status == 403:
+                            logger.error("403 Forbidden - Check your Baserow API token permissions")
+                        elif response.status == 400:
+                            logger.error("400 Bad Request - Check your data format and field names")
+                        elif response.status == 401:
+                            logger.error("401 Unauthorized - Check your Baserow API token")
+                        elif response.status == 404:
+                            logger.error("404 Not Found - Check if the record exists")
+                        elif response.status == 413:
+                            logger.error("413 Payload Too Large - Check if your data exceeds limits")
+                            
                         return None
             except Exception as e:
                 logger.error(f"Error updating record: {e}")

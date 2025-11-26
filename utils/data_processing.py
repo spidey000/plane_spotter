@@ -260,7 +260,7 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             }
             
             try:
-                result = await bm.update_record(config['baserow']['tables']['registrations'], payload, flight)
+                result = await bm.update_record(config['baserow']['tables']['registrations'], payload, flight, config)
                 if result:
                     logger.debug(f"Updated record for {flight['registration']} in table {config['baserow']['tables']['registrations']}")
                 else:
@@ -281,7 +281,7 @@ async def check_flight(flight, reg_db, interesting_reg_db, model_db, interesting
             }
             try: # its new, lets add it to the db
                 table_name = config['baserow']['tables']['registrations']
-                result = await bm.create_record(f'{table_name}', payload)
+                result = await bm.create_record(f'{table_name}', payload, config)
                 if result:
                     logger.success(f"Created new record for {flight['registration']} in table {table_name}")
                     first_seen = True

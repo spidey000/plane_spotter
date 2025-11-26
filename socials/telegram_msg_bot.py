@@ -29,7 +29,24 @@ if 'SSL_CERT_FILE' in os.environ:
         logger.warning(f"Error checking SSL_CERT_FILE, unsetting it: {e}")
         del os.environ['SSL_CERT_FILE']
 
-application = ApplicationBuilder().token(os.getenv('TELEGRAM_BOT_TOKEN')).build()
+_application = None
+
+def get_application():
+    global _application
+    if _application:
+        return _application
+    
+    token = os.getenv('TELEGRAM_BOT_TOKEN')
+    if not token:
+        logger.error("TELEGRAM_BOT_TOKEN not found in environment variables.")
+        return None
+        
+    try:
+        _application = ApplicationBuilder().token(token).build()
+        return _application
+    except Exception as e:
+        logger.error(f"Failed to initialize Telegram bot: {e}")
+        return None
 
 def generate_flight_message(flight_data, interesting_reasons, config):
     """Generate a formatted message from flight data"""
@@ -109,13 +126,18 @@ async def send_flight_update(chat_id, flight_data, image_path=None, interesting_
     message = generate_flight_message(flight_data, interesting_reasons, config)
     retries = 3
     flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
+    app = get_application()
+    if not app:
+        logger.warning("Telegram application not initialized, skipping message.")
+        return
+
     for attempt in range(retries):
         try:
             # image path is a local image path
             if image_path:
                 # Send message with photo
                 with open(image_path, 'rb') as photo_file:
-                    await application.bot.send_photo(
+                    await app.bot.send_photo(
                         chat_id=chat_id,
                         photo=photo_file,
                         caption=message,
@@ -129,7 +151,7 @@ async def send_flight_update(chat_id, flight_data, image_path=None, interesting_
             else:
                 # Send message without photo if no image found
                 logger.warning(f"No valid image file found at {image_path}, sending text only")
-                await application.bot.send_message(
+                await app.bot.send_message(
                     chat_id=chat_id,
                     text=message,
                     disable_web_page_preview=True,

@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: twitter_spotter_app
+    image: twitter_spotter:latest
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+      - ./data:/app/data
+    env_file:
+      - .env
+    # Add any other necessary configuration here

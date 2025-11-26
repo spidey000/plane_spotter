@@ -57,6 +57,12 @@
         "airport": "LEMD",
         "airport_name": "Madrid",
         "aeroapi_cost_limit": 5,
-        "hour_gap": [0,4]
+        "_note_aeroapi_limit": "HARD LIMIT: Do not increase. Rotate keys if exhausted.",
+        "hour_gap": [
+            0,
+            4
+        ],
+        "fetch_window_hours": 1,
+        "debug": true
     }
 }

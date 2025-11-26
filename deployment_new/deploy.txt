@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# Configuration
+# ----------------------------------------------------------------
+# Replace these with your VPS details or set them as environment variables
+REMOTE_USER="${REMOTE_USER:-root}"
+REMOTE_HOST="${REMOTE_HOST:-your_vps_ip}"
+REMOTE_DIR="${REMOTE_DIR:-/opt/twitter_spotter}"
+IMAGE_NAME="twitter_spotter"
+VERSION=$(date +%Y%m%d_%H%M%S)
+IMAGE_FILE="${IMAGE_NAME}_${VERSION}.tar"
+
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}Starting deployment process...${NC}"
+
+# 1. Build the Docker image
+echo -e "${GREEN}Building Docker image...${NC}"
+docker build -t ${IMAGE_NAME}:latest .
+if [ $? -ne 0 ]; then
+    echo -e "${RED}Build failed!${NC}"
+    exit 1
+fi
+
+# 2. Save the image to a tar file
+echo -e "${GREEN}Saving image to ${IMAGE_FILE}...${NC}"
+docker save -o ${IMAGE_FILE} ${IMAGE_NAME}:latest
+
+# 3. Create remote directory
+echo -e "${GREEN}Ensuring remote directory exists...${NC}"
+ssh ${REMOTE_USER}@${REMOTE_HOST} "mkdir -p ${REMOTE_DIR}"
+
+# 4. Upload files
+echo -e "${GREEN}Uploading image and configuration...${NC}"
+scp ${IMAGE_FILE} ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+scp deployment_new/docker-compose.yml ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+# Note: We don't upload .env automatically for security, but you can uncomment if you want
+# scp .env ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DIR}/
+
+# 5. Deploy on remote server
+echo -e "${GREEN}Deploying on remote server...${NC}"
+ssh ${REMOTE_USER}@${REMOTE_HOST} "cd ${REMOTE_DIR} && \
+    docker load -i ${IMAGE_FILE} && \
+    docker-compose up -d --force-recreate && \
+    rm ${IMAGE_FILE}"
+
+# 6. Cleanup local file
+rm ${IMAGE_FILE}
+
+echo -e "${GREEN}Deployment completed successfully!${NC}"
