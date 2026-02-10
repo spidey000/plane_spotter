@@ -1,9 +1,55 @@
-# this loads the fligth data from the apis and stores it in the database
-# compare flights by flight_name in both api calls and merge the most information in the database
+"""Flight processing and DB enrichment utilities."""
 
-from datetime import datetime
-import database.baserow_manager as bm
+from __future__ import annotations
+
+from datetime import datetime, timezone
+from typing import Any
+
 from loguru import logger
+
+
+def _is_nullish(value: Any) -> bool:
+    return value in (None, "", "null", "None")
+
+
+def _normalize_registration(value: Any) -> str | None:
+    if _is_nullish(value):
+        return None
+    return str(value).strip().upper()
+
+
+def _normalize_model(value: Any) -> str | None:
+    if _is_nullish(value):
+        return None
+    return str(value).strip().upper()
+
+
+def _parse_datetime(value: Any) -> datetime:
+    if isinstance(value, datetime):
+        return value
+
+    if isinstance(value, str) and value.strip():
+        normalized = value.strip().replace("Z", "+00:00")
+        try:
+            parsed = datetime.fromisoformat(normalized)
+            if parsed.tzinfo is None:
+                return parsed
+            return parsed.astimezone(timezone.utc).replace(tzinfo=None)
+        except ValueError:
+            pass
+
+        for fmt in (
+            "%Y-%m-%d %H:%M",
+            "%Y-%m-%dT%H:%M",
+            "%Y-%m-%dT%H:%M:%S",
+            "%Y-%m-%d %H:%M:%S",
+        ):
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+
+    return datetime.now()
 
 def process_flight_data_adb(flight, movement):
     # Extract flight information
@@ -38,7 +84,7 @@ def process_flight_data_adb(flight, movement):
     
     # Get scheduled time and convert to datetime object
     try:
-        scheduled_time_str = flight[movement.removesuffix('s')]['revisedTime']['local'][:-6]
+        scheduled_time_str = flight[movement.removesuffix("s")]["revisedTime"]["local"][:-6]
         scheduled_time = datetime.strptime(scheduled_time_str, "%Y-%m-%d %H:%M")
     except Exception as e:
         logger.error(f"Failed to parse scheduled time: {e}")
@@ -48,29 +94,29 @@ def process_flight_data_adb(flight, movement):
     last_update = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     single_flight_data = {
-        'flight_name': "".join(flight_name.split()),
-        'flight_name_iata': flight_name_iata,
-        'registration': registration,
-        'aircraft_name': aircraft_name.strip(),
-        'aircraft_icao': None,
-        'airline': airline,
-        'airline_name': airline_name,
-        'origin_icao': origin_icao,
-        'origin_name': origin_name,
-        'destination_icao': destination_icao,
-        'destination_name': destination_name,
-        'terminal': terminal,
-        'scheduled_time': scheduled_time,
-        'last_update': last_update,
-        'diverted': diverted
+        "flight_name": "".join(flight_name.split()),
+        "flight_name_iata": flight_name_iata,
+        "registration": registration,
+        "aircraft_name": aircraft_name.strip(),
+        "aircraft_icao": None,
+        "airline": airline,
+        "airline_name": airline_name,
+        "origin_icao": origin_icao,
+        "origin_name": origin_name,
+        "destination_icao": destination_icao,
+        "destination_name": destination_name,
+        "terminal": terminal,
+        "scheduled_time": scheduled_time,
+        "last_update": last_update,
+        "diverted": diverted,
     }
 
     logger.debug(f"Processed ADB flight data: {single_flight_data}")
     return single_flight_data
 
-def get_valid_value(flight, keys, default='null'):
+def get_valid_value(flight, keys, default="null"):
     """Returns the first non-null and non-'null' value from the flight dictionary."""
-    return next((flight.get(k) for k in keys if flight.get(k) not in [None, 'null']), default)
+    return next((flight.get(k) for k in keys if flight.get(k) not in [None, "null"]), default)
 
 def process_flight_data_aeroapi(flight):
     try:
@@ -83,130 +129,139 @@ def process_flight_data_aeroapi(flight):
     
     if is_departure:
         scheduled_time = get_valid_value(flight, ["actual_out", "estimated_out", "scheduled_out"])
-        terminal = flight.get("terminal_origin", 'null')
-        origin_icao, origin_name = 'LEMD', 'Madrid'
-        destination_icao = flight.get("destination", {}).get("code_icao", 'null')
-        destination_name = flight.get("destination", {}).get("name", 'null')
+        terminal = flight.get("terminal_origin", "null")
+        origin_icao, origin_name = "LEMD", "Madrid"
+        destination_icao = flight.get("destination", {}).get("code_icao", "null")
+        destination_name = flight.get("destination", {}).get("name", "null")
     else:
         scheduled_time = get_valid_value(flight, ["actual_out", "estimated_off", "scheduled_off"])
-        terminal = flight.get("terminal_destination", 'null')
-        origin_icao = flight.get("origin", {}).get("code_icao", 'null')
-        origin_name = flight.get("origin", {}).get("name", 'null')
-        destination_icao, destination_name = 'LEMD', 'Madrid'
+        terminal = flight.get("terminal_destination", "null")
+        origin_icao = flight.get("origin", {}).get("code_icao", "null")
+        origin_name = flight.get("origin", {}).get("name", "null")
+        destination_icao, destination_name = "LEMD", "Madrid"
     
-    flight_name = get_valid_value(flight, ['atc_ident', 'ident_icao'])
-    flight_name_iata = get_valid_value(flight, ['ident_iata', 'null'])
-    aircraft = flight.get("aircraft_type", 'null')
-    airline = flight.get("operator_icao", 'null')
-    airline_name = flight.get("operator", 'null')
-    diverted = flight.get("diverted", 'null')
+    flight_name = get_valid_value(flight, ["atc_ident", "ident_icao"])
+    flight_name_iata = get_valid_value(flight, ["ident_iata", "null"])
+    aircraft = flight.get("aircraft_type", "null")
+    airline = flight.get("operator_icao", "null")
+    airline_name = flight.get("operator", "null")
+    diverted = flight.get("diverted", "null")
 
     # Get last update time
     last_update = datetime.now().strftime("%Y-%m-%d %H:%M")
 
     single_flight_data = {
-        'flight_name': "".join(flight_name.split()),
-        'flight_name_iata': flight_name_iata,
-        'registration': registration,
-        'aircraft_name': None,
-        'aircraft_icao': aircraft.strip(),
-        'airline': airline,
-        'airline_name': airline_name,
-        'origin_icao': origin_icao,
-        'origin_name': origin_name,
-        'destination_icao': destination_icao,
-        'destination_name': destination_name,
-        'terminal': terminal,
-        'scheduled_time': datetime.strptime(scheduled_time[:-4], "%Y-%m-%dT%H:%M"),
-        'last_update': last_update,
-        'diverted': diverted
+        "flight_name": "".join(flight_name.split()),
+        "flight_name_iata": flight_name_iata,
+        "registration": registration,
+        "aircraft_name": None,
+        "aircraft_icao": (aircraft or "null").strip(),
+        "airline": airline,
+        "airline_name": airline_name,
+        "origin_icao": origin_icao,
+        "origin_name": origin_name,
+        "destination_icao": destination_icao,
+        "destination_name": destination_name,
+        "terminal": terminal,
+        "scheduled_time": _parse_datetime(scheduled_time),
+        "last_update": last_update,
+        "diverted": diverted,
     }
 
     logger.debug(f"Processed AeroAPI flight data: {single_flight_data}")
     return single_flight_data
 
-async def check_flight(flight, reg_db, model_db):
+def _is_interesting_model(
+    flight: dict[str, Any],
+    model_db: dict[str, dict[str, Any]],
+) -> bool:
+    aircraft_icao = _normalize_model(flight.get("aircraft_icao"))
+    if aircraft_icao and aircraft_icao in model_db:
+        return True
+
+    aircraft_name = str(flight.get("aircraft_name") or "").lower()
+    if not aircraft_name:
+        return False
+
+    for model_entry in model_db.values():
+        model_name = str(model_entry.get("name") or "").strip().lower()
+        if model_name and model_name in aircraft_name:
+            return True
+
+    return False
+
+
+async def check_flight(
+    flight,
+    reg_db,
+    interesting_reg_db,
+    model_db,
+    db_provider,
+    airport_icao="LEMD",
+):
     interesting_registration = False
     interesting_model = False
-    first_seen = False        
+    first_seen = False
 
     # Convert scheduled_time to string if needed
-    if not isinstance(flight['scheduled_time'], str):
-        flight['scheduled_time'] = flight['scheduled_time'].strftime("%Y-%m-%d %H:%M")
+    if not isinstance(flight["scheduled_time"], str):
+        flight["scheduled_time"] = _parse_datetime(flight["scheduled_time"]).strftime("%Y-%m-%d %H:%M")
         logger.debug(f"Converted scheduled_time to string format")
-    
-    if flight['registration'] not in ['null', None]:
-        if flight['registration'] in reg_db:
-            db_reg = reg_db[flight['registration']]
-            logger.debug(f"Flight {flight['registration']} has been seen before")
-            
-            if db_reg['reason'] not in ['null', None]:
-                logger.info(f"Flight {flight['registration']} is in interesting registrations table")
-                interesting_registration = True
-                
-            for model_entry in model_db.values():
-                try:
-                    interesting_model = True if model_entry['model'].lower() == flight['aircraft_icao'].lower() else False
-                except Exception as e:
-                    logger.debug(f"Model comparison error: {e}")
-                    interesting_model = True if model_entry['name'].lower() in flight['aircraft_name'].lower() else False
-                if interesting_model:
-                    logger.info(f"Flight {flight['registration']} matches interesting model {model_entry['model']}")
-                    break
-            # Update last seen value
-            times_seen = db_reg['times_seen']
-            payload = {
-                'last_seen': flight['scheduled_time'], 
-                'times_seen': int(times_seen) + 1
-            }
-            try:
-                # await bm.update_record('441094', payload, flight)
-                logger.debug(f"Updated record for {flight['registration']} in table 441094")
-            except Exception as e:
-                logger.error(f"Failed to update record for {flight['registration']}: {e}")
 
-        else:
-            # New registration
-            payload = {
-                "registration": flight['registration'],
-                "first_seen": flight['scheduled_time'],
-                "last_seen": flight['scheduled_time'],
-                "times_seen": 1,
-                "reason": None
-            }
-            try:
-                await bm.create_record('441094', payload)
-                logger.success(f"Created new record for {flight['registration']} in table 441094")
-                first_seen = True
-            except Exception as e:
-                logger.error(f"Failed to create record for {flight['registration']}: {e}")
-    else:
-        for model_entry in model_db.values():
-            try:
-                interesting_model = True if model_entry['model'].lower() == flight['aircraft_icao'].lower() else False
-            except Exception as e:
-                logger.debug(f"Model comparison error: {e}")
-                interesting_model = True if model_entry['name'].lower() in flight['aircraft_name'].lower() else False
-            if interesting_model:
-                logger.info(f"Flight {flight['registration']} matches interesting model {model_entry['model']}")
-                break
+    registration = _normalize_registration(flight.get("registration"))
+    if registration:
+        if registration in reg_db:
+            logger.debug(f"Flight {registration} has been seen before")
+
+        interesting_registration = registration in interesting_reg_db and bool(
+            interesting_reg_db[registration].get("is_active", True)
+        )
+        if interesting_registration:
+            logger.info(f"Flight {registration} is in interesting registrations table")
+
+        try:
+            db_row, created = await db_provider.upsert_registration_sighting(
+                flight,
+                airport_icao=airport_icao,
+            )
+            first_seen = bool(created)
+            if db_row is not None:
+                reg_db[registration] = db_row
+            if created:
+                logger.success(f"Created new registration row for {registration}")
+        except Exception as e:
+            logger.error(f"Failed to upsert registration {registration}: {e}")
+
+    interesting_model = _is_interesting_model(flight, model_db)
+    if interesting_model:
+        logger.info(
+            f"Flight {flight.get('flight_name_iata') or flight.get('flight_name')} matches interesting model"
+        )
 
     return flight, interesting_registration, interesting_model, first_seen
 
 # If flight already exists, merge data
 def check_existing(all_flights, processed_data):
-    nameish = ['flight_name_iata', 'flight_name']
+    if not processed_data:
+        return
 
-    for name in nameish:
-        if processed_data.get(name, None) in [None, 'null']:
-            continue
-        else:
-            if name == 'flight_name_iata' and processed_data.get('flight_name', None) in all_flights:
-                for key, value in processed_data.items():
-                    if all_flights[name].get(key) in [None, 'null'] and value not in [None, 'null']:
-                        all_flights[name][key] = value
-                        logger.debug(f"Updated {key} for {name}")
+    iata_key = processed_data.get("flight_name_iata")
+    fallback_key = processed_data.get("flight_name")
 
-            else:
-                # Add new flight data
-                all_flights[processed_data.get('flight_name_iata')] = processed_data
+    existing_key = None
+    if iata_key not in [None, "null"] and iata_key in all_flights:
+        existing_key = iata_key
+    elif fallback_key not in [None, "null"] and fallback_key in all_flights:
+        existing_key = fallback_key
+
+    if existing_key is None:
+        new_key = iata_key if iata_key not in [None, "null"] else fallback_key
+        if new_key in [None, "null"]:
+            return
+        all_flights[new_key] = processed_data
+        return
+
+    for key, value in processed_data.items():
+        if all_flights[existing_key].get(key) in [None, "null"] and value not in [None, "null"]:
+            all_flights[existing_key][key] = value
+            logger.debug(f"Updated {key} for {existing_key}")

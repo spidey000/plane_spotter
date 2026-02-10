@@ -1,19 +1,22 @@
-# uses threads api https://developers.facebook.com/docs/threads
+from __future__ import annotations
 
-def generate_flight_message(flight_data):
-    """Generate a formatted message from flight data"""
-    message = f"✈️ Flight Information:\n\n"
-    message += f"Flight: {flight_data['flight_name']}\n"
-    message += f"Registration: {flight_data['registration']}\n"
-    message += f"Aircraft: {flight_data['aircraft']}\n"
-    message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"
-    message += f"Route: {flight_data['origin_name']} ({flight_data['origin_icao']}) → "
-    message += f"{flight_data['destination_name']} ({flight_data['destination_icao']})\n"
-    message += f"Scheduled Time: {flight_data['scheduled_time']}\n"
-    message += f"Terminal: {flight_data['terminal']}\n"
-    if flight_data['diverted'] not in [None, False, 'null']:
-        message += "\n⚠️ This flight has been diverted"
-    message += "\n\n"
-    message += "Check all our socials in linktr.ee/ctrl_plataforma"
-    return message
+from loguru import logger
 
+from socials.message_builder import MessageContext, render_flight_message
+
+
+def generate_flight_message(flight_data, interesting=None):
+    return render_flight_message(flight_data, interesting=interesting)
+
+
+async def post_to_threads(flight_data, image_path=None, message_text=None):
+    logger.info(
+        "Threads sender placeholder: implement API credentials and endpoint wiring before enabling this platform"
+    )
+    logger.debug(
+        f"Threads payload prepared for {flight_data.get('flight_name_iata') or flight_data.get('flight_name')}"
+    )
+
+
+async def send_message(context: MessageContext, image_path: str | None = None):
+    await post_to_threads(context.flight_data, image_path=image_path, message_text=context.text)

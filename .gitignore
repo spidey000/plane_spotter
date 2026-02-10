@@ -46,6 +46,7 @@ api/data/preloaded/
 
 # Temporary files
 socials/temp_image.jpg_compressed.jpg
+database/usage_metrics.db
 
 # IDE
 .vscode/

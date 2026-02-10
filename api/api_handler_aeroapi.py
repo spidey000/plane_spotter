@@ -1,88 +1,228 @@
-import aiohttp
+from __future__ import annotations
+
 import asyncio
-from loguru import logger
 import json
+import time
 
-# delete for production
+import aiohttp
+from loguru import logger
+
+from api.aeroapi_key_manager import AeroApiCredential, mask_key, select_aeroapi_credential
+from monitoring.api_usage import record_api_event
 
 
-async def fetch_aeroapi_scheduled(move, start_time, end_time):
+async def fetch_aeroapi_scheduled(move, start_time, end_time, airport_icao="LEMD"):
+    airport_icao = (airport_icao or "LEMD").upper()
     move = "scheduled_" + move
-    headers = {
-        "Accept": "application/json; charset=UTF-8",
-        "x-apikey": "pnOwXcIXPl4JuRo6qOursdOGT4YOxmlc"
-    }
-    base_url = f"https://aeroapi.flightaware.com/aeroapi/airports/lemd/flights/{move}"
+    endpoint = f"GET /aeroapi/airports/{airport_icao.lower()}/flights/{move}"
+
+    base_url = f"https://aeroapi.flightaware.com/aeroapi/airports/{airport_icao.lower()}/flights/{move}"
     params = {
         "start": start_time,
         "end": end_time,
-        "max_pages": 10
+        "max_pages": 10,
     }
-    
-    async def fetch_page(session, url):
-        n = 0
+
+    active_credential = await select_aeroapi_credential(force_usage_refresh=False)
+    logger.info(
+        f"Using AeroAPI key {active_credential.alias} ({mask_key(active_credential.key)}) for airport {airport_icao}"
+    )
+
+    async def fetch_page(session, url, credential: AeroApiCredential):
         retry_count = 0
         max_retries = 5
-        base_delay = 20  # Starting delay in seconds
-        
+        base_delay = 20
+        excluded_keys: set[str] = set()
+
         while retry_count < max_retries:
+            headers = {
+                "Accept": "application/json; charset=UTF-8",
+                "x-apikey": credential.key,
+            }
+
+            started = time.perf_counter()
             try:
                 async with session.get(url, headers=headers, params=params) as response:
+                    duration_ms = (time.perf_counter() - started) * 1000.0
+
+                    if response.status in (401, 403):
+                        body = await response.text()
+                        record_api_event(
+                            provider="aeroapi",
+                            endpoint=endpoint,
+                            method="GET",
+                            status_code=response.status,
+                            success=False,
+                            duration_ms=duration_ms,
+                            estimated_cost_usd=0.0,
+                            metadata={
+                                "key_alias": credential.alias,
+                                "key_mask": mask_key(credential.key),
+                            },
+                            error=f"auth_error: {body}",
+                        )
+
+                        excluded_keys.add(credential.key)
+                        try:
+                            rotated = await select_aeroapi_credential(
+                                excluded_keys=excluded_keys,
+                                force_usage_refresh=True,
+                            )
+                            logger.warning(
+                                f"AeroAPI auth error with {credential.alias}. Switching to {rotated.alias} ({mask_key(rotated.key)})"
+                            )
+                            credential = rotated
+                            continue
+                        except Exception as exc:
+                            logger.error(f"No replacement AeroAPI key available after auth error: {exc}")
+                            return None, credential
+
                     if response.status == 429:
-                        retry_after = int(response.headers.get('Retry-After', base_delay))
-                        wait_time = min(retry_after * (2 ** retry_count), 60)  # Cap at 60 seconds
-                        logger.warning(f"Rate limited. Retrying in {wait_time} seconds (attempt {retry_count + 1})")
+                        record_api_event(
+                            provider="aeroapi",
+                            endpoint=endpoint,
+                            method="GET",
+                            status_code=response.status,
+                            success=False,
+                            duration_ms=duration_ms,
+                            estimated_cost_usd=0.0,
+                            metadata={
+                                "key_alias": credential.alias,
+                                "key_mask": mask_key(credential.key),
+                            },
+                            error="rate_limited",
+                        )
+
+                        excluded_keys.add(credential.key)
+                        try:
+                            rotated = await select_aeroapi_credential(
+                                excluded_keys=excluded_keys,
+                                force_usage_refresh=False,
+                            )
+                            if rotated.key != credential.key:
+                                logger.warning(
+                                    f"AeroAPI key {credential.alias} hit rate limit. Rotating to {rotated.alias} ({mask_key(rotated.key)})"
+                                )
+                                credential = rotated
+                                continue
+                        except Exception:
+                            pass
+
+                        retry_after = int(response.headers.get("Retry-After", base_delay))
+                        wait_time = min(retry_after * (2**retry_count), 60)
+                        logger.warning(
+                            f"AeroAPI rate limited for {credential.alias}. Retrying in {wait_time}s "
+                            f"(attempt {retry_count + 1}/{max_retries})"
+                        )
                         await asyncio.sleep(wait_time)
                         retry_count += 1
                         continue
-                    
-                    logger.info(f"Received response iteration {n} with status: {response.status}")
-                    data = await response.json()
-                    await asyncio.sleep(base_delay)
-                    n += 1
-                    return data
-                    
-            except aiohttp.ClientError as e:
-                logger.error(f"Client error occurred: {e}")
-                print(f"Client error occurred: {e}")
-                return None
 
-            except Exception as e:
-                logger.error(f"An unexpected error occurred: {e}")
-                print(f"Client error occurred: {e}")
-                return None
+                    data = await response.json()
+                    success = 200 <= response.status < 300
+                    record_api_event(
+                        provider="aeroapi",
+                        endpoint=endpoint,
+                        method="GET",
+                        status_code=response.status,
+                        success=success,
+                        duration_ms=duration_ms,
+                        estimated_cost_usd=0.0,
+                        metadata={
+                            "key_alias": credential.alias,
+                            "key_mask": mask_key(credential.key),
+                        },
+                        error=None if success else str(data),
+                    )
+
+                    if not success:
+                        retry_count += 1
+                        wait_time = min(base_delay * (2**retry_count), 60)
+                        logger.warning(
+                            f"AeroAPI request failed with status {response.status}. Retrying in {wait_time}s "
+                            f"(attempt {retry_count}/{max_retries})"
+                        )
+                        await asyncio.sleep(wait_time)
+                        continue
+
+                    await asyncio.sleep(base_delay)
+                    return data, credential
+
+            except aiohttp.ClientError as exc:
+                duration_ms = (time.perf_counter() - started) * 1000.0
+                record_api_event(
+                    provider="aeroapi",
+                    endpoint=endpoint,
+                    method="GET",
+                    status_code=None,
+                    success=False,
+                    duration_ms=duration_ms,
+                    estimated_cost_usd=0.0,
+                    metadata={
+                        "key_alias": credential.alias,
+                        "key_mask": mask_key(credential.key),
+                    },
+                    error=str(exc),
+                )
+                retry_count += 1
+                wait_time = min(10 * (2**retry_count), 60)
+                logger.warning(
+                    f"AeroAPI client error ({exc}). Retrying in {wait_time}s "
+                    f"(attempt {retry_count}/{max_retries})"
+                )
+                await asyncio.sleep(wait_time)
+            except Exception as exc:
+                duration_ms = (time.perf_counter() - started) * 1000.0
+                record_api_event(
+                    provider="aeroapi",
+                    endpoint=endpoint,
+                    method="GET",
+                    status_code=None,
+                    success=False,
+                    duration_ms=duration_ms,
+                    estimated_cost_usd=0.0,
+                    metadata={
+                        "key_alias": credential.alias,
+                        "key_mask": mask_key(credential.key),
+                    },
+                    error=str(exc),
+                )
+                logger.error(f"Unexpected AeroAPI error: {exc}")
+                return None, credential
 
         logger.error(f"Max retries ({max_retries}) reached for URL: {url}")
-        return None
+        return None, credential
 
-    
     async with aiohttp.ClientSession() as session:
         all_data = {move: []}
-        url = f"{base_url}"
-        logger.debug(f"Starting data fetch from {url}")
-        while url:
-            logger.debug(f"Fetching data from {url}")
-            data = await fetch_page(session, url)
-            params = None
-            if len(data.get(move, [])) > 0:
-                logger.success(f"Received {len(data.get(move, []))} flights in this batch")
-                all_data[move].extend(data.get(move, []))
-                try:
-                    next_url = data.get("links", {})["next"]
-                    logger.debug(f"Next URL found: {next_url}")
-                except Exception as e:
-                    logger.warning(f"No next URL: {e}")
-                    next_url = None
-                url = f"https://aeroapi.flightaware.com/aeroapi{next_url}" if next_url else None
-                if url:
-                    logger.debug(f"Proceeding to next page: {url}")
-            else:
-                logger.warning("No data received, stopping pagination")
-                break
-        logger.success(f"Total flights collected: {len(all_data[move])}")
-        with open(f'api/data/aeroapi_data_{move}.json', 'w') as f:
-            json.dump(all_data, f, indent=4)
-            logger.debug(f"Data saved to api/data/aeroapi_data_{move}.json")
-        return all_data
+        url = base_url
+        logger.debug(f"Starting AeroAPI data fetch from {url}")
 
-#asyncio.run(fetch_aeroapi_scheduled('departures',  '2025-02-13T00:01', '2025-02-13T23:59'))
+        while url:
+            logger.debug(f"Fetching AeroAPI page from {url}")
+            data, active_credential = await fetch_page(session, url, active_credential)
+            if not data:
+                logger.warning("No data fetched from AeroAPI page")
+                break
+
+            params = None
+            batch = data.get(move, [])
+            if batch:
+                logger.success(f"Received {len(batch)} flights in this AeroAPI batch")
+                all_data[move].extend(batch)
+                next_url = data.get("links", {}).get("next")
+                if next_url:
+                    url = f"https://aeroapi.flightaware.com/aeroapi{next_url}"
+                    logger.debug(f"Proceeding to AeroAPI next page: {url}")
+                else:
+                    url = None
+            else:
+                logger.warning("AeroAPI returned empty batch, stopping pagination")
+                break
+
+        logger.success(f"Total AeroAPI flights collected: {len(all_data[move])}")
+        output_path = f"api/data/{airport_icao.lower()}_aeroapi_data_{move}.json"
+        with open(output_path, "w", encoding="utf-8") as file_handle:
+            json.dump(all_data, file_handle, indent=4)
+            logger.debug(f"AeroAPI data saved to {output_path}")
+        return all_data

@@ -11,15 +11,58 @@ import os
 import sys
 import json
 import argparse
+import time
 from typing import Dict, List
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
 
+from monitoring.api_usage import record_api_event
+
+
+def _tracked_request(method: str, url: str, **kwargs):
+    endpoint = f"{method.upper()} {urlparse(url).path or '/'}"
+    started = time.perf_counter()
+    try:
+        response = requests.request(method=method.upper(), url=url, **kwargs)
+        duration_ms = (time.perf_counter() - started) * 1000.0
+        record_api_event(
+            provider="bluesky",
+            endpoint=endpoint,
+            method=method.upper(),
+            status_code=response.status_code,
+            success=200 <= response.status_code < 300,
+            duration_ms=duration_ms,
+            estimated_cost_usd=0.0,
+        )
+        return response
+    except Exception as exc:
+        duration_ms = (time.perf_counter() - started) * 1000.0
+        record_api_event(
+            provider="bluesky",
+            endpoint=endpoint,
+            method=method.upper(),
+            status_code=None,
+            success=False,
+            duration_ms=duration_ms,
+            estimated_cost_usd=0.0,
+            error=str(exc),
+        )
+        raise
+
+
+def _tracked_get(url: str, **kwargs):
+    return _tracked_request("GET", url, **kwargs)
+
+
+def _tracked_post(url: str, **kwargs):
+    return _tracked_request("POST", url, **kwargs)
+
 
 def bsky_login_session(pds_url: str, handle: str, password: str) -> Dict:
-    resp = requests.post(
+    resp = _tracked_post(
         pds_url + "/xrpc/com.atproto.server.createSession",
         json={"identifier": handle, "password": password},
     )
@@ -108,7 +151,7 @@ def parse_facets(pds_url: str, text: str) -> List[Dict]:
     """
     facets = []
     for m in parse_mentions(text):
-        resp = requests.get(
+        resp = _tracked_get(
             pds_url + "/xrpc/com.atproto.identity.resolveHandle",
             params={"handle": m["handle"]},
         )
@@ -163,7 +206,7 @@ def parse_uri(uri: str) -> Dict:
 
 def get_reply_refs(pds_url: str, parent_uri: str) -> Dict:
     uri_parts = parse_uri(parent_uri)
-    resp = requests.get(
+    resp = _tracked_get(
         pds_url + "/xrpc/com.atproto.repo.getRecord",
         params=uri_parts,
     )
@@ -174,7 +217,7 @@ def get_reply_refs(pds_url: str, parent_uri: str) -> Dict:
     if parent_reply is not None:
         root_uri = parent_reply["root"]["uri"]
         root_repo, root_collection, root_rkey = root_uri.split("/")[2:5]
-        resp = requests.get(
+        resp = _tracked_get(
             pds_url + "/xrpc/com.atproto.repo.getRecord",
             params={
                 "repo": root_repo,
@@ -208,7 +251,7 @@ def upload_file(pds_url, access_token, filename, img_bytes) -> Dict:
         mimetype = "image/webp"
 
     # WARNING: a non-naive implementation would strip EXIF metadata from JPEG files here by default
-    resp = requests.post(
+    resp = _tracked_post(
         pds_url + "/xrpc/com.atproto.repo.uploadBlob",
         headers={
             "Content-Type": mimetype,
@@ -249,7 +292,7 @@ def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict:
     }
 
     # fetch the HTML
-    resp = requests.get(url)
+    resp = _tracked_get(url)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -266,7 +309,7 @@ def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict:
         img_url = image_tag["content"]
         if "://" not in img_url:
             img_url = url + img_url
-        resp = requests.get(img_url)
+        resp = _tracked_get(img_url)
         resp.raise_for_status()
         card["thumb"] = upload_file(pds_url, access_token, img_url, resp.content)
 
@@ -278,7 +321,7 @@ def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict:
 
 def get_embed_ref(pds_url: str, ref_uri: str) -> Dict:
     uri_parts = parse_uri(ref_uri)
-    resp = requests.get(
+    resp = _tracked_get(
         pds_url + "/xrpc/com.atproto.repo.getRecord",
         params=uri_parts,
     )
@@ -336,7 +379,7 @@ def create_post(args):
     #print("creating post:", file=sys.stderr)
     #print(json.dumps(post, indent=2), file=sys.stderr)
 
-    resp = requests.post(
+    resp = _tracked_post(
         args.pds_url + "/xrpc/com.atproto.repo.createRecord",
         headers={"Authorization": "Bearer " + session["accessJwt"]},
         json={

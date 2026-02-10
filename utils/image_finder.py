@@ -4,6 +4,21 @@ import time
 import random
 from loguru import logger
 
+from monitoring.api_usage import record_api_event
+
+
+def _record_image_event(provider, status_code, success, duration_ms, error=None):
+    record_api_event(
+        provider=provider,
+        endpoint="GET /photos/search",
+        method="GET",
+        status_code=status_code,
+        success=success,
+        duration_ms=duration_ms,
+        estimated_cost_usd=0.0,
+        error=error,
+    )
+
 def get_first_image_url_jp(registration):
     params = {
         "aircraft": "all",
@@ -35,9 +50,12 @@ def get_first_image_url_jp(registration):
         # Add retry logic for 429 errors
         max_retries = 3
         for attempt in range(max_retries):
+            started = time.perf_counter()
             response = scraper.get(url, headers=headers, params=params)
+            duration_ms = (time.perf_counter() - started) * 1000.0
             
             if response.status_code == 429:
+                _record_image_event("jetphotos", response.status_code, False, duration_ms, error="rate_limited")
                 if attempt < max_retries - 1:
                     retry_after = int(response.headers.get('Retry-After', 10)) + 5  # Add buffer
                     logger.warning(f"Rate limited. Retrying after {retry_after} seconds... (Attempt {attempt + 1}/{max_retries})")
@@ -47,8 +65,10 @@ def get_first_image_url_jp(registration):
                     logger.error("Max retries reached for rate limiting")
                     return None
             elif response.status_code != 200: #response.status_code
+                _record_image_event("jetphotos", response.status_code, False, duration_ms)
                 logger.error(f"Failed: HTTP {response.status_code}")
                 return None
+            _record_image_event("jetphotos", response.status_code, True, duration_ms)
             break
 
         if "CAPTCHA" in response.text:
@@ -67,6 +87,7 @@ def get_first_image_url_jp(registration):
         return None
 
     except Exception as e:
+        _record_image_event("jetphotos", None, False, 0.0, error=str(e))
         logger.error(f"Error: {e}")
         return None
 def get_first_image_url_pp(registration):
@@ -84,7 +105,15 @@ def get_first_image_url_pp(registration):
     try:
         scraper = cloudscraper.create_scraper()
         time.sleep(random.uniform(2, 5))  # Delay to mimic human behavior
+        started = time.perf_counter()
         response = scraper.get(url, headers=headers, params=params)
+        duration_ms = (time.perf_counter() - started) * 1000.0
+        _record_image_event(
+            "planespotters",
+            response.status_code,
+            response.status_code == 200,
+            duration_ms,
+        )
         
         if response.status_code != 200:
             logger.error(f"Failed: HTTP {response.status_code}")
@@ -106,6 +135,7 @@ def get_first_image_url_pp(registration):
         return None
 
     except Exception as e:
+        _record_image_event("planespotters", None, False, 0.0, error=str(e))
         logger.error(f"Error: {e}")
         return None
     

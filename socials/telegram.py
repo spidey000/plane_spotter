@@ -1,183 +1,250 @@
+from __future__ import annotations
+
+import asyncio
+import os
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Any
+
+import telegram.error
 from loguru import logger
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters, CommandHandler
-import telegram.error
-import asyncio
-from datetime import datetime, timedelta
-from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
-import os
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+
 import config.config as cfg
+from monitoring.api_usage import record_api_event
+from socials.message_builder import MessageContext, render_flight_message
 
-def is_admin(user_id):
-    """Check if user is admin"""
-    return str(user_id) == os.getenv('ADMIN_USER_ID')
 
-async def config_set(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_set command"""
+def is_admin(user_id: int) -> bool:
+    return str(user_id) == os.getenv("ADMIN_USER_ID")
+
+
+async def config_set(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not is_admin(update.message.from_user.id):
         await update.message.reply_text("Acceso denegado")
         return
-    
+
     try:
         key = context.args[0]
         value = context.args[1]
         cfg.update_config(key, value)
-        await update.message.reply_text(f"Configuración actualizada: {key} = {value}")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
+        await update.message.reply_text(f"Configuracion actualizada: {key} = {value}")
+    except Exception as exc:
+        await update.message.reply_text(f"Error: {exc}")
 
-async def config_get(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_get command"""
+
+async def config_get(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not is_admin(update.message.from_user.id):
         await update.message.reply_text("Acceso denegado")
         return
-    
+
     try:
         key = context.args[0]
         value = cfg.get_config(key)
         await update.message.reply_text(f"{key} = {value}")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
+    except Exception as exc:
+        await update.message.reply_text(f"Error: {exc}")
 
-async def config_list(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_list command"""
+
+async def config_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not is_admin(update.message.from_user.id):
         await update.message.reply_text("Acceso denegado")
         return
-    
+
     try:
         config = cfg.load_config()
-        await update.message.reply_text(f"Configuración actual:\n{config}")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
+        await update.message.reply_text(f"Configuracion actual:\n{config}")
+    except Exception as exc:
+        await update.message.reply_text(f"Error: {exc}")
 
-async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /config_reset command"""
+
+async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not is_admin(update.message.from_user.id):
         await update.message.reply_text("Acceso denegado")
         return
-    
+
     try:
         cfg.save_config(cfg.DEFAULT_CONFIG)
-        await update.message.reply_text("Configuración restablecida a valores por defecto")
-    except Exception as e:
-        await update.message.reply_text(f"Error: {str(e)}")
+        await update.message.reply_text("Configuracion restablecida a valores por defecto")
+    except Exception as exc:
+        await update.message.reply_text(f"Error: {exc}")
 
-# Initialize Telegram application with longer timeout
-application = ApplicationBuilder().token('6572961963:AAE29B4HnmR17HTllBAmKK02ecIwav6WQmk')\
-    .read_timeout(30)\
-    .write_timeout(30)\
-    .build()
 
-# Register configuration commands
-application.add_handler(CommandHandler("config_set", config_set))
-application.add_handler(CommandHandler("config_get", config_get))
-application.add_handler(CommandHandler("config_list", config_list))
-application.add_handler(CommandHandler("config_reset", config_reset))
+_application = None
 
-def generate_flight_message(flight_data):
-    """Generate a formatted message from flight data"""
-    message = f"✈️ Flight Information:\n\n"
-    message += f"Flight: {flight_data['flight_name_iata']}{"/" + flight_data['flight_name'] if flight_data['flight_name'] not in [None, 'null'] else ''}\n"
-    message += f"Registration: {flight_data['registration'] if flight_data['registration'] not in [None, 'null'] else 'Unkown'}\n"
-    message += f"Aircraft: {flight_data['aircraft_name'] if flight_data['aircraft_name'] else flight_data['aircraft_icao']}\n"
-    message += f"Airline: {flight_data['airline_name']} ({flight_data['airline']})\n"
-    message += f"Route: {flight_data['origin_name']} ({flight_data['origin_icao']}) → "
-    message += f"{flight_data['destination_name']} ({flight_data['destination_icao']})\n"
-    message += f"Scheduled Time: {flight_data['scheduled_time']}\n"
-    message += f"Terminal: {flight_data['terminal']}\n"
-    if flight_data['diverted'] not in [None, False, 'null']:
-        message += "\n⚠️ This flight has been diverted"
-    message += "\n\n"
-    message += "Check all our socials in linktr.ee/ctrl_plataforma"
-    return message
 
-async def send_flight_update(chat_id, flight_data, image_path=None):
-    """Send flight update to specified chat with retry logic"""
-    message = generate_flight_message(flight_data)
+def _create_application():
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    if not token:
+        logger.warning("TELEGRAM_BOT_TOKEN is not configured; Telegram sender is disabled")
+        return None
+
+    app = (
+        ApplicationBuilder()
+        .token(token)
+        .read_timeout(30)
+        .write_timeout(30)
+        .build()
+    )
+    app.add_handler(CommandHandler("config_set", config_set))
+    app.add_handler(CommandHandler("config_get", config_get))
+    app.add_handler(CommandHandler("config_list", config_list))
+    app.add_handler(CommandHandler("config_reset", config_reset))
+    return app
+
+
+def get_application():
+    global _application
+    if _application is None:
+        _application = _create_application()
+    return _application
+
+
+def generate_flight_message(flight_data: dict[str, Any], interesting: dict[str, bool] | None = None) -> str:
+    return render_flight_message(flight_data, interesting=interesting)
+
+
+def _flight_url(flight_data: dict[str, Any], fallback_url: str | None = None) -> str:
+    if fallback_url:
+        return fallback_url
+    flight_slug = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
+    flight_slug = str(flight_slug).replace(" ", "").lower()
+    return f"https://www.flightradar24.com/data/flights/{flight_slug}"
+
+
+async def send_flight_update(
+    chat_id: str,
+    flight_data: dict[str, Any],
+    image_path: str | None = None,
+    message_text: str | None = None,
+    flight_url: str | None = None,
+) -> None:
+    application = get_application()
+    if application is None:
+        return
+
+    message = message_text or generate_flight_message(flight_data)
+    url = _flight_url(flight_data, fallback_url=flight_url)
     retries = 3
-    flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
+    flight_name = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
+
     for attempt in range(retries):
         try:
-            # image path is a local image path
-            if image_path and flight_data['registration']:
-                # Send message with photo
-                with open(image_path, 'rb') as photo_file:
+            started = time.perf_counter()
+            if image_path and Path(image_path).exists() and flight_data.get("registration") not in (None, "null"):
+                with open(image_path, "rb") as photo_file:
                     await application.bot.send_photo(
                         chat_id=chat_id,
                         photo=photo_file,
                         caption=message,
                         reply_markup={
-                            'inline_keyboard': [[{
-                                'text': 'Flightradar',
-                                'url': f"https://www.flightradar24.com/data/flights/{flight_name}"
-                            }]]
-                        }
+                            "inline_keyboard": [[{"text": "Flightradar", "url": url}]],
+                        },
                     )
+                record_api_event(
+                    provider="telegram",
+                    endpoint="POST /bot/sendPhoto",
+                    method="POST",
+                    status_code=200,
+                    success=True,
+                    duration_ms=(time.perf_counter() - started) * 1000.0,
+                    estimated_cost_usd=0.0,
+                )
             else:
-                # Send message without photo if no image found
-                logger.warning(f"No valid image file found at {image_path}, sending text only")
                 await application.bot.send_message(
                     chat_id=chat_id,
                     text=message,
                     disable_web_page_preview=True,
                     reply_markup={
-                        'inline_keyboard': [[{
-                            'text': 'Flightradar',
-                            'url': f"https://www.flightradar24.com/data/flights/{flight_name}"
-                        }]]
-                    }
+                        "inline_keyboard": [[{"text": "Flightradar", "url": url}]],
+                    },
                 )
+                record_api_event(
+                    provider="telegram",
+                    endpoint="POST /bot/sendMessage",
+                    method="POST",
+                    status_code=200,
+                    success=True,
+                    duration_ms=(time.perf_counter() - started) * 1000.0,
+                    estimated_cost_usd=0.0,
+                )
+
             logger.success(f"Successfully sent Telegram message for flight {flight_name}")
             return
         except telegram.error.TimedOut:
-            if attempt < retries - 1:  # Don't wait on the last attempt
-                wait_time = 2 ** attempt  # Exponential backoff
-                logger.warning(f"Timeout occurred. Retrying in {wait_time} seconds... (Attempt {attempt + 1}/{retries})")
+            if attempt < retries - 1:
+                wait_time = 2 ** attempt
+                logger.warning(
+                    f"Telegram timeout. Retrying in {wait_time} seconds "
+                    f"(attempt {attempt + 1}/{retries})"
+                )
                 await asyncio.sleep(wait_time)
                 continue
-            raise  # Re-raise the exception if all retries fail
-        except telegram.error.RetryAfter as e:
-            logger.warning(f"Rate limit hit. Retrying in {e.retry_after} seconds...")
-            await asyncio.sleep(e.retry_after)
+            raise
+        except telegram.error.RetryAfter as exc:
+            logger.warning(f"Telegram rate limit hit. Retrying in {exc.retry_after} seconds")
+            await asyncio.sleep(exc.retry_after)
             continue
-        except Exception as e:
-            logger.error(f"Failed to send Telegram message for flight {flight_data['flight_name']}: {e}")
+        except Exception as exc:
+            record_api_event(
+                provider="telegram",
+                endpoint="POST /bot/send",
+                method="POST",
+                status_code=None,
+                success=False,
+                duration_ms=0.0,
+                estimated_cost_usd=0.0,
+                error=str(exc),
+            )
+            logger.error(f"Failed to send Telegram message for flight {flight_name}: {exc}")
             raise
 
-async def schedule_telegram(flight_data, image_path=None):
-    """Send a Telegram message with flight data to the channel"""
-    chat_id = '-1002116996158'  # Telegram channel ID
-    flight_name = flight_data['flight_name_iata'] if flight_data['flight_name_iata'] not in [None, 'null'] else flight_data['flight_name']
+
+async def schedule_telegram(
+    flight_data: dict[str, Any],
+    image_path: str | None = None,
+    message_text: str | None = None,
+    flight_url: str | None = None,
+):
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "-1002116996158")
+    flight_name = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
     logger.info(f"Scheduling Telegram message for flight {flight_name}")
-    
-    async def send_message_task():
+
+    async def send_message_task() -> None:
         try:
-            # Parse scheduled time and calculate send time (2 hours before)
-            scheduled_time = datetime.strptime(flight_data['scheduled_time'], "%Y-%m-%d %H:%M")
+            scheduled_time = datetime.strptime(str(flight_data["scheduled_time"]), "%Y-%m-%d %H:%M")
             send_time = scheduled_time - timedelta(hours=2)
-            
-            # Calculate delay in seconds
-            now = datetime.now()
-            delay = (send_time - now).total_seconds()
-            
-            # If the time has already passed, send immediately
-            if delay < 0:
+            delay_seconds = (send_time - datetime.now()).total_seconds()
+
+            if delay_seconds < 0:
                 logger.warning(f"Scheduled time for flight {flight_name} is in the past, sending immediately")
-                delay = 0
-            else:
-                logger.debug(f"Message for flight {flight_name} will be sent in {delay} seconds")
-                try:
-                    await asyncio.sleep(delay)
-                except asyncio.CancelledError:
-                    logger.warning(f"Task for flight {flight_name} was cancelled, sending immediately")
-            
-            
-            await send_flight_update(chat_id, flight_data, image_path)
-        except Exception as e:
-            logger.error(f"Failed to send Telegram message for flight {flight_name}: {e}")
-            logger.exception(f"Exception details:{e}")
-    
-    # Create a background task that won't block the main execution
-    task = asyncio.create_task(send_message_task())
-    return task  # Return the task so it can be awaited if needed
+                delay_seconds = 0
+
+            if delay_seconds > 0:
+                await asyncio.sleep(delay_seconds)
+
+            await send_flight_update(
+                chat_id=chat_id,
+                flight_data=flight_data,
+                image_path=image_path,
+                message_text=message_text,
+                flight_url=flight_url,
+            )
+        except asyncio.CancelledError:
+            logger.warning(f"Telegram task for flight {flight_name} was cancelled")
+        except Exception as exc:
+            logger.error(f"Failed to schedule Telegram message for flight {flight_name}: {exc}")
+
+    return asyncio.create_task(send_message_task())
+
+
+async def send_message(context: MessageContext, image_path: str | None = None) -> None:
+    task = await schedule_telegram(
+        context.flight_data,
+        image_path=image_path,
+        message_text=context.text,
+        flight_url=context.flight_url,
+    )
+    await task

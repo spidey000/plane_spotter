@@ -1,159 +1,26 @@
 ---
-description: 
-globs: 
+description:
+globs:
 alwaysApply: true
 ---
-# Contexto General
 
-*   **Propósito Principal:** Sistema para detectar vuelos en el aeropuerto de Madrid-Barajas (LEMD) y publicar información en redes sociales.
-*   **Objetivos Clave:**
-    *   Monitoreo en tiempo real de llegadas y salidas de vuelos.
-    *   Identificación de vuelos relevantes (ej. retrasados, cancelados).
-    *   Publicación automática de actualizaciones en Twitter, Telegram, etc.
-    *   Escalabilidad para soportar un alto volumen de datos.
+# Plane Spotter Context
 
-# Tecnologías
+- Main objective: detect and publish interesting LEMD flights.
+- Data sources: AeroAPI + AeroDataBox.
+- Persistence: provider-based database layer (current provider: Supabase).
+- Social posting: modular adapters called from `socials/socials_processing.py`.
+- Message generation: single reusable builder in `socials/message_builder.py`.
+- API monitoring: centralized usage events in `monitoring/api_usage.py`.
 
-*   **Lenguaje(s) de Programación:** Python 3.9
-*   **Frameworks/Librerías de IA/ML:** Ninguno explícitamente, pero se utilizan librerías para procesamiento de datos y manejo de APIs.
-*   **Otras Librerías Importantes:**
-    *   Pandas
-    *   NumPy
-    *   FastAPI
-    *   python-dotenv
-    *   requests
-    *   bs4 (Beautiful Soup)
-    *   schedule
-    *   PIL (Pillow)
-    *   Instagrapi
-    *   Selenium
-    *   Telethon
-    *   Mastodon.py
-*   **Bases de datos o almacenes de datos:** Baserow (a través de la librería `baserow_manager.py`).
+# Database Notes
 
-# Estructura del Proyecto
+- Do not couple business logic to one database backend.
+- Use `database/providers/base.py` contract for all data operations.
+- Select active backend via `database.provider` in `config/config.yaml`.
 
-*   `main.py`: Punto de entrada principal del programa.
-    *   Responsable de la orquestación general del sistema. Inicializa los módulos, configura el logging, y ejecuta el loop principal de la aplicación. Interactúa con los módulos `api/`, `database/`, y `socials/` para obtener datos, almacenarlos, y publicarlos.
-*   `api/`: Manejo de APIs para obtener datos de vuelos.
-    *   Contiene los handlers para interactuar con diferentes APIs de datos de vuelos.
-    *   `api_handler_aeroapi.py`:  Maneja la API de AeroAPI. Obtiene datos de vuelos desde AeroAPI y los formatea para su uso en el sistema. Interactúa con `utils/data_processing.py` para limpiar y transformar los datos.
-    *   `api_handler_aerodatabox.py`: Maneja la API de AeroDataBox. Similar a `api_handler_aeroapi.py`, pero para la API de AeroDataBox.
-    *   `data/`: Almacena datos de ejemplo y pre-cargados de las APIs. Utilizado para pruebas y desarrollo.
-*   `config/`: Archivos de configuración.
-    *   Almacena la configuración del sistema, incluyendo API keys, credenciales de redes sociales, y otros parámetros.
-    *   `.env`: Variables de entorno (API keys, etc.).
-    *   `config.py`: Configuración del proyecto. Define las clases y funciones para cargar la configuración desde los archivos.
-    *   `config.yaml`: Archivo de configuración YAML. Contiene los parámetros de configuración del sistema.
-*   `database/`:  Manejo de la base de datos.
-    *   `baserow_manager.py`:  Interactúa con la base de datos Baserow. Define las clases y funciones para conectar, leer, escribir y actualizar datos en la base de datos Baserow. Es utilizado por `main.py` y `api/` para almacenar y recuperar datos de vuelos.
-*   `docs/`: Documentación del proyecto.
-    *   Contiene la documentación del proyecto, incluyendo la descripción de la arquitectura, los módulos, y las APIs.
-*   `logs/`: Archivos de registro.
-    *   Almacena los logs del sistema, incluyendo información de errores, warnings, y eventos importantes.
-*   `socials/`:  Manejo de la publicación en redes sociales.
-    *   Contiene los módulos para publicar actualizaciones en diferentes redes sociales.
-    *   `bluesky.py`, `instagram.py`, `linkedin.py`, `telegram.py`, `threads.py`, `twitter.py`:  Implementaciones para cada red social. Cada módulo define las funciones para autenticarse, crear y publicar posts en la red social correspondiente. Utilizan la librería `socials_processing.py` para formatear los mensajes.
-    *   `socials_processing.py`: Lógica para procesar y publicar en redes sociales. Define las funciones para formatear los mensajes y publicar en las redes sociales. Es utilizado por los módulos en `socials/` para publicar las actualizaciones.
-*   `test/`: Pruebas unitarias e integración.
-    *   Contiene las pruebas unitarias e integración para los diferentes módulos del sistema.
-*   `utils/`:  Funciones de utilidad.
-    *   `create_bsky_post.py`: Funciones para crear posts de Bluesky.
-    *   `data_processing.py`: Funciones para procesar datos. Define las funciones para limpiar, transformar y validar los datos de vuelos. Es utilizado por los módulos en `api/` para procesar los datos obtenidos de las APIs.
-    *   `image_finder.py`: Funciones para encontrar imágenes.
+# Cost / Usage Rules
 
-# Guías de Estilo y Convenciones
-
-*   **Guía de Estilo:** PEP 8 para Python.
-*   **Convenciones de Nomenclatura:**
-    *   `snake_case` para variables y funciones.
-    *   `CamelCase` para clases.
-*   **Patrones de Diseño:** No especificado.
-
-# Reglas para la IA de Cursor
-
-*   **Prioridades:**
-    *   Utilizar las funciones en `utils/data_processing.py` para el procesamiento de datos siempre que sea posible.
-    *   Priorizar el uso de las clases en `database/baserow_manager.py` para interactuar con la base de datos.
-*   **Restricciones:**
-    *   No modificar directamente los archivos en `config/`.
-    *   Evitar el uso de la librería `Selenium` a menos que sea absolutamente necesario (debido a su lentitud).
-*   **Manejo de Tareas Específicas:**
-    *   **Logging:** Usar el logger configurado en los archivos de configuración (`config/config.py` o `config/config.yaml`).
-    *   **Manejo de Errores:**  Lanzar excepciones específicas cuando sea apropiado.
-    *   **Configuración:** Leer parámetros desde `config.yaml` usando la librería `python-dotenv` para las variables de entorno en `.env`.
-*   **Documentación:**
-    *   Generar docstrings estilo Google para todas las funciones y clases.
-    *   Añadir comentarios explicativos para lógica compleja.
-*   **Consideraciones Adicionales:**
-    *   Asegurarse de que las API keys y otros secretos no se filtren en el código. Utilizar variables de entorno.
-    *   Optimizar el rendimiento del código, especialmente en el procesamiento de datos y las llamadas a las APIs.
-    *   Manejar correctamente los tipos de datos al interactuar con las APIs y la base de datos.
-
-# Archivos del Proyecto
-
-```
-twitter_spotter_v4/
-├── main.py
-├── api/
-│   ├── api_handler_aeroapi.py
-│   ├── api_handler_aerodatabox.py
-│   └── data/
-│       ├── adb_data_arrivals.json
-│       ├── adb_data_departures.json
-│       ├── aeroapi_data_scheduled_arrivals.json
-│       └── aeroapi_data_scheduled_departures.json
-├── config/
-│   ├── .env
-│   ├── config.py
-│   └── config.yaml
-├── database/
-│   └── baserow_manager.py
-├── docs/
-│   └── twitter_spotter.mdc
-├── logs/
-│   ├── lemd_spotter_warning.log
-│   └── lemd_spotter.log
-├── socials/
-│   ├── bluesky.py
-│   ├── instagram.py
-│   ├── linkedin.py
-│   ├── socials_processing.py
-│   ├── telegram.py
-│   ├── threads.py
-│   └── twitter.py
-├── test/
-│   └── ...
-└── utils/
-    ├── create_bsky_post.py
-    ├── data_processing.py
-    └── image_finder.py
-```
-
-*   `main.py`: Punto de entrada principal del programa. Orquesta la ejecución de los diferentes módulos.
-*   `api/api_handler_aeroapi.py`: Maneja la interacción con la API de AeroAPI para obtener datos de vuelos.
-*   `api/api_handler_aerodatabox.py`: Maneja la interacción con la API de AeroDataBox para obtener datos de vuelos.
-*   `api/data/`: Contiene datos de ejemplo para las APIs.
-*   `config/.env`: Define las variables de entorno.
-*   `config/config.py`: Define la configuración del proyecto.
-*   `config/config.yaml`: Archivo de configuración en formato YAML.
-*   `database/baserow_manager.py`: Maneja la interacción con la base de datos Baserow.
-*   `docs/twitter_spotter.mdc`: Documento con el contexto e información del proyecto para la IA de Cursor.
-*   `logs/lemd_spotter_warning.log`: Archivo de log para warnings.
-*   `logs/lemd_spotter.log`: Archivo de log principal.
-*   `socials/bluesky.py`: Maneja la publicación de información en Bluesky.
-*   `socials/instagram.py`: Maneja la publicación de información en Instagram.
-*   `socials/linkedin.py`: Maneja la publicación de información en LinkedIn.
-*   `socials/socials_processing.py`: Procesa la información para ser publicada en redes sociales.
-*   `socials/telegram.py`: Maneja la publicación de información en Telegram.
-*   `socials/threads.py`: Maneja la publicación de información en Threads.
-*   `socials/twitter.py`: Maneja la publicación de información en Twitter.
-*   `utils/create_bsky_post.py`: Crea posts para Bluesky.
-*   `utils/data_processing.py`: Contiene funciones para procesar datos.
-*   `utils/image_finder.py`: Contiene funciones para encontrar imágenes.
-
-# Otros archivos .mdc útiles
-
-*   **API Documentation:** Un archivo `.mdc` para cada API utilizada en el proyecto (AeroAPI y AeroDataBox). Este archivo contendría información sobre los endpoints de la API, los parámetros de solicitud y los formatos de respuesta.
-*   **Database Schema:** Un archivo `.mdc` que describe el esquema de la base de datos utilizada en Baserow. Este archivo contendría información sobre las tablas, las columnas y los tipos de datos.
-*   **Social Media Configuration:** Un archivo `.mdc` que describe la configuración para cada plataforma de redes sociales. Este archivo contendría información sobre las claves de la API, los tokens de acceso y otras configuraciones.
+- Record all outbound API calls.
+- Enforce only X monthly budget (`$10`) via monitoring guard.
+- Keep other providers observable but not blocked by budget.

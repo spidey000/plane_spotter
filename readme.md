@@ -1,233 +1,115 @@
-# Twitter Spotter v4
+# Plane Spotter
 
-## File Tree
-```
-twitter_spotter_v4/
-├── main.py
-├── readme.md
-├── requirements.txt
-├── twikit_documentation.md
-├── api/
-│   ├── api_handler_aeroapi.py
-│   ├── api_handler_aerodatabox.py
-│   └── data/
-├── config/
-│   └── config.yaml
-├── database/
-│   ├── database.md
-│   ├── flights.db
-│   ├── planes.db
-│   └── scheduled_messages.db
-├── logs/
-├── socials/
-│   ├── bluesky.py
-│   ├── instagram.py
-│   ├── linkedin.py
-│   ├── socials_processing.py
-│   ├── telegram.py
-│   ├── threads.py
-│   └── twitter.py
-├── test/
-│   ├── adb_test_data.json
-│   ├── test_apis.py
-│   ├── test_database.py
-│   └── test_processing.py
-└── utils/
-    ├── data_processing.py
-    └── image_finder.py
-```
+Automates flight detection for a configured airport (`api.airport_icao`), filters interesting flights, and publishes platform-specific posts from a single platform-agnostic message builder.
 
-## File Contexts
+## Current Architecture
 
-### API Integrations
+- `main.py`: orchestration loop, data ingestion, deduplication, DB enrichment, and social dispatch.
+- `api/`: external flight data ingestion (`aeroapi`, `aerodatabox`).
+- `database/`: provider-agnostic database contract and provider resolver.
+  - `database/providers/base.py`: `DatabaseProvider` interface.
+  - `database/providers/supabase.py`: Supabase implementation for your schema.
+  - `database/db_manager.py`: runtime provider selection (`database.provider` in config).
+- `socials/message_builder.py`: single source of truth for message text and links.
+- `socials/socials_processing.py`: adapter registry + enabled/disabled dispatch.
+- `monitoring/api_usage.py`: aggregated API telemetry + X budget guard.
 
-#### AeroAPI Handler
-The AeroAPI handler (api_handler_aeroapi.py) provides functionality to fetch scheduled flight data. Key features:
+## Database Provider Swapping
 
-- Uses aiohttp for asynchronous HTTP requests
-- Fetches arrival/departure data for specified time range
-- Handles pagination of API responses
-- Implements rate limiting with 11-second delays between requests
-- Saves raw API responses to JSON files
-- Uses logging for error handling and debugging
+The project now uses a provider abstraction. To add a new DB backend, implement `DatabaseProvider` and register it:
 
-#### Example Usage
-```python
-from api.api_handler_aeroapi import fetch_scheduled
+1. Create `database/providers/<provider>.py` implementing methods from `DatabaseProvider`.
+2. Register it in `database/db_manager.py` using `register_provider(...)`.
+3. Set `database.provider` in `config/config.yaml`.
 
-# Fetch arrivals data
-arrivals = await fetch_scheduled("arrivals", start_time, end_time)
+No business logic changes are needed in `main.py` or `utils/data_processing.py`.
 
-# Fetch departures data
-departures = await fetch_scheduled("departures", start_time, end_time)
+## Supabase Schema Expected
+
+This implementation expects tables compatible with:
+
+- `registrations`
+- `interesting_registrations`
+- `interesting_models`
+- `aircraft_models`
+- `flight_history`
+
+## API Monitoring + X Budget
+
+- Every outbound integration writes events to `database/usage_metrics.db`.
+- Aggregation is by provider and month.
+- X-specific enforcement blocks only X calls when projected monthly cost exceeds budget.
+- Budget defaults to `$10` and uses temporary per-call cost values until exact endpoint pricing is configured.
+- AeroAPI keys are monitored against `GET /aeroapi/account/usage` and rotated automatically when a key reaches its monthly budget.
+
+## AeroAPI Key Rotation
+
+- Configure one key with `AEROAPI_KEY`, or multiple keys with `AEROAPI_KEYS`.
+- Multiple key format supports labels:
+  - `AEROAPI_KEYS=key1:<key>,key2:<key>,key3:<key>`
+- On each AeroAPI run, usage is checked via `GET /account/usage` (cached for 10 minutes by default).
+- If a key reaches the configured budget (`$5` by default), it is skipped and the next key is used.
+
+Configuration knobs:
+
+```yaml
+api:
+  aeroapi:
+    monthly_budget_per_key_usd: 5.0
+    usage_cache_ttl_seconds: 600
 ```
 
-#### AeroDataBox API Handler
-The AeroDataBox handler (api_handler_aerodatabox.py) provides functionality to fetch flight data. Key features:
+Configure in `config/config.yaml`:
 
-- Uses aiohttp for asynchronous HTTP requests
-- Supports both arrival and departure data
-- Includes comprehensive query parameters for filtering flights
-- Saves raw API responses to JSON files
-- Implements robust error handling and logging
-
-#### Example Usage
-```python
-from api.api_handler_aerodatabox import fetch_data
-
-# Fetch arrival data
-arrivals = await fetch_data("arrival", start_time, end_time)
-
-# Fetch departure data
-departures = await fetch_data("departure", start_time, end_time)
+```yaml
+usage_monitoring:
+  enabled: true
+  db_path: database/usage_metrics.db
+  x:
+    enforce_budget: true
+    monthly_budget_usd: 10.0
+    default_cost_per_call_usd: 0.01
+    endpoint_costs_usd:
+      POST /2/tweets: 0.01
+      POST /1.1/media/upload.json: 0.01
+      GET /2/usage/tweets: 0.01
 ```
 
-# Twitter Spotter v4
+## Environment Variables
 
-## File Tree
-```
-twitter_spotter_v4/
-├── main.py
-├── readme.md
-├── requirements.txt
-├── twikit_documentation.md
-├── api/
-│   ├── api_handler_aeroapi.py
-│   ├── api_handler_aerodatabox.py
-│   └── data/
-├── config/
-│   └── config.yaml
-├── database/
-│   ├── database.md
-│   ├── flights.db
-│   ├── planes.db
-│   └── scheduled_messages.db
-├── logs/
-├── socials/
-│   ├── bluesky.py
-│   ├── instagram.py
-│   ├── linkedin.py
-│   ├── socials_processing.py
-│   ├── telegram.py
-│   ├── threads.py
-│   └── twitter.py
-├── test/
-│   ├── adb_test_data.json
-│   ├── test_apis.py
-│   ├── test_database.py
-│   └── test_processing.py
-└── utils/
-    ├── data_processing.py
-    └── image_finder.py
+Use `.env` for secrets and credentials. Key variables:
+
+- `SUPABASE_URL` (or dashboard URL, auto-normalized to `https://<project>.supabase.co`)
+- `SUPABASE_SERVICE_ROLE_KEY` (preferred) or `SUPABASE_PRIV`
+- `AEROAPI_KEY`
+- `AEROAPI_KEYS` (optional, comma-separated key pool)
+- `AEROAPI_MONTHLY_BUDGET_USD` (optional env override)
+- `AEROAPI_USAGE_CACHE_TTL_SECONDS` (optional env override)
+- `AERODATABOX_KEY`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
+- `BLUESKY_HANDLE`
+- `BLUESKY_PASSWORD`
+- `X_ACCESS_TOKEN` (for post writes)
+- `X_BEARER_TOKEN` / `BEARER_TOKEN` (for usage endpoint sync)
+
+## Run
+
+Set airport at `config/config.yaml` (`api.airport_icao`, e.g. `LEMD`, `LHR`, `JFK`).
+
+```bash
+python main.py
 ```
 
-## File Contexts
+## E2E Telegram Checks
 
-### Main Application Workflow
+Run controlled integration checks that send to your configured Telegram channel:
 
-The main.py file orchestrates the following workflow:
-
-1. Load flight information from APIs
-2. For each flight:
-   - Clean and process data using utils.data_processing
-   - Store flight data in database
-   - Check if plane exists in database
-     - If not, store plane information
-   - Generate social media messages using socials_processing
-   - Schedule messages and store in scheduled_messages.db
-
-The application integrates with multiple APIs and social media platforms to track flights and schedule relevant posts.
-
-### Twitter Integration
-
-The Twitter functionality uses the Twikit library for scheduling tweets. Key features:
-
-- Tweets are scheduled based on flight data
-- Includes flight information and a follow prompt
-- Automatically attaches relevant images when available
-- Uses Twikit's async client for scheduling
-
-#### Dependencies
-- twikit (see twikit_documentation.md for setup)
-- socials_processing.py for text generation
-- utils.image_finder.py for image selection
-
-#### Example Usage
-```python
-from socials.twitter import schedule_tweet
-
-# Initialize with flight data
-await schedule_tweet(client, flight_data)
+```bash
+python3 test/integration/e2e_telegram_checks.py --phase all
 ```
 
-### Testing
+Phases:
 
-The test directory contains test data and test scripts to verify the application's functionality.
-
-#### Test Data
-The test/adb_test_data.json file contains sample flight data used for testing the AeroDataBox API handler. The data structure includes:
-
-- Flight movements (arrivals/departures)
-- Airport information (ICAO, IATA, name, timezone)
-- Scheduled and revised times
-- Aircraft details (registration, model)
-- Airline information
-- Flight status and codeshare information
-
-This test data allows for comprehensive testing of the flight data processing pipeline without making actual API calls.
-
-#### Test Scripts
-The test directory includes several test scripts:
-
-- test_apis.py: Tests API handlers and data processing
-- test_database.py: Tests database operations and schemas
-- test_processing.py: Tests data processing utilities
-
-### Data Processing Utilities
-
-The utils/data_processing.py file contains functions for processing flight data:
-
-- Loads flight data from multiple APIs
-- Compares flights by flight_name across different API responses
-- Merges the most complete information from different sources
-- Stores the processed data in the database
-- Handles data normalization and cleaning
-
-These utilities ensure consistent and accurate flight data is stored in the database, even when information comes from different sources.
-
-### Database Schemas
-
-#### flights.db
-```sql
-CREATE TABLE flights (
-    flight_name TEXT PRIMARY KEY,
-    registration TEXT,
-    aircraft TEXT,
-    airline TEXT,
-    origin_icao TEXT,
-    destination_icao TEXT,
-    scheduled_time DATETIME,
-    last_update DATETIME
-);
-```
-
-#### planes.db
-```sql
-CREATE TABLE planes (
-    registration TEXT PRIMARY KEY,
-    first_seen DATETIME,
-    last_seen DATETIME,
-    times_seen INTEGER,
-    interest_reason TEXT
-);
-```
-
-#### scheduled_messages.db
-```sql
-CREATE TABLE scheduled_messages (
-    flight_name+shceduled_time TEXT PRIMARY KEY,
-    platform TEXT,
-    scheduled_time DATETIME,
-    text TEXT
-);
-```
+- `--phase adapter`: sends through `socials/telegram.py` adapter contract.
+- `--phase pipeline`: runs mocked `main.py` end-to-end flow and sends one interesting flight.
