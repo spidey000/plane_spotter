@@ -1,0 +1,81 @@
+# Portainer Stack for Plane Spotter
+
+This stack definition is ready for Portainer; it enumerates every environment variable the bot reads (core infra, plus the Telegram/Bluesky/X/Twitter network hooks). Replace the empty strings with your secrets or inject the values via Portainer’s Stack → Env interface.
+
+## Environment matrix
+
+### Database & configuration
+- `SUPABASE_URL` (preferred; falls back to other Supabase URLs)
+- `SUPABASE_SERVICE_ROLE_KEY` (recommended) or `SUPABASE_PRIV`; older options: `SUPABASE_KEY`, `SUPABASE_ANON_KEY`, `SUPABASE_PUB`
+- `SUPABASE_SCHEMA` (optional, defaults to `public`)
+- `SUPABASE_TIMEOUT_SECONDS` (optional, defaults to `30`)
+- `AEROAPI_KEY` (primary AeroAPI key used for scheduled data)
+- `AEROAPI_KEYS` (optional comma-separated pool; e.g., `label1:key1,label2:key2`)
+- `AEROAPI_MONTHLY_BUDGET_USD` (overrides `config` default)
+- `AEROAPI_USAGE_CACHE_TTL_SECONDS` (overrides how long usage snapshots are cached)
+- `AERODATABOX_KEY` (required for Aerodatabox ingestion)
+- `API_PRELOADED_DATA` (set to `false` to force live API fetches; `true` reuses bundled fixtures)
+
+### Telegram
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID` (where the bot posts; default `-1002116996158` but replace with your channel)
+- `ADMIN_USER_ID` (optional, used by `socials/telegram` to guard admin commands)
+
+### Bluesky
+- `BLUESKY_HANDLE`
+- `BLUESKY_PASSWORD`
+
+### X / Twitter
+- `X_ACCESS_TOKEN` or `X_USER_ACCESS_TOKEN` (required for write access)
+- `X_BEARER_TOKEN` or `BEARER_TOKEN` (optional; enables usage sync)
+- `X_USAGE_SYNC_ENABLED` (`true`/`false` to toggle sync; defaults to `true`)
+- `X_USAGE_SYNC_DAYS` (how many days of usage to pull; defaults to `7`)
+
+### Optional social placeholders
+- Threads/Instagram/LinkedIn senders are present but currently act as placeholders—no dedicated env vars yet, but you can reuse the flight template placeholders described in `docs/social_media_config.mdc`.
+
+## Portainer stack compose
+
+```yaml
+version: "3.9"
+services:
+  plane_spotter:
+    image: spidey000/plane_spotter:latest
+    restart: unless-stopped
+    environment:
+      SUPABASE_URL: ""
+      SUPABASE_SERVICE_ROLE_KEY: ""
+      SUPABASE_PRIV: ""
+      SUPABASE_KEY: ""
+      SUPABASE_ANON_KEY: ""
+      SUPABASE_PUB: ""
+      SUPABASE_SCHEMA: "public"
+      SUPABASE_TIMEOUT_SECONDS: "30"
+      AEROAPI_KEY: ""
+      AEROAPI_KEYS: ""
+      AEROAPI_MONTHLY_BUDGET_USD: ""
+      AEROAPI_USAGE_CACHE_TTL_SECONDS: ""
+      AERODATABOX_KEY: ""
+      API_PRELOADED_DATA: "true"
+      TELEGRAM_BOT_TOKEN: ""
+      TELEGRAM_CHAT_ID: ""
+      ADMIN_USER_ID: ""
+      BLUESKY_HANDLE: ""
+      BLUESKY_PASSWORD: ""
+      X_ACCESS_TOKEN: ""
+      X_USER_ACCESS_TOKEN: ""
+      X_BEARER_TOKEN: ""
+      BEARER_TOKEN: ""
+      X_USAGE_SYNC_ENABLED: "true"
+      X_USAGE_SYNC_DAYS: "7"
+    volumes:
+      - /opt/plane_spotter/logs:/app/logs
+```
+
+The exposed volume keeps the log files accessible on the host. For security, leave unused slots blank rather than committing them to version control.
+
+### Deploying in Portainer
+1. Create a new stack and pick the above YAML.
+2. In the Stack → Environment tab, provide the actual values (avoid storing secrets in the compose directly).
+3. Save and deploy.
+4. Use the Webhooks tab (if auto-redeploy triggered earlier) or run your manual update script with the Portainer webhook to pull new images whenever you push to Docker Hub.

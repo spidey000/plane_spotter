@@ -210,11 +210,14 @@ async def fetch_aeroapi_scheduled(move, start_time, end_time, airport_icao="LEMD
             if batch:
                 logger.success(f"Received {len(batch)} flights in this AeroAPI batch")
                 all_data[move].extend(batch)
-                next_url = data.get("links", {}).get("next")
+                links = data.get("links") or {}
+                next_url = links.get("next") if isinstance(links, dict) else None
                 if next_url:
                     url = f"https://aeroapi.flightaware.com/aeroapi{next_url}"
                     logger.debug(f"Proceeding to AeroAPI next page: {url}")
                 else:
+                    if links is None:
+                        logger.debug("AeroAPI response omitted 'links', ending pagination")
                     url = None
             else:
                 logger.warning("AeroAPI returned empty batch, stopping pagination")

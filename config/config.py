@@ -1,8 +1,13 @@
+import os
 import yaml
 from pathlib import Path
 from typing import Any
 
 CONFIG_PATH = Path(__file__).parent / 'config.yaml'
+
+ENV_OVERRIDES = {
+    'API_PRELOADED_DATA': ('api', 'preloaded_data'),
+}
 
 # Default configuration
 DEFAULT_CONFIG = {
@@ -67,6 +72,23 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     return merged
 
 
+def _apply_env_overrides(config: dict[str, Any]) -> dict[str, Any]:
+    for env_key, key_path in ENV_OVERRIDES.items():
+        raw_value = os.getenv(env_key)
+        if raw_value is None:
+            continue
+
+        current = config
+        for segment in key_path[:-1]:
+            if segment not in current or not isinstance(current[segment], dict):
+                current[segment] = {}
+            current = current[segment]
+
+        current[key_path[-1]] = _coerce_value(raw_value)
+
+    return config
+
+
 def _coerce_value(value: Any) -> Any:
     if not isinstance(value, str):
         return value
@@ -91,16 +113,17 @@ def load_config():
     """Load configuration from YAML file"""
     if not CONFIG_PATH.exists():
         save_config(DEFAULT_CONFIG)
-        return dict(DEFAULT_CONFIG)
+        return _apply_env_overrides(dict(DEFAULT_CONFIG))
 
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         loaded = yaml.safe_load(f)
 
     if not isinstance(loaded, dict):
         save_config(DEFAULT_CONFIG)
-        return dict(DEFAULT_CONFIG)
+        return _apply_env_overrides(dict(DEFAULT_CONFIG))
 
-    return _deep_merge(DEFAULT_CONFIG, loaded)
+    merged = _deep_merge(DEFAULT_CONFIG, loaded)
+    return _apply_env_overrides(merged)
 
 def save_config(config):
     """Save configuration to YAML file"""
