@@ -1,0 +1,430 @@
+{
+  "ok": true,
+  "report": {
+    "timestamp": "2026-02-11T09:19:04.527196+00:00",
+    "registration": "EC-MLP",
+    "agent_browser_available": true,
+    "agent_browser_probe": {
+      "jetphotos": {
+        "provider": "jetphotos",
+        "target_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP",
+        "session": "probe-jetphotos-1770801544",
+        "ok": true,
+        "steps": [
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 open 'https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 1119.71,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"Attention Required! | Cloudflare\",\"url\":\"https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "Attention Required! | Cloudflare",
+                "url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 wait --load domcontentloaded",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 155.4,
+            "stdout": "{\"success\":true,\"data\":{\"state\":\"domcontentloaded\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "state": "domcontentloaded"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 get title",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 155.31,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"Attention Required! | Cloudflare\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "Attention Required! | Cloudflare"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 get url",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 152.62,
+            "stdout": "{\"success\":true,\"data\":{\"url\":\"https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 snapshot -i",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 195.91,
+            "stdout": "{\"success\":true,\"data\":{\"refs\":{\"e1\":{\"name\":\"Click to reveal\",\"role\":\"button\"},\"e2\":{\"name\":\"Cloudflare\",\"role\":\"link\"}},\"snapshot\":\"- button \\\"Click to reveal\\\" [ref=e1]\\n- link \\\"Cloudflare\\\" [ref=e2]\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "refs": {
+                  "e1": {
+                    "name": "Click to reveal",
+                    "role": "button"
+                  },
+                  "e2": {
+                    "name": "Cloudflare",
+                    "role": "link"
+                  }
+                },
+                "snapshot": "- button \"Click to reveal\" [ref=e1]\n- link \"Cloudflare\" [ref=e2]"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 eval '(() => {const selectors = [\"img.result__photo\", \"a.result__photoLink img\", \"img.result-photo__img\", \"img[src*='\"'\"'jetphotos'\"'\"']\"];const candidates = [];const counts = {};const add = (raw) => {  if (!raw) return;  let url = String(raw).trim();  if (!url) return;  if (url.startsWith('\"'\"'//'\"'\"')) url = '\"'\"'https:'\"'\"' + url;  else if (url.startsWith('\"'\"'/'\"'\"')) url = location.origin + url;  else if (!url.startsWith('\"'\"'http'\"'\"')) url = location.origin + '\"'\"'/'\"'\"' + url.replace(/^\\/+/, '\"'\"''\"'\"');  if (!/^https?:\\/\\//.test(url)) return;  candidates.push(url);};for (const selector of selectors) {  const elements = Array.from(document.querySelectorAll(selector));  counts[selector] = elements.length;  for (const element of elements.slice(0, 8)) {    add(element.getAttribute('\"'\"'src'\"'\"'));    add(element.getAttribute('\"'\"'data-src'\"'\"'));    add(element.getAttribute('\"'\"'data-lazy-src'\"'\"'));    const srcset = element.getAttribute('\"'\"'srcset'\"'\"');    if (srcset) {      for (const part of srcset.split('\"'\"','\"'\"')) {        const pieces = part.trim().split(/\\s+/);        if (pieces.length > 0) add(pieces[0]);      }    }  }}const bodyText = (document.body && document.body.innerText ? document.body.innerText : '\"'\"''\"'\"').toLowerCase();const challengeMarkers = ['\"'\"'captcha'\"'\"', '\"'\"'verify you are human'\"'\"', '\"'\"'challenge-platform'\"'\"', '\"'\"'cloudflare'\"'\"', '\"'\"'access denied'\"'\"'];const detectedChallenges = challengeMarkers.filter((marker) => bodyText.includes(marker));const unique = Array.from(new Set(candidates));const forms = Array.from(document.querySelectorAll('\"'\"'form'\"'\"')).map((form, index) => ({  index,  action: form.getAttribute('\"'\"'action'\"'\"') || '\"'\"''\"'\"',  method: form.getAttribute('\"'\"'method'\"'\"') || '\"'\"''\"'\"',  input_names: Array.from(form.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))    .map((el) => el.getAttribute('\"'\"'name'\"'\"') || el.getAttribute('\"'\"'id'\"'\"') || '\"'\"''\"'\"')    .filter(Boolean)    .slice(0, 40)}));const registrationFields = Array.from(document.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))  .map((el) => ({    tag: el.tagName.toLowerCase(),    type: el.getAttribute('\"'\"'type'\"'\"') || '\"'\"''\"'\"',    name: el.getAttribute('\"'\"'name'\"'\"') || '\"'\"''\"'\"',    id: el.id || '\"'\"''\"'\"',    placeholder: el.getAttribute('\"'\"'placeholder'\"'\"') || '\"'\"''\"'\"'  }))  .filter((item) => (item.name + '\"'\"' '\"'\"' + item.id + '\"'\"' '\"'\"' + item.placeholder).toLowerCase().match(/reg|keyword|search|tail|serial|aircraft/));return {  title: document.title,  current_url: location.href,  selector_counts: counts,  candidate_urls: unique.slice(0, 20),  candidate_count: unique.length,  challenge_markers: detectedChallenges,  forms_count: forms.length,  forms: forms.slice(0, 8),  candidate_registration_fields: registrationFields.slice(0, 20)};})()'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 157.91,
+            "stdout": "{\"success\":true,\"data\":{\"result\":{\"candidate_count\":0,\"candidate_registration_fields\":[],\"candidate_urls\":[],\"challenge_markers\":[\"cloudflare\"],\"current_url\":\"https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP\",\"forms\":[],\"forms_count\":0,\"selector_counts\":{\"a.result__photoLink img\":0,\"img.result-photo__img\":0,\"img.result__photo\":0,\"img[src*='jetphotos']\":0},\"title\":\"Attention Required! | Cloudflare\"}},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "result": {
+                  "candidate_count": 0,
+                  "candidate_registration_fields": [],
+                  "candidate_urls": [],
+                  "challenge_markers": [
+                    "cloudflare"
+                  ],
+                  "current_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP",
+                  "forms": [],
+                  "forms_count": 0,
+                  "selector_counts": {
+                    "a.result__photoLink img": 0,
+                    "img.result-photo__img": 0,
+                    "img.result__photo": 0,
+                    "img[src*='jetphotos']": 0
+                  },
+                  "title": "Attention Required! | Cloudflare"
+                }
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1770801544 close",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 186.64,
+            "stdout": "{\"success\":true,\"data\":{\"closed\":true},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "closed": true
+              },
+              "error": null
+            }
+          }
+        ],
+        "eval_payload": {
+          "success": true,
+          "data": {
+            "result": {
+              "candidate_count": 0,
+              "candidate_registration_fields": [],
+              "candidate_urls": [],
+              "challenge_markers": [
+                "cloudflare"
+              ],
+              "current_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP",
+              "forms": [],
+              "forms_count": 0,
+              "selector_counts": {
+                "a.result__photoLink img": 0,
+                "img.result-photo__img": 0,
+                "img.result__photo": 0,
+                "img[src*='jetphotos']": 0
+              },
+              "title": "Attention Required! | Cloudflare"
+            }
+          },
+          "error": null
+        },
+        "registration_insertion_strategy": {
+          "provider": "jetphotos",
+          "type": "query_param",
+          "base_url": "https://www.jetphotos.com/showphotos.php",
+          "parameter": "keywords",
+          "example_value": "EC-MLP",
+          "example_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-MLP",
+          "note": "Set aircraft registration in query string parameter 'keywords'."
+        },
+        "image_extraction_strategy": {
+          "provider": "jetphotos",
+          "selectors": [
+            "img.result__photo",
+            "a.result__photoLink img",
+            "img.result-photo__img",
+            "img[src*='jetphotos']"
+          ],
+          "attributes_order": [
+            "src",
+            "data-src",
+            "data-lazy-src",
+            "srcset"
+          ],
+          "normalization": [
+            "// -> https://",
+            "relative path -> absolute URL"
+          ]
+        }
+      },
+      "planespotters": {
+        "provider": "planespotters",
+        "target_url": "https://www.planespotters.net/photos/reg/EC-MLP?sort=latest",
+        "session": "probe-planespotters-1770801546",
+        "ok": true,
+        "steps": [
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 open 'https://www.planespotters.net/photos/reg/EC-MLP?sort=latest'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 1081.91,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"Attention Required! | Cloudflare\",\"url\":\"https://www.planespotters.net/photos/reg/EC-MLP?sort=latest\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "Attention Required! | Cloudflare",
+                "url": "https://www.planespotters.net/photos/reg/EC-MLP?sort=latest"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 wait --load domcontentloaded",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 155.54,
+            "stdout": "{\"success\":true,\"data\":{\"state\":\"domcontentloaded\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "state": "domcontentloaded"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 get title",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 154.7,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"Attention Required! | Cloudflare\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "Attention Required! | Cloudflare"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 get url",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 153.18,
+            "stdout": "{\"success\":true,\"data\":{\"url\":\"https://www.planespotters.net/photos/reg/EC-MLP?sort=latest\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "url": "https://www.planespotters.net/photos/reg/EC-MLP?sort=latest"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 snapshot -i",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 194.8,
+            "stdout": "{\"success\":true,\"data\":{\"refs\":{\"e1\":{\"name\":\"Click to reveal\",\"role\":\"button\"},\"e2\":{\"name\":\"Cloudflare\",\"role\":\"link\"}},\"snapshot\":\"- button \\\"Click to reveal\\\" [ref=e1]\\n- link \\\"Cloudflare\\\" [ref=e2]\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "refs": {
+                  "e1": {
+                    "name": "Click to reveal",
+                    "role": "button"
+                  },
+                  "e2": {
+                    "name": "Cloudflare",
+                    "role": "link"
+                  }
+                },
+                "snapshot": "- button \"Click to reveal\" [ref=e1]\n- link \"Cloudflare\" [ref=e2]"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 eval '(() => {const selectors = [\"img.photo_card__photo\", \"div.photo_card img\", \"img[data-photo-id]\", \"img[src*='\"'\"'plnspttrs'\"'\"']\", \"img[src*='\"'\"'planespotters'\"'\"']\"];const candidates = [];const counts = {};const add = (raw) => {  if (!raw) return;  let url = String(raw).trim();  if (!url) return;  if (url.startsWith('\"'\"'//'\"'\"')) url = '\"'\"'https:'\"'\"' + url;  else if (url.startsWith('\"'\"'/'\"'\"')) url = location.origin + url;  else if (!url.startsWith('\"'\"'http'\"'\"')) url = location.origin + '\"'\"'/'\"'\"' + url.replace(/^\\/+/, '\"'\"''\"'\"');  if (!/^https?:\\/\\//.test(url)) return;  candidates.push(url);};for (const selector of selectors) {  const elements = Array.from(document.querySelectorAll(selector));  counts[selector] = elements.length;  for (const element of elements.slice(0, 8)) {    add(element.getAttribute('\"'\"'src'\"'\"'));    add(element.getAttribute('\"'\"'data-src'\"'\"'));    add(element.getAttribute('\"'\"'data-lazy-src'\"'\"'));    const srcset = element.getAttribute('\"'\"'srcset'\"'\"');    if (srcset) {      for (const part of srcset.split('\"'\"','\"'\"')) {        const pieces = part.trim().split(/\\s+/);        if (pieces.length > 0) add(pieces[0]);      }    }  }}const bodyText = (document.body && document.body.innerText ? document.body.innerText : '\"'\"''\"'\"').toLowerCase();const challengeMarkers = ['\"'\"'captcha'\"'\"', '\"'\"'verify you are human'\"'\"', '\"'\"'challenge-platform'\"'\"', '\"'\"'cloudflare'\"'\"', '\"'\"'access denied'\"'\"'];const detectedChallenges = challengeMarkers.filter((marker) => bodyText.includes(marker));const unique = Array.from(new Set(candidates));const forms = Array.from(document.querySelectorAll('\"'\"'form'\"'\"')).map((form, index) => ({  index,  action: form.getAttribute('\"'\"'action'\"'\"') || '\"'\"''\"'\"',  method: form.getAttribute('\"'\"'method'\"'\"') || '\"'\"''\"'\"',  input_names: Array.from(form.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))    .map((el) => el.getAttribute('\"'\"'name'\"'\"') || el.getAttribute('\"'\"'id'\"'\"') || '\"'\"''\"'\"')    .filter(Boolean)    .slice(0, 40)}));const registrationFields = Array.from(document.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))  .map((el) => ({    tag: el.tagName.toLowerCase(),    type: el.getAttribute('\"'\"'type'\"'\"') || '\"'\"''\"'\"',    name: el.getAttribute('\"'\"'name'\"'\"') || '\"'\"''\"'\"',    id: el.id || '\"'\"''\"'\"',    placeholder: el.getAttribute('\"'\"'placeholder'\"'\"') || '\"'\"''\"'\"'  }))  .filter((item) => (item.name + '\"'\"' '\"'\"' + item.id + '\"'\"' '\"'\"' + item.placeholder).toLowerCase().match(/reg|keyword|search|tail|serial|aircraft/));return {  title: document.title,  current_url: location.href,  selector_counts: counts,  candidate_urls: unique.slice(0, 20),  candidate_count: unique.length,  challenge_markers: detectedChallenges,  forms_count: forms.length,  forms: forms.slice(0, 8),  candidate_registration_fields: registrationFields.slice(0, 20)};})()'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 158.03,
+            "stdout": "{\"success\":true,\"data\":{\"result\":{\"candidate_count\":0,\"candidate_registration_fields\":[],\"candidate_urls\":[],\"challenge_markers\":[\"cloudflare\"],\"current_url\":\"https://www.planespotters.net/photos/reg/EC-MLP?sort=latest\",\"forms\":[],\"forms_count\":0,\"selector_counts\":{\"div.photo_card img\":0,\"img.photo_card__photo\":0,\"img[data-photo-id]\":0,\"img[src*='planespotters']\":0,\"img[src*='plnspttrs']\":0},\"title\":\"Attention Required! | Cloudflare\"}},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "result": {
+                  "candidate_count": 0,
+                  "candidate_registration_fields": [],
+                  "candidate_urls": [],
+                  "challenge_markers": [
+                    "cloudflare"
+                  ],
+                  "current_url": "https://www.planespotters.net/photos/reg/EC-MLP?sort=latest",
+                  "forms": [],
+                  "forms_count": 0,
+                  "selector_counts": {
+                    "div.photo_card img": 0,
+                    "img.photo_card__photo": 0,
+                    "img[data-photo-id]": 0,
+                    "img[src*='planespotters']": 0,
+                    "img[src*='plnspttrs']": 0
+                  },
+                  "title": "Attention Required! | Cloudflare"
+                }
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1770801546 close",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 186.31,
+            "stdout": "{\"success\":true,\"data\":{\"closed\":true},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "closed": true
+              },
+              "error": null
+            }
+          }
+        ],
+        "eval_payload": {
+          "success": true,
+          "data": {
+            "result": {
+              "candidate_count": 0,
+              "candidate_registration_fields": [],
+              "candidate_urls": [],
+              "challenge_markers": [
+                "cloudflare"
+              ],
+              "current_url": "https://www.planespotters.net/photos/reg/EC-MLP?sort=latest",
+              "forms": [],
+              "forms_count": 0,
+              "selector_counts": {
+                "div.photo_card img": 0,
+                "img.photo_card__photo": 0,
+                "img[data-photo-id]": 0,
+                "img[src*='planespotters']": 0,
+                "img[src*='plnspttrs']": 0
+              },
+              "title": "Attention Required! | Cloudflare"
+            }
+          },
+          "error": null
+        },
+        "registration_insertion_strategy": {
+          "provider": "planespotters",
+          "type": "path_segment",
+          "base_url": "https://www.planespotters.net/photos/reg/{registration}",
+          "parameter": "registration_path",
+          "example_value": "EC-MLP",
+          "example_url": "https://www.planespotters.net/photos/reg/EC-MLP?sort=latest",
+          "note": "Set aircraft registration in URL path segment '/photos/reg/{registration}'."
+        },
+        "image_extraction_strategy": {
+          "provider": "planespotters",
+          "selectors": [
+            "img.photo_card__photo",
+            "div.photo_card img",
+            "img[data-photo-id]",
+            "img[src*='plnspttrs']",
+            "img[src*='planespotters']"
+          ],
+          "attributes_order": [
+            "src",
+            "data-src",
+            "data-lazy-src",
+            "srcset"
+          ],
+          "normalization": [
+            "// -> https://",
+            "relative path -> absolute URL"
+          ]
+        }
+      }
+    },
+    "parser_probe": {
+      "registration": "EC-MLP",
+      "jetphotos": {
+        "url": null,
+        "error": null,
+        "elapsed_ms": 197.69
+      },
+      "planespotters": {
+        "url": null,
+        "error": null,
+        "elapsed_ms": 388.46
+      }
+    },
+    "findings": [
+      "jetphotos: challenge markers in DOM -> cloudflare",
+      "jetphotos: browser probe found 0 image URL candidates in DOM.",
+      "jetphotos: browser probe found 0 forms in DOM.",
+      "jetphotos: parser did not resolve any image URL.",
+      "planespotters: challenge markers in DOM -> cloudflare",
+      "planespotters: browser probe found 0 image URL candidates in DOM.",
+      "planespotters: browser probe found 0 forms in DOM.",
+      "planespotters: parser did not resolve any image URL."
+    ],
+    "debug_plan": [
+      "Add canary checks (single registration per provider) and alert on challenge spikes before running full scraping batches.",
+      "Run `test/integration/image_scrape_probe.py` with 5-10 real registrations and keep JSON outputs under `test/artifacts/`.",
+      "For each provider, compare `eval_payload.candidate_urls` from browser probe vs parser output; if browser has URLs but parser fails, update selectors/parsing first.",
+      "When anti-bot markers appear, increase provider cooldown and reduce retry pressure instead of hard-failing the full social publish flow.",
+      "Track HTTP status, challenge markers, and parser reasons in monitoring to spot drift after site DOM changes.",
+      "Add regression fixtures with captured HTML snippets and test parser extraction against them before deploying."
+    ]
+  }
+}

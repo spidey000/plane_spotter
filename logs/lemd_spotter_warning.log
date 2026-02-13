@@ -1343,3 +1343,11 @@ TypeError: ExtBot.send_photo() got an unexpected keyword argument 'disable_web_p
 2025-02-15 12:03:52.071 | WARNING  | socials.telegram:send_flight_update:56 - No valid image file found at None, sending text only
 2025-02-15 12:03:52.294 | WARNING  | socials.telegram:send_message_task:103 - Scheduled time for flight QR150 is in the past, sending immediately
 2025-02-15 12:03:52.295 | WARNING  | socials.telegram:send_flight_update:56 - No valid image file found at None, sending text only
+2026-02-11 08:25:58.222 | ERROR    | utils.data_processing:process_flight_data_adb:90 - Failed to parse scheduled time: 'revisedTime'
+2026-02-11 08:26:03.487 | ERROR    | utils.image_finder:get_first_image_url_jp:69 - Failed: HTTP 403
+2026-02-11 08:26:07.297 | WARNING  | utils.image_finder:get_first_image_url_pp:134 - PP No image found.
+2026-02-11 08:26:07.319 | WARNING  | socials.telegram:send_message_task:470 - Scheduled time for flight FR 689 is in the past, sending immediately
+2026-02-11 08:26:12.315 | ERROR    | utils.image_finder:get_first_image_url_jp:69 - Failed: HTTP 403
+2026-02-11 08:26:15.773 | WARNING  | utils.image_finder:get_first_image_url_pp:134 - PP No image found.
+2026-02-11 08:26:15.796 | WARNING  | socials.telegram:send_message_task:470 - Scheduled time for flight LH 1112 is in the past, sending immediately
+2026-02-11 08:26:21.220 | WARNING  | socials.telegram:send_message_task:470 - Scheduled time for flight UX 1040 is in the past, sending immediately

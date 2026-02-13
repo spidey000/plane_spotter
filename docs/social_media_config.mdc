@@ -10,6 +10,8 @@ The `socials_processing.py` module handles the posting of flight information to 
 
 *   **Posting to Social Networks:** The `call_socials(flight_data, interesting)` function posts flight information to the enabled social networks.
 *   **Image Handling:** The module downloads an image of the aircraft from JetPhotos or Planespotters and includes it in the social media posts.
+*   **Provider Fallback + Cooldown:** Image lookup tries providers in configured order and applies retry/backoff, temporary provider cooldown, and per-provider cache (positive + negative TTL).
+*   **Safe Media Downloading:** Downloaded images are validated by host allowlist, `Content-Type`, and max file size before sending.
 *   **Social Network Modules:** The module uses separate modules for each social network (e.g., `bluesky.py`, `telegram.py`, `twitter.py`).
 
 ## Configuration
@@ -22,6 +24,14 @@ The following social networks can be enabled or disabled in the `config.config` 
 *   `threads`
 *   `instagram`
 *   `linkedin`
+
+Image finder configuration keys (in `config/config.yaml`):
+
+*   `image_finder.providers`: ordered list of providers (`jetphotos`, `planespotters`).
+*   `image_finder.max_retries`, `base_delay_seconds`, `max_delay_seconds`, `jitter_seconds`.
+*   `image_finder.positive_cache_ttl_seconds`, `negative_cache_ttl_seconds`.
+*   `image_finder.provider_cooldown_seconds`.
+*   `image_finder.download_timeout_seconds`, `download_max_bytes`, `allowed_image_hosts`.
 
 ## Dependencies
 
@@ -36,3 +46,34 @@ The following social networks can be enabled or disabled in the `config.config` 
 *   `os`: For file operations.
 *   `requests`: For downloading images.
 *   `loguru`: For logging.
+
+## Template placeholders
+
+All social networks (Telegram, Bluesky, Twitter, Threads, Instagram, LinkedIn) share the same pool of template placeholders, which are available for the short/medium/long profiles rendered by `socials.message_builder`. The config enforces maximum lengths per placeholder, so any network that enables the preferred profile can safely interpolate these tokens.
+
+| Placeholder | Description |
+|-------------|-------------|
+| `flight_label` | Flight designator combining IATA and ICAO names when available. |
+| `flight_slug` | Normalized slug used in landing URLs (spaces removed, lowercase). |
+| `flight_url` | `https://www.flightradar24.com/data/flights/{flight_slug}` link to the flight. |
+| `registration` | Aircraft registration (tail number). |
+| `aircraft` | Aircraft type/name if known, otherwise manufacturer code. |
+| `airline_name` | Operating airline full name. |
+| `airline_code` | Airline ICAO or IATA code seen in flight data. |
+| `origin_name` | Origin airport name. |
+| `origin_icao` | Origin airport ICAO identifier. |
+| `destination_name` | Destination airport name. |
+| `destination_icao` | Destination airport ICAO identifier. |
+| `scheduled_time` | Scheduled departure or arrival time, human-friendly. |
+| `terminal` | Terminal at the configured airport, if provided. |
+| `interesting_text` | Concatenated reason(s) why the flight is marked interesting. |
+| `diverted_text` | Literal `DIVERTED` string when the flight is flagged as diverted. |
+| `short_interesting` | ` | Interesting: …` appended in the short template when appropriate. |
+| `short_diverted` | ` | DIVERTED` suffix used by the short profile on diversions. |
+| `medium_interesting` | `\nInteresting: …` inserted in the medium profile when interesting. |
+| `medium_diverted` | `\nWarning: Flight diverted` inserted in the medium profile when diverted. |
+| `long_interesting` | `\nInteresting: …` inserted in the long profile when interesting. |
+| `long_diverted` | `\nWarning: This flight has been diverted` inserted in the long profile. |
+
+Use these placeholders freely within your custom templates for any enabled network; the renderer truncates values only where the profile limit requires it.
+

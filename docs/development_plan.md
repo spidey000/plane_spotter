@@ -72,3 +72,19 @@ Status is maintained as:
 - [x] Validation
   - [x] Run syntax compile (`python3 -m compileall ...`)
   - [x] Run tests (`python3 -m pytest -q`) -> 6 passed
+
+## Major 6 - Multi-profile message policy (Iteration A/B)
+
+- [x] Iteration A - Engine and platform selection
+  - [x] Generate `short`/`medium`/`long` from one message builder
+  - [x] Add central resolver by platform with limits + fallback order
+  - [x] Enforce overflow policy = `block` when no profile fits
+  - [x] Integrate resolver in social dispatcher before each send
+- [x] Iteration B - Live config on Telegram
+  - [x] Add `/profile_set <platform> <profile>`
+  - [x] Add `/profile_get <platform>`
+  - [x] Add `/profile_list`
+  - [x] Add `/profile_preview <platform> [image]`
+- [ ] Iteration C - Quality tuning and advanced counters
+  - [ ] Refine copy per platform from production feedback
+  - [ ] Optional platform-specific character counting (e.g. X t.co-aware)

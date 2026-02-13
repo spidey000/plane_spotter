@@ -1,0 +1,34 @@
+# Git metadata
+.git
+.gitignore
+
+# Local secrets and environments
+.env
+config/.env
+
+# Python caches and virtual environments
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+
+# Runtime artifacts
+logs/
+*.log
+database/usage_metrics.db
+socials/temp_image.jpg_compressed.jpg
+
+# Development and docs
+test/
+docs/
+twikit_documentation.md
+
+# Editors / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

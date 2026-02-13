@@ -1,0 +1,18 @@
+services:
+  plane-spotter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_UID: ${APP_UID:-1000}
+        APP_GID: ${APP_GID:-1000}
+    image: plane-spotter:local
+    container_name: plane-spotter
+    init: true
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./logs:/app/logs
+      - ./config/config.yaml:/app/config/config.yaml
+    command: ["python", "main.py"]

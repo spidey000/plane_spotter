@@ -24,6 +24,156 @@ social_networks:
   linkedin: false
   threads: false
 
+image_finder:
+  enabled: true
+  providers:
+    - jetphotos
+    - planespotters
+  request_timeout_seconds: 15
+  max_retries: 3
+  base_delay_seconds: 1.5
+  max_delay_seconds: 10
+  jitter_seconds: 0.5
+  positive_cache_ttl_seconds: 21600
+  negative_cache_ttl_seconds: 1200
+  provider_cooldown_seconds: 600
+  download_timeout_seconds: 30
+  download_max_bytes: 5242880
+  allowed_image_hosts:
+    - jetphotos.com
+    - cdn.jetphotos.com
+    - planespotters.net
+    - plnspttrs.net
+    - t.plnspttrs.net
+  user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+
+message_policy:
+  defaults:
+    preferred_profile: long
+    fallback_order:
+      - long
+      - medium
+      - short
+    overflow_action: block
+  platform_limits:
+    twitter: 280
+    bluesky: 300
+    threads: 500
+    instagram: 2200
+    linkedin: 3000
+    telegram_text: 4096
+    telegram_caption: 1024
+  platforms:
+    twitter:
+      preferred_profile: short
+    bluesky:
+      preferred_profile: short
+    threads:
+      preferred_profile: medium
+    instagram:
+      preferred_profile: medium
+    linkedin:
+      preferred_profile: medium
+    telegram:
+      preferred_profile: long
+
+message_templates:
+  profiles:
+    short: |-
+      {flight_label} | Reg {registration} | {origin_icao}->{destination_icao} | {scheduled_time}{short_diverted}{short_interesting}
+      FR24: {flight_url}
+    medium: |-
+      Flight: {flight_label}
+      Reg: {registration} | Aircraft: {aircraft}
+      Route: {origin_icao}->{destination_icao} ({origin_name} to {destination_name})
+      Time: {scheduled_time} | Terminal: {terminal}
+      Airline: {airline_name} ({airline_code}){medium_interesting}{medium_diverted}
+      FR24: {flight_url}
+    long: |-
+      Flight Information:
+
+      Flight: {flight_label}
+      Registration: {registration}
+      Aircraft: {aircraft}
+      Airline: {airline_name} ({airline_code})
+      Route: {origin_name} ({origin_icao}) -> {destination_name} ({destination_icao})
+      Scheduled Time: {scheduled_time}
+      Terminal: {terminal}{long_interesting}{long_diverted}
+
+      Check all our socials in https://linktr.ee/ctrl_plataforma
+  validation:
+    profile_max_chars:
+      short: 275
+      medium: 1200
+      long: 2500
+    placeholder_max_chars:
+      short:
+        flight_label: 24
+        flight_slug: 40
+        flight_url: 95
+        registration: 12
+        aircraft: 28
+        airline_name: 30
+        airline_code: 8
+        origin_name: 24
+        origin_icao: 4
+        destination_name: 24
+        destination_icao: 4
+        scheduled_time: 16
+        terminal: 8
+        interesting_text: 64
+        diverted_text: 11
+        short_interesting: 87
+        short_diverted: 11
+        medium_interesting: 96
+        medium_diverted: 32
+        long_interesting: 120
+        long_diverted: 48
+      medium:
+        flight_label: 32
+        flight_slug: 48
+        flight_url: 95
+        registration: 12
+        aircraft: 42
+        airline_name: 40
+        airline_code: 8
+        origin_name: 32
+        origin_icao: 4
+        destination_name: 32
+        destination_icao: 4
+        scheduled_time: 16
+        terminal: 10
+        interesting_text: 90
+        diverted_text: 24
+        short_interesting: 100
+        short_diverted: 11
+        medium_interesting: 130
+        medium_diverted: 40
+        long_interesting: 160
+        long_diverted: 64
+      long:
+        flight_label: 40
+        flight_slug: 56
+        flight_url: 95
+        registration: 12
+        aircraft: 60
+        airline_name: 50
+        airline_code: 8
+        origin_name: 50
+        origin_icao: 4
+        destination_name: 50
+        destination_icao: 4
+        scheduled_time: 16
+        terminal: 10
+        interesting_text: 140
+        diverted_text: 32
+        short_interesting: 120
+        short_diverted: 11
+        medium_interesting: 170
+        medium_diverted: 48
+        long_interesting: 220
+        long_diverted: 90
+
 execution:
   interval: 6600
 

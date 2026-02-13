@@ -11,7 +11,9 @@ Automates flight detection for a configured airport (`api.airport_icao`), filter
   - `database/providers/supabase.py`: Supabase implementation for your schema.
   - `database/db_manager.py`: runtime provider selection (`database.provider` in config).
 - `socials/message_builder.py`: single source of truth for message text and links.
+- `socials/message_policy.py`: profile and length selection (`short`/`medium`/`long`) per platform.
 - `socials/socials_processing.py`: adapter registry + enabled/disabled dispatch.
+- `utils/image_finder.py`: image provider lookup (JetPhotos/Planespotters) with retry, cache, and cooldown.
 - `monitoring/api_usage.py`: aggregated API telemetry + X budget guard.
 
 ## Database Provider Swapping
@@ -41,6 +43,79 @@ This implementation expects tables compatible with:
 - X-specific enforcement blocks only X calls when projected monthly cost exceeds budget.
 - Budget defaults to `$10` and uses temporary per-call cost values until exact endpoint pricing is configured.
 - AeroAPI keys are monitored against `GET /aeroapi/account/usage` and rotated automatically when a key reaches its monthly budget.
+
+## Message Profiles by Platform
+
+- The bot builds three variants for each flight message: `short`, `medium`, `long`.
+- Each platform is mapped to a preferred profile in config.
+- If the preferred profile exceeds platform limits, fallback order is applied.
+- Overflow policy is configurable; current default is `block` (skip publish on that platform).
+
+## Image Finder Hardening
+
+- Provider order is configurable via `image_finder.providers`.
+- Lookups use retry + exponential backoff + jitter and temporary cooldown on anti-bot/rate-limit responses.
+- Results are cached by provider+registration (positive and negative TTL) to reduce repeated scraping.
+- Image downloads are validated with host allowlist, `Content-Type`, and max size before posting.
+
+## Message Templates (No Redeploy)
+
+- Message text is overrideable from `config/config.yaml` under `message_templates.profiles`.
+- The app loads config at runtime, so template changes apply in the next processing cycle without redeploy.
+- Overrides are validated before use; invalid templates automatically fall back to code defaults.
+- Placeholder lengths are bounded per profile via `message_templates.validation.placeholder_max_chars`.
+- Profile budgets are enforced with `message_templates.validation.profile_max_chars` (`short` defaults to `275`).
+
+Available placeholders:
+
+- `flight_label`, `flight_slug`, `flight_url`
+- `registration`, `aircraft`, `airline_name`, `airline_code`
+- `origin_name`, `origin_icao`, `destination_name`, `destination_icao`
+- `scheduled_time`, `terminal`
+- `interesting_text`, `diverted_text`
+- `short_interesting`, `short_diverted`
+- `medium_interesting`, `medium_diverted`
+- `long_interesting`, `long_diverted`
+
+Validation rules:
+
+- Unknown placeholders are rejected.
+- Unsupported format syntax (`{field:...}` / `{field!r}`) is rejected.
+- Every used placeholder must have a configured max length for that profile.
+- `static_template_chars + sum(placeholder_max_chars_for_used_fields)` must be `<= profile_max_chars`.
+
+Configuration (`config/config.yaml`):
+
+```yaml
+message_policy:
+  defaults:
+    preferred_profile: long
+    fallback_order: [long, medium, short]
+    overflow_action: block
+  platform_limits:
+    twitter: 280
+    bluesky: 300
+    threads: 500
+    instagram: 2200
+    linkedin: 3000
+    telegram_text: 4096
+    telegram_caption: 1024
+  platforms:
+    twitter: { preferred_profile: short }
+    bluesky: { preferred_profile: short }
+    telegram: { preferred_profile: long }
+```
+
+### Live tuning from Telegram bot
+
+Admin commands:
+
+- `/help` (or `/start`) to show command usage.
+- `/help_tech` (or `/help_tecnico`) for detailed technical command guide.
+- `/profile_set <platform> <short|medium|long>`
+- `/profile_get <platform>`
+- `/profile_list`
+- `/profile_preview <platform> [image]`
 
 ## AeroAPI Key Rotation
 
@@ -113,3 +188,17 @@ Phases:
 
 - `--phase adapter`: sends through `socials/telegram.py` adapter contract.
 - `--phase pipeline`: runs mocked `main.py` end-to-end flow and sends one interesting flight.
+
+## Image Scraping Probe
+
+Run an agent-browser + parser probe for JetPhotos and Planespotters:
+
+```bash
+python3 test/integration/image_scrape_probe.py --registration EC-MLP --output test/artifacts/image_probe_ec_mlp.json
+```
+
+The report includes:
+
+- Browser-level checks (title, snapshot, challenge markers, candidate image URLs).
+- Parser-level checks (`utils/image_finder.py` resolution for both providers).
+- Auto-generated findings and a debugging plan based on the observed signals.
