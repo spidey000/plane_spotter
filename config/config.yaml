@@ -24,6 +24,13 @@ social_networks:
   linkedin: false
   threads: false
 
+platform_settings:
+  telegram:
+    notifications_enabled: true
+    registration_link_enabled: true
+  bluesky:
+    registration_link_enabled: true
+
 image_finder:
   enabled: true
   providers:

@@ -6,6 +6,7 @@ from pathlib import Path
 
 import config.config as cfg
 import socials.socials_processing as sp
+import socials.telegram as tg
 import utils.data_processing as dp
 from api.aeroapi_key_manager import get_aeroapi_usage_snapshot
 from api import api_handler_aeroapi, api_handler_aerodatabox
@@ -192,11 +193,18 @@ async def main(all_flights):
 async def run_periodically():
     interval_seconds = int(cfg.get_config("execution.interval") or ((2 * 60 * 60) - 600))
 
-    while True:
-        await main(all_flights)
-        next_round = datetime.now() + timedelta(seconds=interval_seconds)
-        logger.info("Next round at " + next_round.strftime("%Y-%m-%d %H:%M"))
-        await asyncio.sleep(interval_seconds)
+    try:
+        await tg.ensure_command_listener()
+        while True:
+            await main(all_flights)
+            next_round = datetime.now() + timedelta(seconds=interval_seconds)
+            logger.info("Next round at " + next_round.strftime("%Y-%m-%d %H:%M"))
+            await asyncio.sleep(interval_seconds)
+    except asyncio.CancelledError:
+        logger.info("Periodic runner cancelled")
+        raise
+    finally:
+        await tg.shutdown_command_listener()
 
 
 if __name__ == "__main__":

@@ -51,6 +51,14 @@ This implementation expects tables compatible with:
 - If the preferred profile exceeds platform limits, fallback order is applied.
 - Overflow policy is configurable; current default is `block` (skip publish on that platform).
 
+## Platform-Specific Settings
+
+- `platform_settings.telegram.notifications_enabled` lets you control whether Telegram messages raise notifications or stay silent.
+- `platform_settings.telegram.registration_link_enabled` toggles the inline registration hyperlink in Telegram dispatches.
+- `platform_settings.bluesky.registration_link_enabled` controls whether Bluesky posts include the registration hyperlink facet.
+
+These settings can all be adjusted at runtime via `/config_set`.
+
 ## Image Finder Hardening
 
 - Provider order is configurable via `image_finder.providers`.

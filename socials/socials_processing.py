@@ -23,6 +23,7 @@ from monitoring.api_usage import record_api_event
 from socials.message_builder import MessageContext, build_message_context, build_platform_context
 from socials.message_policy import resolve_message_for_platform
 from utils.image_finder import get_first_image_url_jp, get_first_image_url_pp
+from utils.registration_links import resolve_registration_gallery_url
 import os
 
 
@@ -250,11 +251,11 @@ def _download_image(image_url: str, temp_dir: str = "socials") -> str | None:
 
 async def call_socials(flight_data, interesting):
     logger.debug(f"Starting socials processing for flight {flight_data['flight_name']}")
-    context = build_message_context(flight_data, interesting=interesting)
     sender_registry = _build_sender_registry()
 
     temp_image_path = None
     image_provider = None
+    registration_url = None
 
     try:
         registration = flight_data.get("registration")
@@ -279,6 +280,8 @@ async def call_socials(flight_data, interesting):
 
                 logger.debug(f"No image found on {provider}")
 
+            registration_url = resolve_registration_gallery_url(registration, provider=image_provider)
+
         if image_url:
             logger.debug(
                 f"Found image at {image_url} from {image_provider or 'unknown-provider'}, downloading..."
@@ -292,6 +295,12 @@ async def call_socials(flight_data, interesting):
             temp_image_path
             and os.path.exists(temp_image_path)
             and _is_valid_registration(flight_data.get("registration"))
+        )
+
+        context = build_message_context(
+            flight_data,
+            interesting=interesting,
+            registration_url=registration_url,
         )
 
         for platform_name, sender in sender_registry.items():

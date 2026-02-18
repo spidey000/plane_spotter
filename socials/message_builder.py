@@ -151,6 +151,7 @@ class MessageContext:
     flight_slug: str
     flight_url: str
     interesting: dict[str, bool]
+    registration_url: str | None = None
     selected_profile: str | None = None
     selected_platform: str | None = None
 
@@ -437,6 +438,7 @@ def _build_texts_by_profile(values: Mapping[str, str]) -> dict[str, str]:
 def build_message_context(
     flight_data: Mapping[str, Any],
     interesting: Mapping[str, bool] | None = None,
+    registration_url: str | None = None,
 ) -> MessageContext:
     serialized_flight_data = dict(flight_data)
     serialized_interesting = dict(interesting or {})
@@ -498,6 +500,7 @@ def build_message_context(
         texts_by_profile=texts_by_profile,
         flight_slug=flight_slug,
         flight_url=flight_url,
+        registration_url=registration_url,
         interesting=serialized_interesting,
     )
 

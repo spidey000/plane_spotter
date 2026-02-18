@@ -356,10 +356,17 @@ def create_post(args):
         post["langs"] = args.lang
 
     # parse out mentions and URLs as "facets"
+    parsed_facets = []
     if len(args.text) > 0:
-        facets = parse_facets(args.pds_url, post["text"])
-        if facets:
-            post["facets"] = facets
+        parsed_facets = parse_facets(args.pds_url, post["text"])
+    extra_facets = getattr(args, "extra_facets", None)
+    combined_facets = []
+    if parsed_facets:
+        combined_facets.extend(parsed_facets)
+    if extra_facets:
+        combined_facets.extend(extra_facets)
+    if combined_facets:
+        post["facets"] = combined_facets
 
     # if this is a reply, get references to the parent and root
     if args.reply_to:

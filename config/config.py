@@ -38,6 +38,15 @@ DEFAULT_CONFIG = {
         'linkedin': False,
         'threads': False
     },
+    'platform_settings': {
+        'telegram': {
+            'notifications_enabled': True,
+            'registration_link_enabled': True,
+        },
+        'bluesky': {
+            'registration_link_enabled': True,
+        },
+    },
     'execution': {
         'interval': (2 * 60 * 60) - 600  # 2 hours minus 10 minutes
     },

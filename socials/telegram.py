@@ -9,7 +9,8 @@ from typing import Any
 
 import telegram.error
 from loguru import logger
-from telegram import Update
+from telegram import MessageEntity, Update
+from telegram.constants import MessageEntityType
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 import config.config as cfg
@@ -116,6 +117,9 @@ def _build_help_tech_text(admin_user: bool) -> str:
         "- message_policy.platform_limits.twitter 280",
         "- message_policy.platform_limits.telegram_caption 1024",
         "- message_policy.platforms.telegram.preferred_profile long",
+        "- platform_settings.telegram.notifications_enabled false",
+        "- platform_settings.telegram.registration_link_enabled false",
+        "- platform_settings.bluesky.registration_link_enabled true",
         "",
         "6) Notas tecnicas:",
         "- overflow_action=block: si no cabe ni short, se bloquea esa red.",
@@ -313,6 +317,8 @@ async def profile_preview(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 _application = None
+_listener_task: asyncio.Task | None = None
+_listener_lock: asyncio.Lock | None = None
 
 
 def _create_application():
@@ -350,6 +356,93 @@ def get_application():
     return _application
 
 
+def _log_listener_task_result(task: asyncio.Task) -> None:
+    if task.cancelled():
+        return
+    exc = task.exception()
+    if exc:
+        logger.error(f"Telegram command listener stopped with error: {exc}")
+    else:
+        logger.warning("Telegram command listener stopped unexpectedly")
+
+
+async def _run_command_listener(application):
+    if not application.updater:
+        logger.warning("Telegram Application has no Updater; command listener disabled")
+        return
+
+    logger.info("Starting Telegram command listener")
+    try:
+        await application.initialize()
+        await application.start()
+        await application.updater.start_polling(drop_pending_updates=True)
+        logger.info("Telegram command listener running")
+        stop_future = asyncio.get_running_loop().create_future()
+        await stop_future
+    except asyncio.CancelledError:
+        logger.info("Telegram command listener cancellation requested")
+        raise
+    finally:
+        try:
+            if application.updater and application.updater.running:
+                await application.updater.stop()
+        except Exception as exc:
+            logger.warning(f"Unable to stop Telegram updater cleanly: {exc}")
+        try:
+            if application.running:
+                await application.stop()
+        except Exception as exc:
+            logger.warning(f"Unable to stop Telegram application cleanly: {exc}")
+        try:
+            await application.shutdown()
+        except Exception as exc:
+            logger.warning(f"Unable to shutdown Telegram application cleanly: {exc}")
+        logger.info("Telegram command listener stopped")
+
+
+async def ensure_command_listener() -> asyncio.Task | None:
+    global _listener_task, _listener_lock
+    application = get_application()
+    if application is None:
+        logger.debug("Telegram command listener not started because TELEGRAM_BOT_TOKEN is missing")
+        return None
+
+    if not application.updater:
+        logger.warning("Telegram Application has no Updater; command listener disabled")
+        return None
+
+    if _listener_lock is None:
+        _listener_lock = asyncio.Lock()
+
+    async with _listener_lock:
+        if _listener_task and not _listener_task.done():
+            return _listener_task
+
+        loop = asyncio.get_running_loop()
+        _listener_task = loop.create_task(
+            _run_command_listener(application),
+            name="telegram-command-listener",
+        )
+        _listener_task.add_done_callback(_log_listener_task_result)
+        return _listener_task
+
+
+async def shutdown_command_listener() -> None:
+    global _listener_task
+    task = _listener_task
+    if task is None:
+        return
+
+    _listener_task = None
+    task.cancel()
+    try:
+        await task
+    except asyncio.CancelledError:
+        pass
+    except Exception as exc:
+        logger.error(f"Telegram command listener shutdown failed: {exc}")
+
+
 def generate_flight_message(flight_data: dict[str, Any], interesting: dict[str, bool] | None = None) -> str:
     return render_flight_message(flight_data, interesting=interesting)
 
@@ -362,12 +455,62 @@ def _flight_url(flight_data: dict[str, Any], fallback_url: str | None = None) ->
     return f"https://www.flightradar24.com/data/flights/{flight_slug}"
 
 
+_NULLISH_REG_VALUES = {"", "null", "none"}
+
+
+def _get_telegram_settings() -> dict[str, Any]:
+    settings = cfg.get_config("platform_settings.telegram")
+    if isinstance(settings, dict):
+        return settings
+    return {}
+
+
+def _bool_setting(settings: dict[str, Any], key: str, default: bool) -> bool:
+    value = settings.get(key)
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"true", "1", "yes", "on"}:
+            return True
+        if lowered in {"false", "0", "no", "off"}:
+            return False
+    return default
+
+
+def _build_registration_entities(
+    message: str,
+    registration_value: Any,
+    registration_url: str | None,
+) -> list[MessageEntity] | None:
+    if not (registration_url and message):
+        return None
+
+    normalized = str(registration_value or "").strip()
+    if not normalized or normalized.lower() in _NULLISH_REG_VALUES:
+        return None
+
+    offset = message.find(normalized)
+    if offset == -1:
+        return None
+
+    return [
+        MessageEntity(
+            type=MessageEntityType.TEXT_LINK,
+            offset=offset,
+            length=len(normalized),
+            url=registration_url,
+        )
+    ]
+
+
 async def send_flight_update(
     chat_id: str,
     flight_data: dict[str, Any],
     image_path: str | None = None,
     message_text: str | None = None,
     flight_url: str | None = None,
+    registration_url: str | None = None,
 ) -> None:
     application = get_application()
     if application is None:
@@ -375,6 +518,17 @@ async def send_flight_update(
 
     message = message_text or generate_flight_message(flight_data)
     url = _flight_url(flight_data, fallback_url=flight_url)
+    settings = _get_telegram_settings()
+    notifications_enabled = _bool_setting(settings, "notifications_enabled", True)
+    registration_links_enabled = _bool_setting(settings, "registration_link_enabled", True)
+    if registration_links_enabled:
+        entities = _build_registration_entities(
+            message,
+            flight_data.get("registration"),
+            registration_url,
+        )
+    else:
+        entities = None
     retries = 3
     flight_name = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
 
@@ -383,14 +537,18 @@ async def send_flight_update(
             started = time.perf_counter()
             if image_path and Path(image_path).exists() and flight_data.get("registration") not in (None, "null"):
                 with open(image_path, "rb") as photo_file:
-                    await application.bot.send_photo(
-                        chat_id=chat_id,
-                        photo=photo_file,
-                        caption=message,
-                        reply_markup={
+                    photo_kwargs = {
+                        "chat_id": chat_id,
+                        "photo": photo_file,
+                        "caption": message,
+                        "reply_markup": {
                             "inline_keyboard": [[{"text": "Flightradar", "url": url}]],
                         },
-                    )
+                        "disable_notification": not notifications_enabled,
+                    }
+                    if entities is not None:
+                        photo_kwargs["caption_entities"] = entities
+                    await application.bot.send_photo(**photo_kwargs)
                 record_api_event(
                     provider="telegram",
                     endpoint="POST /bot/sendPhoto",
@@ -401,14 +559,18 @@ async def send_flight_update(
                     estimated_cost_usd=0.0,
                 )
             else:
-                await application.bot.send_message(
-                    chat_id=chat_id,
-                    text=message,
-                    disable_web_page_preview=True,
-                    reply_markup={
+                message_kwargs = {
+                    "chat_id": chat_id,
+                    "text": message,
+                    "disable_web_page_preview": True,
+                    "reply_markup": {
                         "inline_keyboard": [[{"text": "Flightradar", "url": url}]],
                     },
-                )
+                    "disable_notification": not notifications_enabled,
+                }
+                if entities is not None:
+                    message_kwargs["entities"] = entities
+                await application.bot.send_message(**message_kwargs)
                 record_api_event(
                     provider="telegram",
                     endpoint="POST /bot/sendMessage",
@@ -455,6 +617,7 @@ async def schedule_telegram(
     image_path: str | None = None,
     message_text: str | None = None,
     flight_url: str | None = None,
+    registration_url: str | None = None,
 ):
     chat_id = os.getenv("TELEGRAM_CHAT_ID", "-1002116996158")
     flight_name = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
@@ -479,6 +642,7 @@ async def schedule_telegram(
                 image_path=image_path,
                 message_text=message_text,
                 flight_url=flight_url,
+                registration_url=registration_url,
             )
         except asyncio.CancelledError:
             logger.warning(f"Telegram task for flight {flight_name} was cancelled")
@@ -494,5 +658,6 @@ async def send_message(context: MessageContext, image_path: str | None = None) -
         image_path=image_path,
         message_text=context.text,
         flight_url=context.flight_url,
+        registration_url=context.registration_url,
     )
     await task
