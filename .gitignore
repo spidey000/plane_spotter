@@ -28,6 +28,33 @@ ENV/
 env.bak/
 venv.bak/
 
+# Secrets
+*.env
+.env.*
+*.key
+*.pem
+*.pfx
+*.p12
+*.cer
+*.crt
+*.der
+*.jks
+*.kdbx
+*.p8
+*.mobileprovision
+*.keystore
+*.secret
+*.secrets
+*.token
+*.pat
+*.cred
+*.creds
+*.vault
+*.password
+*.psk
+secrets/
+config/secrets/
+
 # Logs
 *.log
 logs/
