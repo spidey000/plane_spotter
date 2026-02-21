@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import Any
 
 from loguru import logger
@@ -34,7 +35,7 @@ def _parse_datetime(value: Any) -> datetime:
             parsed = datetime.fromisoformat(normalized)
             if parsed.tzinfo is None:
                 return parsed
-            return parsed.astimezone(timezone.utc).replace(tzinfo=None)
+            return parsed.astimezone(ZoneInfo("Europe/Madrid")).replace(tzinfo=None)
         except ValueError:
             pass
 
@@ -118,6 +119,12 @@ def get_valid_value(flight, keys, default="null"):
     """Returns the first non-null and non-'null' value from the flight dictionary."""
     return next((flight.get(k) for k in keys if flight.get(k) not in [None, "null"]), default)
 
+
+def _select_best_event_time(flight: dict[str, Any], keys: list[str]) -> Any:
+    """Select the best available event timestamp using ordered AeroAPI fallbacks."""
+    return get_valid_value(flight, keys)
+
+
 def process_flight_data_aeroapi(flight):
     try:
         registration = flight["registration"]
@@ -128,13 +135,33 @@ def process_flight_data_aeroapi(flight):
     is_departure = flight.get("origin", {}).get("code_icao") == "LEMD"
     
     if is_departure:
-        scheduled_time = get_valid_value(flight, ["actual_out", "estimated_out", "scheduled_out"])
+        scheduled_time = _select_best_event_time(
+            flight,
+            [
+                "actual_out",
+                "estimated_out",
+                "scheduled_out",
+                "actual_off",
+                "estimated_off",
+                "scheduled_off",
+            ],
+        )
         terminal = flight.get("terminal_origin", "null")
         origin_icao, origin_name = "LEMD", "Madrid"
         destination_icao = flight.get("destination", {}).get("code_icao", "null")
         destination_name = flight.get("destination", {}).get("name", "null")
     else:
-        scheduled_time = get_valid_value(flight, ["actual_out", "estimated_off", "scheduled_off"])
+        scheduled_time = _select_best_event_time(
+            flight,
+            [
+                "actual_in",
+                "estimated_in",
+                "scheduled_in",
+                "actual_on",
+                "estimated_on",
+                "scheduled_on",
+            ],
+        )
         terminal = flight.get("terminal_destination", "null")
         origin_icao = flight.get("origin", {}).get("code_icao", "null")
         origin_name = flight.get("origin", {}).get("name", "null")
