@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
-from zoneinfo import ZoneInfo
+from datetime import datetime, timezone
 from typing import Any
 
 from loguru import logger
@@ -35,7 +34,7 @@ def _parse_datetime(value: Any) -> datetime:
             parsed = datetime.fromisoformat(normalized)
             if parsed.tzinfo is None:
                 return parsed
-            return parsed.astimezone(ZoneInfo("Europe/Madrid")).replace(tzinfo=None)
+            return parsed.astimezone(timezone.utc)
         except ValueError:
             pass
 
