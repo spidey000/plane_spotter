@@ -24,6 +24,16 @@ def is_admin(user_id: int) -> bool:
     return str(user_id) == os.getenv("ADMIN_USER_ID")
 
 
+SUPPORTED_SOCIAL_TOGGLES = (
+    "telegram",
+    "bluesky",
+    "twitter",
+    "threads",
+    "instagram",
+    "linkedin",
+)
+
+
 def _build_help_text(admin_user: bool) -> str:
     lines = [
         "Plane Spotter Bot - HELP",
@@ -47,6 +57,7 @@ def _build_help_text(admin_user: bool) -> str:
         [
             "",
             "Comandos de configuracion (ADMIN):",
+            "- /toggle <on|off> <platform>",
             "- /config_get <key>",
             "- /config_set <key> <value>",
             "- /config_list",
@@ -61,11 +72,16 @@ def _build_help_text(admin_user: bool) -> str:
             "Plataformas validas:",
             "- telegram, bluesky, twitter, threads, instagram, linkedin",
             "",
+            "Toggle rapido de redes:",
+            "- /toggle off twitter",
+            "- /toggle on threads",
+            "",
             "Ejemplos:",
             "- /profile_set twitter short",
             "- /profile_set telegram long",
             "- /profile_get telegram",
             "- /profile_preview telegram image",
+            "- /toggle off twitter",
             "- /config_set message_policy.defaults.overflow_action block",
         ]
     )
@@ -92,6 +108,7 @@ def _build_help_tech_text(admin_user: bool) -> str:
         "Plane Spotter Bot - HELP TECH",
         "",
         "1) Comandos de configuracion base:",
+        "- /toggle <on|off> <platform>",
         "- /config_get <key>",
         "- /config_set <key> <value>",
         "- /config_list",
@@ -108,6 +125,7 @@ def _build_help_tech_text(admin_user: bool) -> str:
         "",
         "4) Flujos recomendados:",
         "- Ver estado actual: /profile_list",
+        "- Activar/desactivar red: /toggle off twitter",
         "- Ajustar una red: /profile_set twitter short",
         "- Validar limites: /profile_get twitter",
         "- Probar resultado: /profile_preview twitter",
@@ -187,6 +205,37 @@ async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     try:
         cfg.save_config(cfg.DEFAULT_CONFIG)
         await update.message.reply_text("Configuracion restablecida a valores por defecto")
+    except Exception as exc:
+        await update.message.reply_text(f"Error: {exc}")
+
+
+def _parse_toggle_args(args: list[str]) -> tuple[bool, str]:
+    if len(args) < 2:
+        raise ValueError("Uso: /toggle <on|off> <platform>")
+
+    action = str(args[0]).strip().lower()
+    platform = str(args[1]).strip().lower()
+
+    if action not in {"on", "off"}:
+        raise ValueError("Accion invalida. Usa on u off")
+
+    if platform not in SUPPORTED_SOCIAL_TOGGLES:
+        valid_platforms = ", ".join(SUPPORTED_SOCIAL_TOGGLES)
+        raise ValueError(f"Plataforma invalida: {platform}. Validas: {valid_platforms}")
+
+    return action == "on", platform
+
+
+async def toggle_social(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not is_admin(update.message.from_user.id):
+        await update.message.reply_text("Acceso denegado")
+        return
+
+    try:
+        enabled, platform = _parse_toggle_args(context.args)
+        cfg.update_config(f"social_networks.{platform}", enabled)
+        state = "activada" if enabled else "desactivada"
+        await update.message.reply_text(f"{platform} {state}")
     except Exception as exc:
         await update.message.reply_text(f"Error: {exc}")
 
@@ -341,6 +390,8 @@ def _create_application():
     app.add_handler(CommandHandler("help_tech", help_tech_command))
     app.add_handler(CommandHandler("help_tecnico", help_tech_command))
     app.add_handler(CommandHandler("config_set", config_set))
+    app.add_handler(CommandHandler("toggle", toggle_social))
+    app.add_handler(CommandHandler("Toggle", toggle_social))
     app.add_handler(CommandHandler("config_get", config_get))
     app.add_handler(CommandHandler("config_list", config_list))
     app.add_handler(CommandHandler("config_reset", config_reset))
