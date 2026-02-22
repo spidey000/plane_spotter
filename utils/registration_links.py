@@ -14,8 +14,8 @@ _NULLISH_REGISTRATIONS = {"", "null", "none"}
 
 
 _PROVIDER_GALLERY_URLS: dict[str, str] = {
-    PROVIDER_JETPHOTOS: "https://www.jetphotos.com/registration/{registration}",
-    PROVIDER_PLANESPOTTERS: "https://www.planespotters.net/registration/{registration}",
+    PROVIDER_JETPHOTOS: "https://www.planespotters.net/search?q={registration}",
+    PROVIDER_PLANESPOTTERS: "https://www.planespotters.net/search?q={registration}",
 }
 
 

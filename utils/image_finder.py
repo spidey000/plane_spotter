@@ -4,6 +4,7 @@ import random
 import threading
 import time
 from dataclasses import dataclass
+import json
 from typing import Any
 from urllib.parse import urlparse
 
@@ -201,7 +202,7 @@ def _endpoint_for(provider: str) -> str:
     if provider == JETPHOTOS_PROVIDER:
         return "GET /jetphotos/showphotos.php"
     if provider == PLANESPOTTERS_PROVIDER:
-        return "GET /planespotters/photos/reg/{registration}"
+        return "GET /api.planespotters.net/pub/photos/reg/{registration}"
     return "GET /image-search"
 
 
@@ -410,6 +411,58 @@ def _parse_planespotters_image_url(html_text: str, registration: str) -> str | N
     )
 
 
+def _extract_first_planespotters_photo(item: Any) -> str | None:
+    if not isinstance(item, dict):
+        return None
+
+    candidate_keys = (
+        "image_high",
+        "image",
+        "thumbnail_large",
+        "thumbnail",
+        "src",
+        "url",
+    )
+    for key in candidate_keys:
+        value = item.get(key)
+        if isinstance(value, str):
+            normalized = _normalize_image_url(value, base_url="https://www.planespotters.net")
+            if normalized:
+                return normalized
+        if isinstance(value, dict):
+            for nested_key in ("src", "url"):
+                nested_value = value.get(nested_key)
+                if isinstance(nested_value, str):
+                    normalized = _normalize_image_url(nested_value, base_url="https://www.planespotters.net")
+                    if normalized:
+                        return normalized
+    return None
+
+
+def _parse_planespotters_api_image_url(payload_text: str) -> str | None:
+    try:
+        payload = json.loads(payload_text)
+    except json.JSONDecodeError:
+        return None
+
+    if not isinstance(payload, dict):
+        return None
+
+    photos = payload.get("photos")
+    if not isinstance(photos, list) or not photos:
+        return None
+
+    latest_photo = photos[0]
+    image_url = _extract_first_planespotters_photo(latest_photo)
+    if not image_url:
+        return None
+
+    if not _host_matches(image_url, ("cdn.planespotters.net", "planespotters.net", "t.plnspttrs.net", "plnspttrs.net")):
+        return None
+
+    return image_url
+
+
 def _request_with_retry(
     *,
     provider: str,
@@ -575,20 +628,36 @@ def _lookup_provider_image_url(provider: str, registration: str, config: dict[st
     if provider == PLANESPOTTERS_PROVIDER:
         request_result = _request_with_retry(
             provider=provider,
+            request_url=f"https://api.planespotters.net/pub/photos/reg/{registration}",
+            params={},
+            headers=_build_headers(referer="https://api.planespotters.net/", user_agent=config["user_agent"]),
+            registration=registration,
+            config=config,
+        )
+        if request_result.url:
+            parsed_url = _parse_planespotters_api_image_url(request_result.url)
+            if not parsed_url:
+                parsed_url = _parse_planespotters_image_url(request_result.url, registration)
+            if parsed_url:
+                _cache_set(cache_key, parsed_url, config["positive_cache_ttl_seconds"])
+                return LookupResult(url=parsed_url, reason="ok")
+
+        fallback_result = _request_with_retry(
+            provider=provider,
             request_url=f"https://www.planespotters.net/photos/reg/{registration}",
             params={"sort": "latest"},
             headers=_build_headers(referer="https://www.planespotters.net/", user_agent=config["user_agent"]),
             registration=registration,
             config=config,
         )
-        if request_result.url:
-            parsed_url = _parse_planespotters_image_url(request_result.url, registration)
+        if fallback_result.url:
+            parsed_url = _parse_planespotters_image_url(fallback_result.url, registration)
             if parsed_url:
                 _cache_set(cache_key, parsed_url, config["positive_cache_ttl_seconds"])
                 return LookupResult(url=parsed_url, reason="ok")
 
         _cache_set(cache_key, None, config["negative_cache_ttl_seconds"])
-        return LookupResult(url=None, reason=request_result.reason or "no_image")
+        return LookupResult(url=None, reason=fallback_result.reason or request_result.reason or "no_image")
 
     return LookupResult(url=None, reason="unsupported_provider")
 
