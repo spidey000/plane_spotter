@@ -167,6 +167,60 @@ def test_planespotters_prefers_matching_registration_from_photo_links(monkeypatc
     assert url == "https://t.plnspttrs.net/22222/target_280.jpg"
 
 
+def test_planespotters_api_payload_is_primary_source(monkeypatch) -> None:
+    _patch_runtime(monkeypatch)
+    _patch_image_finder_config(monkeypatch)
+
+    scraper = FakeScraper(
+        [
+            FakeResponse(
+                status_code=200,
+                text=(
+                    '{"photos": ['
+                    '{"thumbnail_large": {"src": "https://cdn.planespotters.net/33333/latest_280.jpg"}},'
+                    '{"thumbnail_large": {"src": "https://cdn.planespotters.net/22222/older_280.jpg"}}'
+                    ']}'
+                ),
+            )
+        ]
+    )
+    monkeypatch.setattr(image_finder.cloudscraper, "create_scraper", lambda: scraper)
+
+    url = image_finder.get_first_image_url_pp("EC-API")
+
+    assert url == "https://cdn.planespotters.net/33333/latest_280.jpg"
+    assert len(scraper.calls) == 1
+    assert scraper.calls[0]["url"] == "https://api.planespotters.net/pub/photos/reg/EC-API"
+    assert scraper.calls[0]["params"] == {}
+
+
+def test_planespotters_falls_back_to_legacy_html_when_api_fails(monkeypatch) -> None:
+    _patch_runtime(monkeypatch)
+    _patch_image_finder_config(monkeypatch, max_retries=1)
+
+    scraper = FakeScraper(
+        [
+            FakeResponse(status_code=500, text="server-error"),
+            FakeResponse(
+                status_code=200,
+                text=(
+                    '<a href="/photo/2/ec-mlp">'
+                    '<img src="https://t.plnspttrs.net/22222/fallback.jpg" alt="EC-MLP"/>'
+                    "</a>"
+                ),
+            ),
+        ]
+    )
+    monkeypatch.setattr(image_finder.cloudscraper, "create_scraper", lambda: scraper)
+
+    url = image_finder.get_first_image_url_pp("EC-MLP")
+
+    assert url == "https://t.plnspttrs.net/22222/fallback.jpg"
+    assert len(scraper.calls) == 2
+    assert scraper.calls[0]["url"] == "https://api.planespotters.net/pub/photos/reg/EC-MLP"
+    assert scraper.calls[1]["url"] == "https://www.planespotters.net/photos/reg/EC-MLP"
+
+
 def test_provider_cooldown_skips_second_request(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch, negative_cache_ttl_seconds=0, max_retries=1)

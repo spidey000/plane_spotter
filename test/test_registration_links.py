@@ -2,12 +2,16 @@ from socials.bluesky import _build_registration_facets
 from utils.registration_links import resolve_registration_gallery_url
 
 
-def test_resolve_registration_gallery_url_defaults_to_jetphotos():
-    assert resolve_registration_gallery_url("ec-xyz") == "https://www.jetphotos.com/registration/EC-XYZ"
+def test_resolve_registration_gallery_url_defaults_to_jetphotos_keyword_search():
+    assert resolve_registration_gallery_url("ec-xyz") == "https://www.jetphotos.com/photo/keyword/EC-XYZ"
 
 
 def test_resolve_registration_gallery_url_for_planespotters():
-    assert resolve_registration_gallery_url("ec-xyz", provider="planespotters") == "https://www.planespotters.net/registration/EC-XYZ"
+    assert resolve_registration_gallery_url("ec-xyz", provider="planespotters") == "https://www.planespotters.net/search?q=EC-XYZ"
+
+
+def test_resolve_registration_gallery_url_for_jetphotos():
+    assert resolve_registration_gallery_url("ec-xyz", provider="jetphotos") == "https://www.jetphotos.com/photo/keyword/EC-XYZ"
 
 
 def test_resolve_registration_gallery_url_invalid_registration_returns_none():

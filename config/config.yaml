@@ -34,8 +34,8 @@ platform_settings:
 image_finder:
   enabled: true
   providers:
-    - jetphotos
     - planespotters
+    - jetphotos
   request_timeout_seconds: 15
   max_retries: 3
   base_delay_seconds: 1.5

@@ -29,7 +29,7 @@ import os
 
 PlatformSender = Callable[[MessageContext, str | None], Awaitable[None]]
 
-_DEFAULT_IMAGE_PROVIDER_ORDER = ("jetphotos", "planespotters")
+_DEFAULT_IMAGE_PROVIDER_ORDER = ("planespotters", "jetphotos")
 
 
 def _build_sender_registry() -> dict[str, PlatformSender]:
