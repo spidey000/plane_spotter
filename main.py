@@ -194,8 +194,8 @@ async def run_periodically():
     interval_seconds = int(cfg.get_config("execution.interval") or ((2 * 60 * 60) - 600))
 
     try:
-        await tg.ensure_command_listener()
         while True:
+            await tg.ensure_command_listener()
             await main(all_flights)
             next_round = datetime.now() + timedelta(seconds=interval_seconds)
             logger.info("Next round at " + next_round.strftime("%Y-%m-%d %H:%M"))

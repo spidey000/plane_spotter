@@ -319,6 +319,7 @@ async def profile_preview(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 _application = None
 _listener_task: asyncio.Task | None = None
 _listener_lock: asyncio.Lock | None = None
+_COMMAND_LISTENER_RESTART_DELAY_SECONDS = 5
 
 
 def _create_application():
@@ -372,32 +373,42 @@ async def _run_command_listener(application):
         return
 
     logger.info("Starting Telegram command listener")
-    try:
-        await application.initialize()
-        await application.start()
-        await application.updater.start_polling(drop_pending_updates=True)
-        logger.info("Telegram command listener running")
-        stop_future = asyncio.get_running_loop().create_future()
-        await stop_future
-    except asyncio.CancelledError:
-        logger.info("Telegram command listener cancellation requested")
-        raise
-    finally:
+    while True:
         try:
-            if application.updater and application.updater.running:
-                await application.updater.stop()
+            await application.initialize()
+            await application.start()
+            await application.updater.start_polling(drop_pending_updates=True)
+            logger.info("Telegram command listener running")
+            stop_future = asyncio.get_running_loop().create_future()
+            await stop_future
+        except asyncio.CancelledError:
+            logger.info("Telegram command listener cancellation requested")
+            raise
+        except telegram.error.TelegramError as exc:
+            logger.error(f"Telegram command listener failed with TelegramError: {exc}")
         except Exception as exc:
-            logger.warning(f"Unable to stop Telegram updater cleanly: {exc}")
-        try:
-            if application.running:
-                await application.stop()
-        except Exception as exc:
-            logger.warning(f"Unable to stop Telegram application cleanly: {exc}")
-        try:
-            await application.shutdown()
-        except Exception as exc:
-            logger.warning(f"Unable to shutdown Telegram application cleanly: {exc}")
-        logger.info("Telegram command listener stopped")
+            logger.exception(f"Telegram command listener failed unexpectedly: {exc}")
+        finally:
+            try:
+                if application.updater and application.updater.running:
+                    await application.updater.stop()
+            except Exception as exc:
+                logger.warning(f"Unable to stop Telegram updater cleanly: {exc}")
+            try:
+                if application.running:
+                    await application.stop()
+            except Exception as exc:
+                logger.warning(f"Unable to stop Telegram application cleanly: {exc}")
+            try:
+                await application.shutdown()
+            except Exception as exc:
+                logger.warning(f"Unable to shutdown Telegram application cleanly: {exc}")
+
+        logger.warning(
+            "Telegram command listener stopped unexpectedly; restarting in "
+            f"{_COMMAND_LISTENER_RESTART_DELAY_SECONDS} seconds"
+        )
+        await asyncio.sleep(_COMMAND_LISTENER_RESTART_DELAY_SECONDS)
 
 
 async def ensure_command_listener() -> asyncio.Task | None:
@@ -653,11 +664,10 @@ async def schedule_telegram(
 
 
 async def send_message(context: MessageContext, image_path: str | None = None) -> None:
-    task = await schedule_telegram(
+    await schedule_telegram(
         context.flight_data,
         image_path=image_path,
         message_text=context.text,
         flight_url=context.flight_url,
         registration_url=context.registration_url,
     )
-    await task
