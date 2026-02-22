@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import io
 import os
 import time
 from datetime import datetime, timedelta
@@ -519,6 +520,7 @@ async def send_flight_update(
     chat_id: str,
     flight_data: dict[str, Any],
     image_path: str | None = None,
+    image_bytes: bytes | None = None,
     message_text: str | None = None,
     flight_url: str | None = None,
     registration_url: str | None = None,
@@ -546,11 +548,18 @@ async def send_flight_update(
     for attempt in range(retries):
         try:
             started = time.perf_counter()
-            if image_path and Path(image_path).exists() and flight_data.get("registration") not in (None, "null"):
-                with open(image_path, "rb") as photo_file:
+            send_photo = flight_data.get("registration") not in (None, "null") and (
+                image_bytes is not None or (image_path and Path(image_path).exists())
+            )
+            if send_photo:
+                if image_bytes is not None:
+                    photo = telegram.InputFile(
+                        io.BytesIO(image_bytes),
+                        filename=Path(image_path).name if image_path else "flight.jpg",
+                    )
                     photo_kwargs = {
                         "chat_id": chat_id,
-                        "photo": photo_file,
+                        "photo": photo,
                         "caption": message,
                         "reply_markup": {
                             "inline_keyboard": [[{"text": "Flightradar", "url": url}]],
@@ -560,6 +569,20 @@ async def send_flight_update(
                     if entities is not None:
                         photo_kwargs["caption_entities"] = entities
                     await application.bot.send_photo(**photo_kwargs)
+                else:
+                    with open(image_path, "rb") as photo_file:
+                        photo_kwargs = {
+                            "chat_id": chat_id,
+                            "photo": photo_file,
+                            "caption": message,
+                            "reply_markup": {
+                                "inline_keyboard": [[{"text": "Flightradar", "url": url}]],
+                            },
+                            "disable_notification": not notifications_enabled,
+                        }
+                        if entities is not None:
+                            photo_kwargs["caption_entities"] = entities
+                        await application.bot.send_photo(**photo_kwargs)
                 record_api_event(
                     provider="telegram",
                     endpoint="POST /bot/sendPhoto",
@@ -634,6 +657,13 @@ async def schedule_telegram(
     flight_name = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
     logger.info(f"Scheduling Telegram message for flight {flight_name}")
 
+    cached_image_bytes: bytes | None = None
+    if image_path and Path(image_path).exists():
+        try:
+            cached_image_bytes = Path(image_path).read_bytes()
+        except Exception as exc:
+            logger.warning(f"Failed to cache image for delayed Telegram send ({image_path}): {exc}")
+
     async def send_message_task() -> None:
         try:
             scheduled_time = datetime.strptime(str(flight_data["scheduled_time"]), "%Y-%m-%d %H:%M")
@@ -651,6 +681,7 @@ async def schedule_telegram(
                 chat_id=chat_id,
                 flight_data=flight_data,
                 image_path=image_path,
+                image_bytes=cached_image_bytes,
                 message_text=message_text,
                 flight_url=flight_url,
                 registration_url=registration_url,
