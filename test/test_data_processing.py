@@ -13,7 +13,8 @@ def test_aeroapi_arrival_uses_arrival_eta_fields_instead_of_origin_schedule():
     result = process_flight_data_aeroapi(flight)
 
     assert result is not None
-    assert result["scheduled_time"].strftime("%Y-%m-%d %H:%M") == "2025-02-12 13:30"
+    assert result["scheduled_time"].strftime("%Y-%m-%d %H:%M") == "2025-02-12 12:30"
+    assert result["scheduled_time"].tzinfo is not None
 
 
 def test_aeroapi_departure_prefers_actual_then_estimated_then_scheduled():
@@ -29,7 +30,7 @@ def test_aeroapi_departure_prefers_actual_then_estimated_then_scheduled():
     result = process_flight_data_aeroapi(flight)
 
     assert result is not None
-    assert result["scheduled_time"].strftime("%Y-%m-%d %H:%M") == "2025-02-12 11:40"
+    assert result["scheduled_time"].strftime("%Y-%m-%d %H:%M") == "2025-02-12 10:40"
 
 
 def test_aeroapi_arrival_falls_back_to_scheduled_in_when_no_estimated_or_actual():
@@ -43,4 +44,4 @@ def test_aeroapi_arrival_falls_back_to_scheduled_in_when_no_estimated_or_actual(
     result = process_flight_data_aeroapi(flight)
 
     assert result is not None
-    assert result["scheduled_time"].strftime("%Y-%m-%d %H:%M") == "2025-02-12 22:00"
+    assert result["scheduled_time"].strftime("%Y-%m-%d %H:%M") == "2025-02-12 21:00"
