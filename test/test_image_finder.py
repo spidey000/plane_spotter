@@ -68,6 +68,17 @@ def _patch_runtime(monkeypatch) -> None:
     monkeypatch.setattr(image_finder, "record_api_event", lambda **_: None)
 
 
+def _patch_planespotters_hero(monkeypatch, return_value: str | None = None):
+    calls: list[str] = []
+
+    def fake(photo_url, _config):
+        calls.append(photo_url)
+        return return_value or photo_url
+
+    monkeypatch.setattr(image_finder, "_fetch_planespotters_photo_page_image", fake)
+    return calls
+
+
 def test_jp_retries_429_then_returns_full_size(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
@@ -95,6 +106,7 @@ def test_jp_retries_429_then_returns_full_size(monkeypatch) -> None:
 def test_planespotters_uses_largest_srcset_candidate(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
+    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
@@ -142,6 +154,7 @@ def test_jetphotos_prefers_image_matching_registration(monkeypatch) -> None:
 def test_planespotters_prefers_matching_registration_from_photo_links(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
+    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
@@ -170,6 +183,7 @@ def test_planespotters_prefers_matching_registration_from_photo_links(monkeypatc
 def test_planespotters_api_payload_is_primary_source(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
+    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
@@ -197,6 +211,7 @@ def test_planespotters_api_payload_is_primary_source(monkeypatch) -> None:
 def test_planespotters_falls_back_to_legacy_html_when_api_fails(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch, max_retries=1)
+    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
