@@ -4,7 +4,7 @@ import asyncio
 import io
 import os
 import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -818,58 +818,13 @@ async def send_flight_update(
             raise
 
 
-async def schedule_telegram(
-    flight_data: dict[str, Any],
-    image_path: str | None = None,
-    message_text: str | None = None,
-    flight_url: str | None = None,
-    registration_url: str | None = None,
-):
-    chat_id = os.getenv("TELEGRAM_CHAT_ID", "-1002116996158")
-    flight_name = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
-    logger.info(f"Scheduling Telegram message for flight {flight_name}")
-
-    cached_image_bytes: bytes | None = None
-    if image_path and Path(image_path).exists():
-        try:
-            cached_image_bytes = Path(image_path).read_bytes()
-        except Exception as exc:
-            logger.warning(f"Failed to cache image for delayed Telegram send ({image_path}): {exc}")
-
-    async def send_message_task() -> None:
-        try:
-            scheduled_time = datetime.strptime(str(flight_data["scheduled_time"]), "%Y-%m-%d %H:%M")
-            send_time = scheduled_time - timedelta(hours=2)
-            delay_seconds = (send_time - datetime.now()).total_seconds()
-
-            if delay_seconds < 0:
-                logger.warning(f"Scheduled time for flight {flight_name} is in the past, sending immediately")
-                delay_seconds = 0
-
-            if delay_seconds > 0:
-                await asyncio.sleep(delay_seconds)
-
-            await send_flight_update(
-                chat_id=chat_id,
-                flight_data=flight_data,
-                image_path=image_path,
-                image_bytes=cached_image_bytes,
-                message_text=message_text,
-                flight_url=flight_url,
-                registration_url=registration_url,
-            )
-        except asyncio.CancelledError:
-            logger.warning(f"Telegram task for flight {flight_name} was cancelled")
-        except Exception as exc:
-            logger.error(f"Failed to schedule Telegram message for flight {flight_name}: {exc}")
-
-    return asyncio.create_task(send_message_task())
-
-
 async def send_message(context: MessageContext, image_path: str | None = None) -> None:
-    await schedule_telegram(
-        context.flight_data,
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "-1002116996158")
+    await send_flight_update(
+        chat_id=chat_id,
+        flight_data=context.flight_data,
         image_path=image_path,
+        image_bytes=None,
         message_text=context.text,
         flight_url=context.flight_url,
         registration_url=context.registration_url,
