@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 import telegram.error
 from loguru import logger
 from telegram import MessageEntity, Update
@@ -32,6 +34,10 @@ SUPPORTED_SOCIAL_TOGGLES = (
     "instagram",
     "linkedin",
 )
+
+CONFIG_LIST_CHUNK_SIZE = 3500
+CONFIG_LIST_MAX_TEXT_CHUNKS = 5
+CONFIG_LIST_DEFAULT_FILENAME = "config.yaml"
 
 
 def _build_help_text(admin_user: bool) -> str:
@@ -185,16 +191,131 @@ async def config_get(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
         await update.message.reply_text(f"Error: {exc}")
 
 
+def _chunk_text(text: str, limit: int | None = None) -> list[str]:
+    if limit is None:
+        limit = CONFIG_LIST_CHUNK_SIZE
+    if limit <= 0:
+        raise ValueError("Chunk size must be positive")
+    if not text:
+        return []
+
+    chunks: list[str] = []
+    start = 0
+    length = len(text)
+    while start < length:
+        end = min(start + limit, length)
+        split_point = end
+        if end < length:
+            newline_index = text.rfind("\n", start, end)
+            if newline_index > start:
+                split_point = newline_index
+
+        if split_point == start:
+            split_point = end
+
+        chunk = text[start:split_point]
+        if chunk:
+            chunks.append(chunk.rstrip())
+        start = split_point
+        while start < length and text[start] == "\n":
+            start += 1
+
+    return [chunk for chunk in chunks if chunk]
+
+
+def _select_config_section(config: Any, key_path: str | None) -> Any:
+    if not key_path:
+        return config
+
+    current: Any = config
+    for segment in key_path.split('.'):
+        if isinstance(current, dict):
+            if segment not in current:
+                raise KeyError(segment)
+            current = current[segment]
+        elif isinstance(current, list):
+            try:
+                index = int(segment)
+            except ValueError as exc:
+                raise KeyError(segment) from exc
+            if index < 0 or index >= len(current):
+                raise IndexError(segment)
+            current = current[index]
+        else:
+            raise KeyError(segment)
+
+    return current
+
+
+def _serialize_config_section(section: Any) -> str:
+    return yaml.safe_dump(section, sort_keys=False, allow_unicode=False)
+
+
+def _format_config_header(key_path: str | None) -> str:
+    return f"Configuracion actual ({key_path})" if key_path else "Configuracion actual"
+
+
+def _build_config_filename(key_path: str | None) -> str:
+    if not key_path:
+        return CONFIG_LIST_DEFAULT_FILENAME
+    sanitized = key_path.replace('.', '_').replace('/', '_').strip('_')
+    return f"{sanitized or 'config'}.yaml"
+
+
+def _should_send_document(chunks: list[str]) -> bool:
+    return len(chunks) > CONFIG_LIST_MAX_TEXT_CHUNKS
+
+
+def _truncate_caption(text: str, limit: int = 1024) -> str:
+    if len(text) <= limit:
+        return text
+    return text[: max(0, limit - 3)].rstrip() + "..."
+
+
+async def _reply_config_payload(message, serialized: str, key_path: str | None) -> None:
+    header = _format_config_header(key_path)
+    formatted = f"{header}:\n{serialized}".strip()
+    chunks = _chunk_text(formatted)
+    if not chunks:
+        chunks = [header]
+
+    if not _should_send_document(chunks):
+        for chunk in chunks:
+            await message.reply_text(chunk)
+        return
+
+    buffer = io.BytesIO(serialized.encode('utf-8'))
+    buffer.name = _build_config_filename(key_path)
+    buffer.seek(0)
+    await message.reply_document(
+        buffer,
+        filename=buffer.name,
+        caption=_truncate_caption(header),
+    )
+
+
 async def config_list(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not is_admin(update.message.from_user.id):
         await update.message.reply_text("Acceso denegado")
         return
 
+    args = getattr(context, "args", None) or []
+    key_path = args[0].strip() if args else None
+    if key_path == "":
+        key_path = None
+
     try:
         config = cfg.load_config()
-        await update.message.reply_text(f"Configuracion actual:\n{config}")
+        section = _select_config_section(config, key_path)
+        serialized = _serialize_config_section(section)
+    except (IndexError, KeyError, ValueError):
+        await update.message.reply_text(f"Clave invalida: {key_path}")
+        return
     except Exception as exc:
         await update.message.reply_text(f"Error: {exc}")
+        return
+
+    await _reply_config_payload(update.message, serialized, key_path)
 
 
 async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
