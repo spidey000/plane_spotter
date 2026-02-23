@@ -411,6 +411,71 @@ def _parse_planespotters_image_url(html_text: str, registration: str) -> str | N
     )
 
 
+def _base_url_for(url: str, fallback: str) -> str:
+    parsed = urlparse(url)
+    if parsed.scheme and parsed.netloc:
+        return f"{parsed.scheme}://{parsed.netloc}"
+    return fallback
+
+
+def _parse_planespotters_photo_page_image_url(html_text: str, *, page_url: str) -> str | None:
+    soup = _parse_html(html_text)
+    hero_image = soup.select_one("img.photo_large__photo_img")
+    src = _extract_image_src(hero_image)
+    if not src:
+        return None
+    return _normalize_image_url(src, base_url=_base_url_for(page_url, "https://www.planespotters.net"))
+
+
+def _fetch_planespotters_photo_page_image(photo_url: str, config: dict[str, Any]) -> str | None:
+    normalized_photo_url = _normalize_image_url(photo_url, base_url="https://www.planespotters.net")
+    if not normalized_photo_url:
+        return None
+
+    headers = _build_headers(referer="https://www.planespotters.net/", user_agent=config["user_agent"])
+    scraper = cloudscraper.create_scraper()
+    started = time.perf_counter()
+    try:
+        response = scraper.get(
+            normalized_photo_url,
+            headers=headers,
+            timeout=config["request_timeout_seconds"],
+        )
+        duration_ms = (time.perf_counter() - started) * 1000.0
+    except Exception as exc:
+        duration_ms = (time.perf_counter() - started) * 1000.0
+        _record_image_event(
+            PLANESPOTTERS_PROVIDER,
+            "GET /photo/detail",
+            None,
+            False,
+            duration_ms,
+            error=str(exc),
+            metadata={"photo_url": normalized_photo_url},
+        )
+        return None
+
+    success = response.status_code == 200
+    _record_image_event(
+        PLANESPOTTERS_PROVIDER,
+        "GET /photo/detail",
+        response.status_code,
+        success,
+        duration_ms,
+        metadata={"photo_url": normalized_photo_url},
+    )
+
+    if not success:
+        return None
+
+    if _contains_antibot_challenge(response.text):
+        return None
+
+    return _parse_planespotters_photo_page_image_url(response.text, page_url=normalized_photo_url)
+
+
+
+
 def _extract_first_planespotters_photo(item: Any) -> str | None:
     if not isinstance(item, dict):
         return None
@@ -635,12 +700,20 @@ def _lookup_provider_image_url(provider: str, registration: str, config: dict[st
             config=config,
         )
         if request_result.url:
+            # API returns JSON, so parse it first to extract the card link and hero image.
             parsed_url = _parse_planespotters_api_image_url(request_result.url)
-            if not parsed_url:
-                parsed_url = _parse_planespotters_image_url(request_result.url, registration)
             if parsed_url:
-                _cache_set(cache_key, parsed_url, config["positive_cache_ttl_seconds"])
-                return LookupResult(url=parsed_url, reason="ok")
+                hero_url = _fetch_planespotters_photo_page_image(parsed_url, config)
+                if hero_url:
+                    _cache_set(cache_key, hero_url, config["positive_cache_ttl_seconds"])
+                    return LookupResult(url=hero_url, reason="ok")
+            # If JSON parsing failed, fall back to scraping whatever HTML we got.
+            parsed_url = _parse_planespotters_image_url(request_result.url, registration)
+            if parsed_url:
+                hero_url = _fetch_planespotters_photo_page_image(parsed_url, config)
+                if hero_url:
+                    _cache_set(cache_key, hero_url, config["positive_cache_ttl_seconds"])
+                    return LookupResult(url=hero_url, reason="ok")
 
         fallback_result = _request_with_retry(
             provider=provider,
@@ -653,8 +726,10 @@ def _lookup_provider_image_url(provider: str, registration: str, config: dict[st
         if fallback_result.url:
             parsed_url = _parse_planespotters_image_url(fallback_result.url, registration)
             if parsed_url:
-                _cache_set(cache_key, parsed_url, config["positive_cache_ttl_seconds"])
-                return LookupResult(url=parsed_url, reason="ok")
+                hero_url = _fetch_planespotters_photo_page_image(parsed_url, config)
+                if hero_url:
+                    _cache_set(cache_key, hero_url, config["positive_cache_ttl_seconds"])
+                    return LookupResult(url=hero_url, reason="ok")
 
         _cache_set(cache_key, None, config["negative_cache_ttl_seconds"])
         return LookupResult(url=None, reason=fallback_result.reason or request_result.reason or "no_image")
