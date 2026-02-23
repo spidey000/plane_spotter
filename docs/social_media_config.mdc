@@ -25,7 +25,7 @@ The following social networks can be enabled or disabled in the `config.config` 
 *   `instagram`
 *   `linkedin`
 
-Image finder configuration keys (in `config/config.yaml`):
+Image finder configuration keys (Supabase `app_config` or `config/config.yaml`):
 
 *   `image_finder.providers`: ordered list of providers (`jetphotos`, `planespotters`).
 *   `image_finder.max_retries`, `base_delay_seconds`, `max_delay_seconds`, `jitter_seconds`.

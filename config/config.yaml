@@ -96,8 +96,6 @@ message_templates:
       Terminal: {terminal}
       Interesting: {short_interesting}{short_diverted}
       FR24: {flight_url}
-
-      Check all our socials in https://linktr.ee/ctrl_plataforma
     medium: |-
       Flight: {flight_label}
       Reg: {registration}
@@ -108,6 +106,7 @@ message_templates:
       Airline: {airline_name} ({airline_code})
       Interesting: {medium_interesting}{medium_diverted}
       FR24: {flight_url}
+      Powered by Plane Spotter
     long: |-
       Flight Information:
 
@@ -123,7 +122,7 @@ message_templates:
       Check all our socials in https://linktr.ee/ctrl_plataforma
   validation:
     profile_max_chars:
-      short: 520
+      short: 600
       medium: 1200
       long: 2500
     placeholder_max_chars:
@@ -143,7 +142,7 @@ message_templates:
         terminal: 8
         interesting_text: 64
         diverted_text: 11
-        short_interesting: 87
+        short_interesting: 60
         short_diverted: 11
         medium_interesting: 96
         medium_diverted: 32
