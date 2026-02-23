@@ -72,7 +72,7 @@ These settings can all be adjusted at runtime via `/config_set`.
 - The app loads config at runtime, so template changes apply in the next processing cycle without redeploy.
 - Overrides are validated before use; invalid templates automatically fall back to code defaults.
 - Placeholder lengths are bounded per profile via `message_templates.validation.placeholder_max_chars`.
-- Profile budgets are enforced with `message_templates.validation.profile_max_chars` (`short` defaults to `275`).
+- Profile budgets are enforced with `message_templates.validation.profile_max_chars` (`short` defaults to `520`).
 
 Available placeholders:
 

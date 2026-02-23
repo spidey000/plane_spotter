@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import io
 import os
+import re
 from pathlib import Path
 from typing import Any
 import config.config as cfg
@@ -17,6 +18,8 @@ from utils.create_bsky_post import create_post
 _NULLISH_REG_VALUES = {"", "null", "none"}
 _TRUE_BOOL_VALUES = {"1", "true", "yes", "y", "on"}
 _FALSE_BOOL_VALUES = {"0", "false", "no", "n", "off"}
+_FR24_LINE_RE = re.compile(r"^FR24:\s*(?P<url>\S+)\s*$", re.MULTILINE)
+_FR24_LINK_LABEL = "FlightRadar24"
 
 
 def _build_registration_facets(
@@ -82,6 +85,41 @@ def _bluesky_registration_links_enabled() -> bool:
 
     return True
 
+
+def _inject_fr24_hyperlink(text: str, flight_url: str | None) -> tuple[str, dict[str, Any] | None]:
+    if not flight_url:
+        return text, None
+
+    match = _FR24_LINE_RE.search(text)
+    if not match:
+        return text, None
+
+    start, end = match.span()
+    replacement = f"FR24: {_FR24_LINK_LABEL}"
+    new_text = text[:start] + replacement + text[end:]
+
+    label_start = new_text.find(_FR24_LINK_LABEL, start)
+    if label_start == -1:
+        return new_text, None
+
+    byte_start = len(new_text[:label_start].encode("utf-8"))
+    byte_end = byte_start + len(_FR24_LINK_LABEL.encode("utf-8"))
+
+    facet = {
+        "index": {
+            "byteStart": byte_start,
+            "byteEnd": byte_end,
+        },
+        "features": [
+            {
+                "$type": "app.bsky.richtext.facet#link",
+                "uri": flight_url,
+            }
+        ],
+    }
+    return new_text, facet
+
+
 def generate_flight_message(flight_data: dict[str, Any], interesting: dict[str, bool] | None = None) -> str:
     return render_flight_message(flight_data, interesting=interesting)
 
@@ -128,13 +166,20 @@ def _post_flight_to_bluesky_sync(
         return
 
     message = message_text or generate_flight_message(flight_data)
-    registration_facets = None
+    message, fr24_facet = _inject_fr24_hyperlink(message, flight_url)
+
+    extra_facets: list[dict[str, Any]] = []
+    if fr24_facet:
+        extra_facets.append(fr24_facet)
+
     if _bluesky_registration_links_enabled():
         registration_facets = _build_registration_facets(
             message,
             flight_data.get("registration"),
             registration_url,
         )
+        if registration_facets:
+            extra_facets.extend(registration_facets)
     embed_url = flight_url
     if not embed_url:
         flight_slug = flight_data.get("flight_name_iata") or flight_data.get("flight_name") or "unknown-flight"
@@ -160,7 +205,7 @@ def _post_flight_to_bluesky_sync(
             reply_to=None,
             embed_url=embed_url,
             embed_ref=None,
-            extra_facets=registration_facets,
+            extra_facets=extra_facets or None,
         )
 
         create_post(args)

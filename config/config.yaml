@@ -87,14 +87,26 @@ message_policy:
 message_templates:
   profiles:
     short: |-
-      {flight_label} | Reg {registration} | {origin_icao}->{destination_icao} | {scheduled_time}{short_diverted}{short_interesting}
+      Flight: {flight_label}
+      Registration: {registration}
+      Aircraft: {aircraft}
+      Airline: {airline_name} ({airline_code})
+      Route: {origin_name} ({origin_icao}) -> {destination_name} ({destination_icao})
+      Scheduled Time: {scheduled_time}
+      Terminal: {terminal}
+      Interesting: {short_interesting}{short_diverted}
       FR24: {flight_url}
+
+      Check all our socials in https://linktr.ee/ctrl_plataforma
     medium: |-
       Flight: {flight_label}
-      Reg: {registration} | Aircraft: {aircraft}
+      Reg: {registration}
+      Aircraft: {aircraft}
       Route: {origin_icao}->{destination_icao} ({origin_name} to {destination_name})
-      Time: {scheduled_time} | Terminal: {terminal}
-      Airline: {airline_name} ({airline_code}){medium_interesting}{medium_diverted}
+      Time: {scheduled_time}
+      Terminal: {terminal}
+      Airline: {airline_name} ({airline_code})
+      Interesting: {medium_interesting}{medium_diverted}
       FR24: {flight_url}
     long: |-
       Flight Information:
@@ -105,12 +117,13 @@ message_templates:
       Airline: {airline_name} ({airline_code})
       Route: {origin_name} ({origin_icao}) -> {destination_name} ({destination_icao})
       Scheduled Time: {scheduled_time}
-      Terminal: {terminal}{long_interesting}{long_diverted}
+      Terminal: {terminal}
+      Interesting: {long_interesting}{long_diverted}
 
       Check all our socials in https://linktr.ee/ctrl_plataforma
   validation:
     profile_max_chars:
-      short: 275
+      short: 520
       medium: 1200
       long: 2500
     placeholder_max_chars:

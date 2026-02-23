@@ -68,12 +68,11 @@ All social networks (Telegram, Bluesky, Twitter, Threads, Instagram, LinkedIn) s
 | `terminal` | Terminal at the configured airport, if provided. |
 | `interesting_text` | Concatenated reason(s) why the flight is marked interesting. |
 | `diverted_text` | Literal `DIVERTED` string when the flight is flagged as diverted. |
-| `short_interesting` | ` | Interesting: …` appended in the short template when appropriate. |
+| `short_interesting` | Plain interesting text (or `None`) rendered after `Interesting:` in the short profile. |
 | `short_diverted` | ` | DIVERTED` suffix used by the short profile on diversions. |
-| `medium_interesting` | `\nInteresting: …` inserted in the medium profile when interesting. |
-| `medium_diverted` | `\nWarning: Flight diverted` inserted in the medium profile when diverted. |
-| `long_interesting` | `\nInteresting: …` inserted in the long profile when interesting. |
-| `long_diverted` | `\nWarning: This flight has been diverted` inserted in the long profile. |
+| `medium_interesting` | Plain interesting text (or `None`) rendered after `Interesting:` in the medium profile. |
+| `medium_diverted` | ` | Warning: Flight diverted` suffix used by the medium profile. |
+| `long_interesting` | Detailed interesting text (registration reasons included) rendered after `Interesting:` in the long profile. |
+| `long_diverted` | ` | Warning: This flight has been diverted` suffix used by the long profile. |
 
 Use these placeholders freely within your custom templates for any enabled network; the renderer truncates values only where the profile limit requires it.
-

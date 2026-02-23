@@ -40,15 +40,26 @@ ALLOWED_TEMPLATE_FIELDS = {
 
 DEFAULT_PROFILE_TEMPLATES = {
     PROFILE_SHORT: (
-        "{flight_label} | Reg {registration} | {origin_icao}->{destination_icao} | "
-        "{scheduled_time}{short_diverted}{short_interesting}\nFR24: {flight_url}"
+        "Flight: {flight_label}\n"
+        "Registration: {registration}\n"
+        "Aircraft: {aircraft}\n"
+        "Airline: {airline_name} ({airline_code})\n"
+        "Route: {origin_name} ({origin_icao}) -> {destination_name} ({destination_icao})\n"
+        "Scheduled Time: {scheduled_time}\n"
+        "Terminal: {terminal}\n"
+        "Interesting: {short_interesting}{short_diverted}\n"
+        "FR24: {flight_url}\n\n"
+        "Check all our socials in https://linktr.ee/ctrl_plataforma"
     ),
     PROFILE_MEDIUM: (
         "Flight: {flight_label}\n"
-        "Reg: {registration} | Aircraft: {aircraft}\n"
+        "Reg: {registration}\n"
+        "Aircraft: {aircraft}\n"
         "Route: {origin_icao}->{destination_icao} ({origin_name} to {destination_name})\n"
-        "Time: {scheduled_time} | Terminal: {terminal}\n"
-        "Airline: {airline_name} ({airline_code}){medium_interesting}{medium_diverted}\n"
+        "Time: {scheduled_time}\n"
+        "Terminal: {terminal}\n"
+        "Airline: {airline_name} ({airline_code})\n"
+        "Interesting: {medium_interesting}{medium_diverted}\n"
         "FR24: {flight_url}"
     ),
     PROFILE_LONG: (
@@ -59,13 +70,14 @@ DEFAULT_PROFILE_TEMPLATES = {
         "Airline: {airline_name} ({airline_code})\n"
         "Route: {origin_name} ({origin_icao}) -> {destination_name} ({destination_icao})\n"
         "Scheduled Time: {scheduled_time}\n"
-        "Terminal: {terminal}{long_interesting}{long_diverted}\n\n"
+        "Terminal: {terminal}\n"
+        "Interesting: {long_interesting}{long_diverted}\n\n"
         "Check all our socials in https://linktr.ee/ctrl_plataforma"
     ),
 }
 
 DEFAULT_PROFILE_MAX_CHARS = {
-    PROFILE_SHORT: 275,
+    PROFILE_SHORT: 520,
     PROFILE_MEDIUM: 1200,
     PROFILE_LONG: 2500,
 }
@@ -151,6 +163,7 @@ class MessageContext:
     flight_slug: str
     flight_url: str
     interesting: dict[str, bool]
+    registration_reason: str | None = None
     registration_url: str | None = None
     selected_profile: str | None = None
     selected_platform: str | None = None
@@ -204,8 +217,25 @@ def _format_scheduled_time(value: Any) -> str:
     return _value_or_default(value)
 
 
-def _format_interesting_reasons(interesting: Mapping[str, bool]) -> str | None:
-    active_reasons = [name for name, enabled in interesting.items() if enabled]
+def _format_interesting_reasons(
+    interesting: Mapping[str, bool],
+    *,
+    registration_reason: str | None = None,
+    include_registration_detail: bool = False,
+) -> str | None:
+    detailed_reason: str | None = None
+    if not _is_nullish(registration_reason):
+        detailed_reason = str(registration_reason).strip() or None
+
+    active_reasons: list[str] = []
+    for name, enabled in interesting.items():
+        if not enabled:
+            continue
+        if include_registration_detail and name == "REGISTRATION" and detailed_reason:
+            active_reasons.append(f"{name} - {detailed_reason}")
+        else:
+            active_reasons.append(name)
+
     if not active_reasons:
         return None
     return ", ".join(active_reasons)
@@ -457,16 +487,29 @@ def build_message_context(
     destination_icao = _value_or_default(serialized_flight_data.get("destination_icao"))
     scheduled_time = _format_scheduled_time(serialized_flight_data.get("scheduled_time"))
     terminal = _value_or_default(serialized_flight_data.get("terminal"))
+    registration_reason_value = serialized_flight_data.get("interesting_registration_reason")
+    registration_reason = None
+    if not _is_nullish(registration_reason_value):
+        registration_reason = str(registration_reason_value).strip() or None
+
     interesting_line = _format_interesting_reasons(serialized_interesting)
+    detailed_interesting_line = _format_interesting_reasons(
+        serialized_interesting,
+        registration_reason=registration_reason,
+        include_registration_detail=True,
+    )
     diverted = serialized_flight_data.get("diverted") not in (None, False, "null")
 
     interesting_text = interesting_line or ""
-    short_interesting = f" | Interesting: {interesting_text}" if interesting_text else ""
+    long_interesting_text = detailed_interesting_line or interesting_text
+
+    short_interesting = interesting_text or "None"
+    medium_interesting = interesting_text or "None"
+    long_interesting = long_interesting_text or "None"
+
     short_diverted = " | DIVERTED" if diverted else ""
-    medium_interesting = f"\nInteresting: {interesting_text}" if interesting_text else ""
-    medium_diverted = "\nWarning: Flight diverted" if diverted else ""
-    long_interesting = f"\nInteresting: {interesting_text}" if interesting_text else ""
-    long_diverted = "\nWarning: This flight has been diverted" if diverted else ""
+    medium_diverted = " | Warning: Flight diverted" if diverted else ""
+    long_diverted = " | Warning: This flight has been diverted" if diverted else ""
 
     text_values = {
         "flight_label": flight_label,
@@ -500,6 +543,7 @@ def build_message_context(
         texts_by_profile=texts_by_profile,
         flight_slug=flight_slug,
         flight_url=flight_url,
+        registration_reason=registration_reason,
         registration_url=registration_url,
         interesting=serialized_interesting,
     )

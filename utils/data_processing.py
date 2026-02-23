@@ -25,6 +25,17 @@ def _normalize_model(value: Any) -> str | None:
     return str(value).strip().upper()
 
 
+def _extract_registration_reason(entry: Any) -> str | None:
+    if not isinstance(entry, dict):
+        return None
+
+    for key in ("reason", "description", "details", "notes", "note", "comment"):
+        value = entry.get(key)
+        if not _is_nullish(value):
+            return str(value).strip()
+    return None
+
+
 def _parse_datetime(value: Any) -> datetime:
     if isinstance(value, datetime):
         return value
@@ -229,6 +240,7 @@ async def check_flight(
     interesting_registration = False
     interesting_model = False
     first_seen = False
+    registration_reason: str | None = None
 
     # Convert scheduled_time to string if needed
     if not isinstance(flight["scheduled_time"], str):
@@ -246,6 +258,14 @@ async def check_flight(
         if interesting_registration:
             logger.info(f"Flight {registration} is in interesting registrations table")
 
+        reg_entry = interesting_reg_db.get(registration)
+        if isinstance(reg_entry, dict):
+            registration_reason = _extract_registration_reason(reg_entry)
+        if interesting_registration and registration_reason:
+            flight["interesting_registration_reason"] = registration_reason
+        else:
+            flight.pop("interesting_registration_reason", None)
+
         try:
             db_row, created = await db_provider.upsert_registration_sighting(
                 flight,
@@ -258,6 +278,8 @@ async def check_flight(
                 logger.success(f"Created new registration row for {registration}")
         except Exception as e:
             logger.error(f"Failed to upsert registration {registration}: {e}")
+    else:
+        flight.pop("interesting_registration_reason", None)
 
     interesting_model = _is_interesting_model(flight, model_db)
     if interesting_model:
