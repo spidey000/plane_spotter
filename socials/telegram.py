@@ -247,6 +247,12 @@ async def toggle_social_legacy_alias(update: Update, context: ContextTypes.DEFAU
     if message is None or user is None:
         return
 
+    command_token = ((message.text or "").strip().split(maxsplit=1) or [""])[0]
+    command_target = command_token.split("@", 1)[1].lower() if "@" in command_token else ""
+    bot_username = (context.bot.username or "").lower()
+    if command_target and bot_username and command_target != bot_username:
+        return
+
     if not is_admin(user.id):
         await message.reply_text("Acceso denegado")
         return

@@ -93,9 +93,33 @@ def test_toggle_social_legacy_alias_updates_config_for_admin(monkeypatch):
         effective_message=message,
         effective_user=SimpleNamespace(id=1),
     )
-    context = SimpleNamespace(args=[])
+    context = SimpleNamespace(args=[], bot=SimpleNamespace(username="MyBot"))
 
     asyncio.run(tg.toggle_social_legacy_alias(update, context))
 
     assert captured == {"key": "social_networks.twitter", "value": False}
     assert replies == ["twitter desactivada"]
+
+
+def test_toggle_social_legacy_alias_ignores_other_bot_username(monkeypatch):
+    monkeypatch.setattr(tg.cfg, "update_config", lambda key, value: pytest.fail("unexpected config update"))
+    monkeypatch.setattr(tg, "is_admin", lambda user_id: True)
+
+    replies = []
+
+    async def fake_reply_text(text):
+        replies.append(text)
+
+    message = SimpleNamespace(
+        text="/toggle.command@OtherBot off twitter",
+        reply_text=fake_reply_text,
+    )
+    update = SimpleNamespace(
+        effective_message=message,
+        effective_user=SimpleNamespace(id=1),
+    )
+    context = SimpleNamespace(args=[], bot=SimpleNamespace(username="MyBot"))
+
+    asyncio.run(tg.toggle_social_legacy_alias(update, context))
+
+    assert replies == []
