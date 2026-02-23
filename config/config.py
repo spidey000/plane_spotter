@@ -1,80 +1,82 @@
+from __future__ import annotations
+
+import copy
 import os
-import yaml
 from pathlib import Path
 from typing import Any
 
-CONFIG_PATH = Path(__file__).parent / 'config.yaml'
+import yaml
+
+from config import supabase_store
+
+CONFIG_PATH = Path(__file__).parent / "config.yaml"
 
 ENV_OVERRIDES = {
-    'API_PRELOADED_DATA': ('api', 'preloaded_data'),
+    "API_PRELOADED_DATA": ("api", "preloaded_data"),
 }
 
 # Default configuration
 DEFAULT_CONFIG = {
-    'logging': {
-        'log_file': 'logs/lemd_spotter.log',
-        'warning_log_file': 'logs/lemd_spotter_warning.log',
-        'log_level': 'DEBUG',
-        'log_rotation': '10 MB'
+    "logging": {
+        "log_file": "logs/lemd_spotter.log",
+        "warning_log_file": "logs/lemd_spotter_warning.log",
+        "log_level": "DEBUG",
+        "log_rotation": "10 MB",
     },
-    'api': {
-        'airport_icao': 'LEMD',
-        'time_range_hours': 2,
-        'preloaded_data': True,
-        'aeroapi': {
-            'monthly_budget_per_key_usd': 5.0,
-            'usage_cache_ttl_seconds': 600,
+    "api": {
+        "airport_icao": "LEMD",
+        "time_range_hours": 2,
+        "preloaded_data": True,
+        "aeroapi": {
+            "monthly_budget_per_key_usd": 5.0,
+            "usage_cache_ttl_seconds": 600,
         },
     },
-    'database': {
-        'provider': 'supabase',
-        'airport_icao': 'LEMD'
+    "database": {
+        "provider": "supabase",
+        "airport_icao": "LEMD",
     },
-    'social_networks': {
-        'telegram': True,
-        'bluesky': True,
-        'twitter': False,
-        'instagram': False,
-        'linkedin': False,
-        'threads': False
+    "social_networks": {
+        "telegram": True,
+        "bluesky": True,
+        "twitter": False,
+        "instagram": False,
+        "linkedin": False,
+        "threads": False,
     },
-    'platform_settings': {
-        'telegram': {
-            'notifications_enabled': True,
-            'registration_link_enabled': True,
+    "platform_settings": {
+        "telegram": {
+            "notifications_enabled": True,
+            "registration_link_enabled": True,
         },
-        'bluesky': {
-            'registration_link_enabled': True,
+        "bluesky": {
+            "registration_link_enabled": True,
         },
     },
-    'execution': {
-        'interval': (2 * 60 * 60) - 600  # 2 hours minus 10 minutes
+    "execution": {
+        "interval": (2 * 60 * 60) - 600,
     },
-    'usage_monitoring': {
-        'enabled': True,
-        'db_path': 'database/usage_metrics.db',
-        'x': {
-            'enforce_budget': True,
-            'monthly_budget_usd': 10.0,
-            'default_cost_per_call_usd': 0.01,
-            'endpoint_costs_usd': {
-                'POST /2/tweets': 0.01,
-                'POST /1.1/media/upload.json': 0.01,
-                'GET /2/usage/tweets': 0.01,
+    "usage_monitoring": {
+        "enabled": True,
+        "db_path": "database/usage_metrics.db",
+        "x": {
+            "enforce_budget": True,
+            "monthly_budget_usd": 10.0,
+            "default_cost_per_call_usd": 0.01,
+            "endpoint_costs_usd": {
+                "POST /2/tweets": 0.01,
+                "POST /1.1/media/upload.json": 0.01,
+                "GET /2/usage/tweets": 0.01,
             },
         },
-    }
+    },
 }
 
 
 def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
     merged = dict(base)
     for key, value in override.items():
-        if (
-            key in merged
-            and isinstance(merged[key], dict)
-            and isinstance(value, dict)
-        ):
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
             merged[key] = _deep_merge(merged[key], value)
         else:
             merged[key] = value
@@ -103,9 +105,9 @@ def _coerce_value(value: Any) -> Any:
         return value
 
     lowered = value.strip().lower()
-    if lowered == 'true':
+    if lowered == "true":
         return True
-    if lowered == 'false':
+    if lowered == "false":
         return False
 
     try:
@@ -118,53 +120,97 @@ def _coerce_value(value: Any) -> Any:
     except ValueError:
         return value
 
-def load_config():
-    """Load configuration from YAML file"""
-    if not CONFIG_PATH.exists():
-        save_config(DEFAULT_CONFIG)
-        return _apply_env_overrides(dict(DEFAULT_CONFIG))
 
-    with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
-        loaded = yaml.safe_load(f)
+def _load_yaml_overrides() -> dict[str, Any]:
+    if not CONFIG_PATH.exists():
+        save_config(copy.deepcopy(DEFAULT_CONFIG))
+        return {}
+
+    with open(CONFIG_PATH, "r", encoding="utf-8") as file:
+        loaded = yaml.safe_load(file)
 
     if not isinstance(loaded, dict):
-        save_config(DEFAULT_CONFIG)
-        return _apply_env_overrides(dict(DEFAULT_CONFIG))
+        save_config(copy.deepcopy(DEFAULT_CONFIG))
+        return {}
 
-    merged = _deep_merge(DEFAULT_CONFIG, loaded)
-    return _apply_env_overrides(merged)
+    return loaded
 
-def save_config(config):
-    """Save configuration to YAML file"""
-    with open(CONFIG_PATH, 'w', encoding='utf-8') as f:
-        yaml.safe_dump(config, f, sort_keys=False)
 
-def update_config(key, value):
-    """Update a specific configuration value"""
+def _assign_path(target: dict[str, Any], key_path: list[str], value: Any) -> None:
+    current = target
+    for segment in key_path[:-1]:
+        next_value = current.get(segment)
+        if not isinstance(next_value, dict):
+            next_value = {}
+            current[segment] = next_value
+        current = next_value
+    current[key_path[-1]] = value
+
+
+def _load_local_config() -> dict[str, Any]:
+    overrides = _load_yaml_overrides()
+    return _deep_merge(DEFAULT_CONFIG, overrides)
+
+
+def load_config(force_refresh_remote: bool = False) -> dict[str, Any]:
+    """Load configuration merging defaults, YAML overrides, Supabase, and env."""
+
+    config = _load_local_config()
+    remote = supabase_store.load_remote_config(force_refresh=force_refresh_remote)
+    if remote:
+        config = _deep_merge(config, remote)
+    return _apply_env_overrides(config)
+
+
+def save_config(config: dict[str, Any]) -> None:
+    """Persist configuration overrides to the local YAML file."""
+
+    CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(CONFIG_PATH, "w", encoding="utf-8") as file:
+        yaml.safe_dump(config, file, sort_keys=False)
+
+
+def _update_local_override(key_path: str, value: Any) -> None:
+    overrides = _load_yaml_overrides()
+    segments = [segment for segment in key_path.split(".") if segment]
+    if not segments:
+        raise ValueError("Config key path must not be empty")
+    _assign_path(overrides, segments, value)
+    save_config(overrides)
+
+
+def update_config(key: str, value: Any) -> None:
+    """Update a specific configuration value locally and, if enabled, remotely."""
+
+    coerced = _coerce_value(value)
+    if supabase_store.is_enabled():
+        supabase_store.set_remote_value(key, coerced)
+    _update_local_override(key, coerced)
+
+
+def get_config(key: str) -> Any:
+    """Get a specific configuration value."""
+
     config = load_config()
-    keys = key.split('.')
+    keys = key.split(".")
     current = config
-    
-    for k in keys[:-1]:
-        if k not in current:
-            current[k] = {}
-        current = current[k]
 
-    current[keys[-1]] = _coerce_value(value)
-    save_config(config)
-
-def get_config(key):
-    """Get a specific configuration value"""
-    config = load_config()
-    keys = key.split('.')
-    current = config
-    
     for k in keys:
         if k not in current:
             return None
         current = current[k]
-    
+
     return current
 
-# Load initial configuration
+
+def reset_config_to_defaults() -> None:
+    """Reset both YAML and Supabase configs back to DEFAULT_CONFIG."""
+
+    defaults_copy = copy.deepcopy(DEFAULT_CONFIG)
+    save_config(defaults_copy)
+    if supabase_store.is_enabled():
+        supabase_store.replace_remote_config(defaults_copy)
+
+
+# Load initial configuration snapshot
 config = load_config()

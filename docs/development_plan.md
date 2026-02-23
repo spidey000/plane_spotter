@@ -28,7 +28,7 @@ Status is maintained as:
   - [x] Implement indexed reads for registrations and interesting entities
   - [x] Implement registration upsert + flight history insert
 - [x] Add provider resolver (`db_manager`) for backend swap
-  - [x] Configure provider name in `config/config.yaml`
+  - [x] Configure provider name via Supabase config (or `config/config.yaml`)
 - [x] Migrate orchestration/data processing to provider contract
   - [x] Remove runtime dependency on Baserow manager
 - [x] Remove Baserow references from code/docs

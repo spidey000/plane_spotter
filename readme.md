@@ -22,7 +22,7 @@ The project now uses a provider abstraction. To add a new DB backend, implement 
 
 1. Create `database/providers/<provider>.py` implementing methods from `DatabaseProvider`.
 2. Register it in `database/db_manager.py` using `register_provider(...)`.
-3. Set `database.provider` in `config/config.yaml`.
+3. Set `database.provider` via the Supabase config table (or fallback `config/config.yaml`).
 
 No business logic changes are needed in `main.py` or `utils/data_processing.py`.
 
@@ -35,6 +35,14 @@ This implementation expects tables compatible with:
 - `interesting_models`
 - `aircraft_models`
 - `flight_history`
+
+## Supabase Configuration Store
+
+- Set `SUPABASE_CONFIG_ENABLED=true` to source runtime settings from Supabase instead of the local YAML file.
+- Configuration rows live in the `app_config` table with `key_path` (dot notation) and `value` (`jsonb`).
+- Telegram admin commands (`/config_set`, `/toggle`, `/profile_set`, `/config_reset`, etc.) now write directly to Supabase; the YAML file stays as an offline fallback.
+- `config/reset_config_to_defaults()` wipes the table and repopulates it with `DEFAULT_CONFIG` while also refreshing `config/config.yaml`.
+- `SUPABASE_CONFIG_TABLE`, cache TTL, and request timeout can be tuned via the new env vars in `.env.example`.
 
 ## API Monitoring + X Budget
 
@@ -68,11 +76,11 @@ These settings can all be adjusted at runtime via `/config_set`.
 
 ## Message Templates (No Redeploy)
 
-- Message text is overrideable from `config/config.yaml` under `message_templates.profiles`.
+- Message text is overrideable from the Supabase config (`app_config` table) or the fallback `config/config.yaml` under `message_templates.profiles`.
 - The app loads config at runtime, so template changes apply in the next processing cycle without redeploy.
 - Overrides are validated before use; invalid templates automatically fall back to code defaults.
 - Placeholder lengths are bounded per profile via `message_templates.validation.placeholder_max_chars`.
-- Profile budgets are enforced with `message_templates.validation.profile_max_chars` (`short` defaults to `275`).
+- Profile budgets are enforced with `message_templates.validation.profile_max_chars` (`short` defaults to `520`).
 
 Available placeholders:
 
@@ -92,7 +100,7 @@ Validation rules:
 - Every used placeholder must have a configured max length for that profile.
 - `static_template_chars + sum(placeholder_max_chars_for_used_fields)` must be `<= profile_max_chars`.
 
-Configuration (`config/config.yaml`):
+Configuration (Supabase `app_config` table or `config/config.yaml`):
 
 ```yaml
 message_policy:
@@ -142,7 +150,7 @@ api:
     usage_cache_ttl_seconds: 600
 ```
 
-Configure in `config/config.yaml`:
+Configure via Supabase (preferred) or `config/config.yaml`:
 
 ```yaml
 usage_monitoring:
@@ -164,6 +172,7 @@ Use `.env` for secrets and credentials. Key variables:
 
 - `SUPABASE_URL` (or dashboard URL, auto-normalized to `https://<project>.supabase.co`)
 - `SUPABASE_SERVICE_ROLE_KEY` (preferred) or `SUPABASE_PRIV`
+- `SUPABASE_CONFIG_ENABLED`/`SUPABASE_CONFIG_TABLE`/`SUPABASE_CONFIG_CACHE_SECONDS`/`SUPABASE_CONFIG_TIMEOUT_SECONDS` to control the remote config client
 - `AEROAPI_KEY`
 - `AEROAPI_KEYS` (optional, comma-separated key pool)
 - `AEROAPI_MONTHLY_BUDGET_USD` (optional env override)
@@ -178,7 +187,7 @@ Use `.env` for secrets and credentials. Key variables:
 
 ## Run
 
-Set airport at `config/config.yaml` (`api.airport_icao`, e.g. `LEMD`, `LHR`, `JFK`).
+Set `api.airport_icao` via the Supabase config table (or fallback `config/config.yaml`).
 
 ```bash
 python main.py

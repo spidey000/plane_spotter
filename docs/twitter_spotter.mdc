@@ -17,7 +17,7 @@ alwaysApply: true
 
 - Do not couple business logic to one database backend.
 - Use `database/providers/base.py` contract for all data operations.
-- Select active backend via `database.provider` in `config/config.yaml`.
+- Select active backend via `database.provider` in Supabase config (or `config/config.yaml`).
 
 # Cost / Usage Rules
 

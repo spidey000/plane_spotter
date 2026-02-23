@@ -88,7 +88,7 @@ def test_short_template_budget_violation_falls_back(monkeypatch) -> None:
         profile=mb.PROFILE_SHORT,
     )
 
-    oversized = " ".join(["{flight_label}"] * 12)
+    oversized = " ".join(["{flight_label}"] * 40)
     _patch_templates(
         monkeypatch,
         {
@@ -144,10 +144,10 @@ def test_placeholder_limits_truncate_values(monkeypatch) -> None:
 
     assert text.startswith("F:")
     assert text.count("...") >= 2
-    assert len(text) <= 275
+    assert len(text) <= mb.DEFAULT_PROFILE_MAX_CHARS[mb.PROFILE_SHORT]
 
 
-def test_default_short_profile_is_capped_to_275(monkeypatch) -> None:
+def test_default_short_profile_is_capped_to_default_limit(monkeypatch) -> None:
     _patch_templates(monkeypatch, None)
 
     flight = _sample_flight_data()
@@ -168,4 +168,4 @@ def test_default_short_profile_is_capped_to_275(monkeypatch) -> None:
         profile=mb.PROFILE_SHORT,
     )
 
-    assert len(text) <= 275
+    assert len(text) <= mb.DEFAULT_PROFILE_MAX_CHARS[mb.PROFILE_SHORT]

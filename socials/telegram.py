@@ -150,7 +150,7 @@ def _build_help_tech_text(admin_user: bool) -> str:
         "- overflow_action=block: si no cabe ni short, se bloquea esa red.",
         "- fallback_order se define en config.yaml (lista), no se recomienda editar por /config_set.",
         "- Telegram usa limite distinto para texto normal y caption con imagen.",
-        "- Todos los cambios son on-the-go y persisten en config/config.yaml.",
+        "- Todos los cambios se guardan en Supabase (o config/config.yaml si Supabase esta deshabilitado).",
     ]
     return "\n".join(lines)
 
@@ -324,7 +324,7 @@ async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         return
 
     try:
-        cfg.save_config(cfg.DEFAULT_CONFIG)
+        cfg.reset_config_to_defaults()
         await update.message.reply_text("Configuracion restablecida a valores por defecto")
     except Exception as exc:
         await update.message.reply_text(f"Error: {exc}")
