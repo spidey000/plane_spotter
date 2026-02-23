@@ -32,7 +32,7 @@ DEFAULT_CONFIG = {
     },
     'social_networks': {
         'telegram': True,
-        'bluesky': False,
+        'bluesky': True,
         'twitter': False,
         'instagram': False,
         'linkedin': False,
