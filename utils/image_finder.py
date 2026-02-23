@@ -36,6 +36,12 @@ class LookupResult:
     reason: str
 
 
+@dataclass(frozen=True)
+class PlanespottersPhotoCandidate:
+    photo_page_url: str | None
+    fallback_image_url: str | None
+
+
 def _as_int(value: Any, default: int) -> int:
     try:
         return int(value)
@@ -55,7 +61,7 @@ def _load_image_finder_config() -> dict[str, Any]:
     if not isinstance(raw, dict):
         raw = {}
 
-    providers_raw = raw.get("providers", [JETPHOTOS_PROVIDER, PLANESPOTTERS_PROVIDER])
+    providers_raw = raw.get("providers", [PLANESPOTTERS_PROVIDER, JETPHOTOS_PROVIDER])
     providers: list[str] = []
     if isinstance(providers_raw, list):
         for provider in providers_raw:
@@ -64,7 +70,7 @@ def _load_image_finder_config() -> dict[str, Any]:
                 providers.append(normalized)
 
     if not providers:
-        providers = [JETPHOTOS_PROVIDER, PLANESPOTTERS_PROVIDER]
+        providers = [PLANESPOTTERS_PROVIDER, JETPHOTOS_PROVIDER]
 
     return {
         "enabled": bool(raw.get("enabled", True)),
@@ -476,10 +482,11 @@ def _fetch_planespotters_photo_page_image(photo_url: str, config: dict[str, Any]
 
 
 
-def _extract_first_planespotters_photo(item: Any) -> str | None:
+def _extract_planespotters_photo_candidate(item: Any) -> PlanespottersPhotoCandidate | None:
     if not isinstance(item, dict):
         return None
 
+    fallback_url: str | None = None
     candidate_keys = (
         "image_high",
         "image",
@@ -493,18 +500,31 @@ def _extract_first_planespotters_photo(item: Any) -> str | None:
         if isinstance(value, str):
             normalized = _normalize_image_url(value, base_url="https://www.planespotters.net")
             if normalized:
-                return normalized
+                fallback_url = normalized
+                break
         if isinstance(value, dict):
             for nested_key in ("src", "url"):
                 nested_value = value.get(nested_key)
                 if isinstance(nested_value, str):
                     normalized = _normalize_image_url(nested_value, base_url="https://www.planespotters.net")
                     if normalized:
-                        return normalized
-    return None
+                        fallback_url = normalized
+                        break
+        if fallback_url:
+            break
+
+    link_value = item.get("link")
+    photo_page_url = None
+    if isinstance(link_value, str):
+        photo_page_url = _normalize_image_url(link_value, base_url="https://www.planespotters.net")
+
+    if not photo_page_url and not fallback_url:
+        return None
+
+    return PlanespottersPhotoCandidate(photo_page_url=photo_page_url, fallback_image_url=fallback_url)
 
 
-def _parse_planespotters_api_image_url(payload_text: str) -> str | None:
+def _parse_planespotters_api_photo_candidate(payload_text: str) -> PlanespottersPhotoCandidate | None:
     try:
         payload = json.loads(payload_text)
     except json.JSONDecodeError:
@@ -518,14 +538,17 @@ def _parse_planespotters_api_image_url(payload_text: str) -> str | None:
         return None
 
     latest_photo = photos[0]
-    image_url = _extract_first_planespotters_photo(latest_photo)
-    if not image_url:
+    candidate = _extract_planespotters_photo_candidate(latest_photo)
+    if not candidate:
         return None
 
-    if not _host_matches(image_url, ("cdn.planespotters.net", "planespotters.net", "t.plnspttrs.net", "plnspttrs.net")):
-        return None
+    fallback_url = candidate.fallback_image_url
+    if fallback_url and not _host_matches(fallback_url, ("cdn.planespotters.net", "planespotters.net", "t.plnspttrs.net", "plnspttrs.net")):
+        candidate = PlanespottersPhotoCandidate(photo_page_url=candidate.photo_page_url, fallback_image_url=None)
+        if candidate.photo_page_url is None:
+            return None
 
-    return image_url
+    return candidate
 
 
 def _request_with_retry(
@@ -700,20 +723,23 @@ def _lookup_provider_image_url(provider: str, registration: str, config: dict[st
             config=config,
         )
         if request_result.url:
-            # API returns JSON, so parse it first to extract the card link and hero image.
-            parsed_url = _parse_planespotters_api_image_url(request_result.url)
-            if parsed_url:
-                hero_url = _fetch_planespotters_photo_page_image(parsed_url, config)
+            candidate = _parse_planespotters_api_photo_candidate(request_result.url)
+            if candidate:
+                hero_url = (
+                    _fetch_planespotters_photo_page_image(candidate.photo_page_url, config)
+                    if candidate.photo_page_url
+                    else None
+                )
                 if hero_url:
                     _cache_set(cache_key, hero_url, config["positive_cache_ttl_seconds"])
                     return LookupResult(url=hero_url, reason="ok")
-            # If JSON parsing failed, fall back to scraping whatever HTML we got.
+                if candidate.fallback_image_url:
+                    _cache_set(cache_key, candidate.fallback_image_url, config["positive_cache_ttl_seconds"])
+                    return LookupResult(url=candidate.fallback_image_url, reason="ok")
             parsed_url = _parse_planespotters_image_url(request_result.url, registration)
             if parsed_url:
-                hero_url = _fetch_planespotters_photo_page_image(parsed_url, config)
-                if hero_url:
-                    _cache_set(cache_key, hero_url, config["positive_cache_ttl_seconds"])
-                    return LookupResult(url=hero_url, reason="ok")
+                _cache_set(cache_key, parsed_url, config["positive_cache_ttl_seconds"])
+                return LookupResult(url=parsed_url, reason="ok")
 
         fallback_result = _request_with_retry(
             provider=provider,
@@ -726,10 +752,8 @@ def _lookup_provider_image_url(provider: str, registration: str, config: dict[st
         if fallback_result.url:
             parsed_url = _parse_planespotters_image_url(fallback_result.url, registration)
             if parsed_url:
-                hero_url = _fetch_planespotters_photo_page_image(parsed_url, config)
-                if hero_url:
-                    _cache_set(cache_key, hero_url, config["positive_cache_ttl_seconds"])
-                    return LookupResult(url=hero_url, reason="ok")
+                _cache_set(cache_key, parsed_url, config["positive_cache_ttl_seconds"])
+                return LookupResult(url=parsed_url, reason="ok")
 
         _cache_set(cache_key, None, config["negative_cache_ttl_seconds"])
         return LookupResult(url=None, reason=fallback_result.reason or request_result.reason or "no_image")

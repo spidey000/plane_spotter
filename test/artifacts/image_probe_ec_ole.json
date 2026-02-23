@@ -1,0 +1,1990 @@
+{
+  "ok": true,
+  "report": {
+    "timestamp": "2026-02-23T06:13:24.571106+00:00",
+    "registration": "EC-OLE",
+    "agent_browser_available": true,
+    "agent_browser_probe": {
+      "jetphotos": {
+        "provider": "jetphotos",
+        "target_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE",
+        "session": "probe-jetphotos-1771827204",
+        "ok": true,
+        "steps": [
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 open 'https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 6412.18,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"Aviation photos on Jetphotos\",\"url\":\"https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "Aviation photos on Jetphotos",
+                "url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 wait --load domcontentloaded",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 842.5,
+            "stdout": "{\"success\":true,\"data\":{\"state\":\"domcontentloaded\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "state": "domcontentloaded"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 get title",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 789.5,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"Aviation photos on Jetphotos\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "Aviation photos on Jetphotos"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 get url",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 805.74,
+            "stdout": "{\"success\":true,\"data\":{\"url\":\"https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 snapshot -i",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 1026.28,
+            "stdout": "{\"success\":true,\"data\":{\"refs\":{\"e1\":{\"name\":\"our 60 partners\",\"role\":\"button\"},\"e10\":{\"name\":\"Log in\",\"role\":\"link\"},\"e100\":{\"name\":\"Photos\",\"role\":\"link\"},\"e101\":{\"name\":\"Profile\",\"role\":\"link\"},\"e102\":{\"name\":\"Contact\",\"role\":\"link\"},\"e103\":{\"name\":\"Album Album You must be logged in\",\"role\":\"link\"},\"e104\":{\"name\":\"Like Like You must be logged in\",\"role\":\"link\"},\"e105\":{\"name\":\"Share Share\",\"role\":\"link\"},\"e106\":{\"name\":\"EC-OLE - Airbus A321-253NY - Iberia\",\"role\":\"link\"},\"e107\":{\"name\":\"Iberia\",\"role\":\"link\"},\"e108\":{\"name\":\"EC-OLE photos\",\"role\":\"link\"},\"e109\":{\"name\":\"Airbus A321-253NY\",\"role\":\"link\"},\"e11\":{\"name\":\"Sign up\",\"role\":\"button\"},\"e110\":{\"name\":\"11686\",\"role\":\"link\"},\"e111\":{\"name\":\"2025-10-10\",\"role\":\"link\"},\"e112\":{\"name\":\"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\",\"role\":\"link\"},\"e113\":{\"name\":\"Steven L\",\"role\":\"link\"},\"e114\":{\"name\":\"Photos\",\"role\":\"link\"},\"e115\":{\"name\":\"Profile\",\"role\":\"link\"},\"e116\":{\"name\":\"Contact\",\"role\":\"link\"},\"e117\":{\"name\":\"Album Album You must be logged in\",\"role\":\"link\"},\"e118\":{\"name\":\"Like Like You must be logged in\",\"role\":\"link\"},\"e119\":{\"name\":\"Share Share\",\"role\":\"link\"},\"e12\":{\"name\":\"Modify search\",\"role\":\"button\"},\"e120\":{\"name\":\"EC-OLE - Airbus A321-253NY - Iberia\",\"role\":\"link\"},\"e121\":{\"name\":\"Iberia\",\"role\":\"link\"},\"e122\":{\"name\":\"EC-OLE photos\",\"role\":\"link\"},\"e123\":{\"name\":\"Airbus A321-253NY\",\"role\":\"link\"},\"e124\":{\"name\":\"11686\",\"role\":\"link\"},\"e125\":{\"name\":\"2025-09-27\",\"ro...<truncated>",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "refs": {
+                  "e1": {
+                    "name": "our 60 partners",
+                    "role": "button"
+                  },
+                  "e10": {
+                    "name": "Log in",
+                    "role": "link"
+                  },
+                  "e100": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e101": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e102": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e103": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e104": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e105": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e106": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e107": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e108": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e109": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e11": {
+                    "name": "Sign up",
+                    "role": "button"
+                  },
+                  "e110": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e111": {
+                    "name": "2025-10-10",
+                    "role": "link"
+                  },
+                  "e112": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e113": {
+                    "name": "Steven L",
+                    "role": "link"
+                  },
+                  "e114": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e115": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e116": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e117": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e118": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e119": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e12": {
+                    "name": "Modify search",
+                    "role": "button"
+                  },
+                  "e120": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e121": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e122": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e123": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e124": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e125": {
+                    "name": "2025-09-27",
+                    "role": "link"
+                  },
+                  "e126": {
+                    "name": "San Juan Luis Munoz Marin Int'l Airport - TJSJ, Puerto Rico",
+                    "role": "link"
+                  },
+                  "e127": {
+                    "name": "Carlos Nieves",
+                    "role": "link"
+                  },
+                  "e128": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e129": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e13": {
+                    "name": "Civilian only",
+                    "role": "button"
+                  },
+                  "e130": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e131": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e132": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e133": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e134": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e135": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e136": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e137": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e138": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e139": {
+                    "name": "2025-07-05",
+                    "role": "link"
+                  },
+                  "e14": {
+                    "name": "Military only",
+                    "role": "button"
+                  },
+                  "e140": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e141": {
+                    "name": "Jack Yang",
+                    "role": "link"
+                  },
+                  "e142": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e143": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e144": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e145": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e146": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e147": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e148": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e149": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e15": {
+                    "role": "combobox"
+                  },
+                  "e150": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e151": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e152": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e153": {
+                    "name": "2025-08-11",
+                    "role": "link"
+                  },
+                  "e154": {
+                    "name": "Madrid Barajas - LEMD, Spain",
+                    "role": "link"
+                  },
+                  "e155": {
+                    "name": "CAN-CSN",
+                    "role": "link"
+                  },
+                  "e156": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e157": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e158": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e159": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e16": {
+                    "name": "Added (newest)",
+                    "role": "option"
+                  },
+                  "e160": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e161": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e162": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e163": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e164": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e165": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e166": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e167": {
+                    "name": "2025-06-30",
+                    "role": "link"
+                  },
+                  "e168": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e169": {
+                    "name": "Guy Langlois",
+                    "role": "link"
+                  },
+                  "e17": {
+                    "name": "Added (oldest)",
+                    "role": "option"
+                  },
+                  "e170": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e171": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e172": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e173": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e174": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e175": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e176": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e177": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e178": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e179": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e18": {
+                    "name": "Photo taken date (newest)",
+                    "role": "option"
+                  },
+                  "e180": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e181": {
+                    "name": "2025-06-28",
+                    "role": "link"
+                  },
+                  "e182": {
+                    "name": "Madrid Barajas - LEMD, Spain",
+                    "role": "link"
+                  },
+                  "e183": {
+                    "name": "Guille G\u00aa del Alamo",
+                    "role": "link"
+                  },
+                  "e184": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e185": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e186": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e187": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e188": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e189": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e19": {
+                    "name": "Photo taken date (oldest)",
+                    "role": "option"
+                  },
+                  "e190": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e191": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e192": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e193": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e194": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e195": {
+                    "name": "2025-04-30",
+                    "role": "link"
+                  },
+                  "e196": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e197": {
+                    "name": "Johnson541",
+                    "role": "link"
+                  },
+                  "e198": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e199": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e2": {
+                    "name": "Learn more",
+                    "role": "button"
+                  },
+                  "e20": {
+                    "name": "Views (highest)",
+                    "role": "option"
+                  },
+                  "e200": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e201": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e202": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e203": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e204": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e205": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e206": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e207": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e208": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e209": {
+                    "name": "2025-03-28",
+                    "role": "link"
+                  },
+                  "e21": {
+                    "name": "Views (lowest)",
+                    "role": "option"
+                  },
+                  "e210": {
+                    "name": "Hamburg Finkenwerder - EDHI, Germany",
+                    "role": "link"
+                  },
+                  "e211": {
+                    "name": "Jonas Eickholt",
+                    "role": "link"
+                  },
+                  "e212": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e213": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e214": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e215": {
+                    "name": "First registration First registration",
+                    "role": "link"
+                  },
+                  "e216": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e217": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e218": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e219": {
+                    "name": "Manage Consent",
+                    "role": "link"
+                  },
+                  "e22": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e220": {
+                    "name": "Facebook",
+                    "role": "link"
+                  },
+                  "e221": {
+                    "name": "Twitter",
+                    "role": "link"
+                  },
+                  "e222": {
+                    "name": "Forum",
+                    "role": "link"
+                  },
+                  "e23": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e24": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e25": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e26": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e27": {
+                    "name": "2025-09-04",
+                    "role": "link"
+                  },
+                  "e28": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e29": {
+                    "name": "Andrew Seong",
+                    "role": "link"
+                  },
+                  "e3": {
+                    "name": "Logo",
+                    "role": "link"
+                  },
+                  "e30": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e31": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e32": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e33": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e34": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e35": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e36": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e37": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e38": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e39": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e4": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e40": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e41": {
+                    "name": "2025-12-11",
+                    "role": "link"
+                  },
+                  "e42": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e43": {
+                    "name": "HaoxiGuo",
+                    "role": "link"
+                  },
+                  "e44": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e45": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e46": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e47": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e48": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e49": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e5": {
+                    "name": "About",
+                    "role": "link"
+                  },
+                  "e50": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e51": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e52": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e53": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e54": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e55": {
+                    "name": "2025-11-28",
+                    "role": "link"
+                  },
+                  "e56": {
+                    "name": "New York John F. Kennedy Int'l Airport - KJFK, USA - New York",
+                    "role": "link"
+                  },
+                  "e57": {
+                    "name": "Sakiko Togawa",
+                    "role": "link"
+                  },
+                  "e58": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e59": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e6": {
+                    "name": "Social",
+                    "role": "link"
+                  },
+                  "e60": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e61": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e62": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e63": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e64": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e65": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e66": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e67": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e68": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e69": {
+                    "name": "2025-11-24",
+                    "role": "link"
+                  },
+                  "e7": {
+                    "name": "\ue904",
+                    "role": "button"
+                  },
+                  "e70": {
+                    "name": "New York John F. Kennedy Int'l Airport - KJFK, USA - New York",
+                    "role": "link"
+                  },
+                  "e71": {
+                    "name": "Cary Liao - PlaneCaptures",
+                    "role": "link"
+                  },
+                  "e72": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e73": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e74": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e75": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e76": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e77": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e78": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e79": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e8": {
+                    "name": "Aircraft registration, photo location, photographer",
+                    "role": "searchbox"
+                  },
+                  "e80": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e81": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e82": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e83": {
+                    "name": "2025-07-12",
+                    "role": "link"
+                  },
+                  "e84": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e85": {
+                    "name": "boblikesfood86",
+                    "role": "link"
+                  },
+                  "e86": {
+                    "name": "Photos",
+                    "role": "link"
+                  },
+                  "e87": {
+                    "name": "Profile",
+                    "role": "link"
+                  },
+                  "e88": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e89": {
+                    "name": "Album Album You must be logged in",
+                    "role": "link"
+                  },
+                  "e9": {
+                    "name": "\ue905",
+                    "role": "button"
+                  },
+                  "e90": {
+                    "name": "Like Like You must be logged in",
+                    "role": "link"
+                  },
+                  "e91": {
+                    "name": "Share Share",
+                    "role": "link"
+                  },
+                  "e92": {
+                    "name": "EC-OLE - Airbus A321-253NY - Iberia",
+                    "role": "link"
+                  },
+                  "e93": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e94": {
+                    "name": "EC-OLE photos",
+                    "role": "link"
+                  },
+                  "e95": {
+                    "name": "Airbus A321-253NY",
+                    "role": "link"
+                  },
+                  "e96": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e97": {
+                    "name": "2025-09-04",
+                    "role": "link"
+                  },
+                  "e98": {
+                    "name": "Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts",
+                    "role": "link"
+                  },
+                  "e99": {
+                    "name": "Caden Henderson",
+                    "role": "link"
+                  }
+                },
+                "snapshot": "- button \"our 60 partners\" [ref=e1]\n- button \"Learn more\" [ref=e2]\n- link \"Logo\" [ref=e3]\n- link \"Photos\" [ref=e4]\n- link \"About\" [ref=e5]\n- link \"Social\" [ref=e6]\n- button \"\ue904\" [ref=e7] [disabled]\n- searchbox \"Aircraft registration, photo location, photographer\" [ref=e8]\n- button \"\ue905\" [ref=e9]\n- link \"Log in\" [ref=e10]\n- button \"Sign up\" [ref=e11]\n- button \"Modify search\" [ref=e12]\n- button \"Civilian only\" [ref=e13]\n- button \"Military only\" [ref=e14]\n- combobox [ref=e15]\n- option \"Added (newest)\" [ref=e16] [selected]\n- option \"Added (oldest)\" [ref=e17]\n- option \"Photo taken date (newest)\" [ref=e18]\n- option \"Photo taken date (oldest)\" [ref=e19]\n- option \"Views (highest)\" [ref=e20]\n- option \"Views (lowest)\" [ref=e21]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e22]\n- link \"Iberia\" [ref=e23]\n- link \"EC-OLE photos\" [ref=e24]\n- link \"Airbus A321-253NY\" [ref=e25]\n- link \"11686\" [ref=e26]\n- link \"2025-09-04\" [ref=e27]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e28]\n- link \"Andrew Seong\" [ref=e29]\n- link \"Photos\" [ref=e30] [nth=1]\n- link \"Profile\" [ref=e31]\n- link \"Contact\" [ref=e32]\n- link \"Album Album You must be logged in\" [ref=e33]\n- link \"Like Like You must be logged in\" [ref=e34]\n- link \"Share Share\" [ref=e35]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e36] [nth=1]\n- link \"Iberia\" [ref=e37] [nth=1]\n- link \"EC-OLE photos\" [ref=e38] [nth=1]\n- link \"Airbus A321-253NY\" [ref=e39] [nth=1]\n- link \"11686\" [ref=e40] [nth=1]\n- link \"2025-12-11\" [ref=e41]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e42] [nth=1]\n- link \"HaoxiGuo\" [ref=e43]\n- link \"Photos\" [ref=e44] [nth=2]\n- link \"Profile\" [ref=e45] [nth=1]\n- link \"Contact\" [ref=e46] [nth=1]\n- link \"Album Album You must be logged in\" [ref=e47] [nth=1]\n- link \"Like Like You must be logged in\" [ref=e48] [nth=1]\n- link \"Share Share\" [ref=e49] [nth=1]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e50] [nth=2]\n- link \"Iberia\" [ref=e51] [nth=2]\n- link \"EC-OLE photos\" [ref=e52] [nth=2]\n- link \"Airbus A321-253NY\" [ref=e53] [nth=2]\n- link \"11686\" [ref=e54] [nth=2]\n- link \"2025-11-28\" [ref=e55]\n- link \"New York John F. Kennedy Int'l Airport - KJFK, USA - New York\" [ref=e56]\n- link \"Sakiko Togawa\" [ref=e57]\n- link \"Photos\" [ref=e58] [nth=3]\n- link \"Profile\" [ref=e59] [nth=2]\n- link \"Contact\" [ref=e60] [nth=2]\n- link \"Album Album You must be logged in\" [ref=e61] [nth=2]\n- link \"Like Like You must be logged in\" [ref=e62] [nth=2]\n- link \"Share Share\" [ref=e63] [nth=2]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e64] [nth=3]\n- link \"Iberia\" [ref=e65] [nth=3]\n- link \"EC-OLE photos\" [ref=e66] [nth=3]\n- link \"Airbus A321-253NY\" [ref=e67] [nth=3]\n- link \"11686\" [ref=e68] [nth=3]\n- link \"2025-11-24\" [ref=e69]\n- link \"New York John F. Kennedy Int'l Airport - KJFK, USA - New York\" [ref=e70] [nth=1]\n- link \"Cary Liao - PlaneCaptures\" [ref=e71]\n- link \"Photos\" [ref=e72] [nth=4]\n- link \"Profile\" [ref=e73] [nth=3]\n- link \"Contact\" [ref=e74] [nth=3]\n- link \"Album Album You must be logged in\" [ref=e75] [nth=3]\n- link \"Like Like You must be logged in\" [ref=e76] [nth=3]\n- link \"Share Share\" [ref=e77] [nth=3]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e78] [nth=4]\n- link \"Iberia\" [ref=e79] [nth=4]\n- link \"EC-OLE photos\" [ref=e80] [nth=4]\n- link \"Airbus A321-253NY\" [ref=e81] [nth=4]\n- link \"11686\" [ref=e82] [nth=4]\n- link \"2025-07-12\" [ref=e83]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e84] [nth=2]\n- link \"boblikesfood86\" [ref=e85]\n- link \"Photos\" [ref=e86] [nth=5]\n- link \"Profile\" [ref=e87] [nth=4]\n- link \"Contact\" [ref=e88] [nth=4]\n- link \"Album Album You must be logged in\" [ref=e89] [nth=4]\n- link \"Like Like You must be logged in\" [ref=e90] [nth=4]\n- link \"Share Share\" [ref=e91] [nth=4]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e92] [nth=5]\n- link \"Iberia\" [ref=e93] [nth=5]\n- link \"EC-OLE photos\" [ref=e94] [nth=5]\n- link \"Airbus A321-253NY\" [ref=e95] [nth=5]\n- link \"11686\" [ref=e96] [nth=5]\n- link \"2025-09-04\" [ref=e97] [nth=1]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e98] [nth=3]\n- link \"Caden Henderson\" [ref=e99]\n- link \"Photos\" [ref=e100] [nth=6]\n- link \"Profile\" [ref=e101] [nth=5]\n- link \"Contact\" [ref=e102] [nth=5]\n- link \"Album Album You must be logged in\" [ref=e103] [nth=5]\n- link \"Like Like You must be logged in\" [ref=e104] [nth=5]\n- link \"Share Share\" [ref=e105] [nth=5]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e106] [nth=6]\n- link \"Iberia\" [ref=e107] [nth=6]\n- link \"EC-OLE photos\" [ref=e108] [nth=6]\n- link \"Airbus A321-253NY\" [ref=e109] [nth=6]\n- link \"11686\" [ref=e110] [nth=6]\n- link \"2025-10-10\" [ref=e111]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e112] [nth=4]\n- link \"Steven L\" [ref=e113]\n- link \"Photos\" [ref=e114] [nth=7]\n- link \"Profile\" [ref=e115] [nth=6]\n- link \"Contact\" [ref=e116] [nth=6]\n- link \"Album Album You must be logged in\" [ref=e117] [nth=6]\n- link \"Like Like You must be logged in\" [ref=e118] [nth=6]\n- link \"Share Share\" [ref=e119] [nth=6]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e120] [nth=7]\n- link \"Iberia\" [ref=e121] [nth=7]\n- link \"EC-OLE photos\" [ref=e122] [nth=7]\n- link \"Airbus A321-253NY\" [ref=e123] [nth=7]\n- link \"11686\" [ref=e124] [nth=7]\n- link \"2025-09-27\" [ref=e125]\n- link \"San Juan Luis Munoz Marin Int'l Airport - TJSJ, Puerto Rico\" [ref=e126]\n- link \"Carlos Nieves\" [ref=e127]\n- link \"Photos\" [ref=e128] [nth=8]\n- link \"Profile\" [ref=e129] [nth=7]\n- link \"Contact\" [ref=e130] [nth=7]\n- link \"Album Album You must be logged in\" [ref=e131] [nth=7]\n- link \"Like Like You must be logged in\" [ref=e132] [nth=7]\n- link \"Share Share\" [ref=e133] [nth=7]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e134] [nth=8]\n- link \"Iberia\" [ref=e135] [nth=8]\n- link \"EC-OLE photos\" [ref=e136] [nth=8]\n- link \"Airbus A321-253NY\" [ref=e137] [nth=8]\n- link \"11686\" [ref=e138] [nth=8]\n- link \"2025-07-05\" [ref=e139]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e140] [nth=5]\n- link \"Jack Yang\" [ref=e141]\n- link \"Photos\" [ref=e142] [nth=9]\n- link \"Profile\" [ref=e143] [nth=8]\n- link \"Contact\" [ref=e144] [nth=8]\n- link \"Album Album You must be logged in\" [ref=e145] [nth=8]\n- link \"Like Like You must be logged in\" [ref=e146] [nth=8]\n- link \"Share Share\" [ref=e147] [nth=8]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e148] [nth=9]\n- link \"Iberia\" [ref=e149] [nth=9]\n- link \"EC-OLE photos\" [ref=e150] [nth=9]\n- link \"Airbus A321-253NY\" [ref=e151] [nth=9]\n- link \"11686\" [ref=e152] [nth=9]\n- link \"2025-08-11\" [ref=e153]\n- link \"Madrid Barajas - LEMD, Spain\" [ref=e154]\n- link \"CAN-CSN\" [ref=e155]\n- link \"Photos\" [ref=e156] [nth=10]\n- link \"Profile\" [ref=e157] [nth=9]\n- link \"Contact\" [ref=e158] [nth=9]\n- link \"Album Album You must be logged in\" [ref=e159] [nth=9]\n- link \"Like Like You must be logged in\" [ref=e160] [nth=9]\n- link \"Share Share\" [ref=e161] [nth=9]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e162] [nth=10]\n- link \"Iberia\" [ref=e163] [nth=10]\n- link \"EC-OLE photos\" [ref=e164] [nth=10]\n- link \"Airbus A321-253NY\" [ref=e165] [nth=10]\n- link \"11686\" [ref=e166] [nth=10]\n- link \"2025-06-30\" [ref=e167]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e168] [nth=6]\n- link \"Guy Langlois\" [ref=e169]\n- link \"Photos\" [ref=e170] [nth=11]\n- link \"Profile\" [ref=e171] [nth=10]\n- link \"Contact\" [ref=e172] [nth=10]\n- link \"Album Album You must be logged in\" [ref=e173] [nth=10]\n- link \"Like Like You must be logged in\" [ref=e174] [nth=10]\n- link \"Share Share\" [ref=e175] [nth=10]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e176] [nth=11]\n- link \"Iberia\" [ref=e177] [nth=11]\n- link \"EC-OLE photos\" [ref=e178] [nth=11]\n- link \"Airbus A321-253NY\" [ref=e179] [nth=11]\n- link \"11686\" [ref=e180] [nth=11]\n- link \"2025-06-28\" [ref=e181]\n- link \"Madrid Barajas - LEMD, Spain\" [ref=e182] [nth=1]\n- link \"Guille G\u00aa del Alamo\" [ref=e183]\n- link \"Photos\" [ref=e184] [nth=12]\n- link \"Profile\" [ref=e185] [nth=11]\n- link \"Contact\" [ref=e186] [nth=11]\n- link \"Album Album You must be logged in\" [ref=e187] [nth=11]\n- link \"Like Like You must be logged in\" [ref=e188] [nth=11]\n- link \"Share Share\" [ref=e189] [nth=11]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e190] [nth=12]\n- link \"Iberia\" [ref=e191] [nth=12]\n- link \"EC-OLE photos\" [ref=e192] [nth=12]\n- link \"Airbus A321-253NY\" [ref=e193] [nth=12]\n- link \"11686\" [ref=e194] [nth=12]\n- link \"2025-04-30\" [ref=e195]\n- link \"Boston General Edward Lawrence Logan Int'l Airport - KBOS, USA - Massachusetts\" [ref=e196] [nth=7]\n- link \"Johnson541\" [ref=e197]\n- link \"Photos\" [ref=e198] [nth=13]\n- link \"Profile\" [ref=e199] [nth=12]\n- link \"Contact\" [ref=e200] [nth=12]\n- link \"Album Album You must be logged in\" [ref=e201] [nth=12]\n- link \"Like Like You must be logged in\" [ref=e202] [nth=12]\n- link \"Share Share\" [ref=e203] [nth=12]\n- link \"EC-OLE - Airbus A321-253NY - Iberia\" [ref=e204] [nth=13]\n- link \"Iberia\" [ref=e205] [nth=13]\n- link \"EC-OLE photos\" [ref=e206] [nth=13]\n- link \"Airbus A321-253NY\" [ref=e207] [nth=13]\n- link \"11686\" [ref=e208] [nth=13]\n- link \"2025-03-28\" [ref=e209]\n- link \"Hamburg Finkenwerder - EDHI, Germany\" [ref=e210]\n- link \"Jonas Eickholt\" [ref=e211]\n- link \"Photos\" [ref=e212] [nth=14]\n- link \"Profile\" [ref=e213] [nth=13]\n- link \"Contact\" [ref=e214] [nth=13]\n- link \"First registration First registration\" [ref=e215]\n- link \"Album Album You must be logged in\" [ref=e216] [nth=13]\n- link \"Like Like You must be logged in\" [ref=e217] [nth=13]\n- link \"Share Share\" [ref=e218] [nth=13]\n- link \"Manage Consent\" [ref=e219]\n- link \"Facebook\" [ref=e220]\n- link \"Twitter\" [ref=e221]\n- link \"Forum\" [ref=e222]"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 eval '(() => {const selectors = [\"img.result__photo\", \"a.result__photoLink img\", \"img.result-photo__img\", \"img[src*='\"'\"'jetphotos'\"'\"']\"];const candidates = [];const counts = {};const add = (raw) => {  if (!raw) return;  let url = String(raw).trim();  if (!url) return;  if (url.startsWith('\"'\"'//'\"'\"')) url = '\"'\"'https:'\"'\"' + url;  else if (url.startsWith('\"'\"'/'\"'\"')) url = location.origin + url;  else if (!url.startsWith('\"'\"'http'\"'\"')) url = location.origin + '\"'\"'/'\"'\"' + url.replace(/^\\/+/, '\"'\"''\"'\"');  if (!/^https?:\\/\\//.test(url)) return;  candidates.push(url);};for (const selector of selectors) {  const elements = Array.from(document.querySelectorAll(selector));  counts[selector] = elements.length;  for (const element of elements.slice(0, 8)) {    add(element.getAttribute('\"'\"'src'\"'\"'));    add(element.getAttribute('\"'\"'data-src'\"'\"'));    add(element.getAttribute('\"'\"'data-lazy-src'\"'\"'));    const srcset = element.getAttribute('\"'\"'srcset'\"'\"');    if (srcset) {      for (const part of srcset.split('\"'\"','\"'\"')) {        const pieces = part.trim().split(/\\s+/);        if (pieces.length > 0) add(pieces[0]);      }    }  }}const bodyText = (document.body && document.body.innerText ? document.body.innerText : '\"'\"''\"'\"').toLowerCase();const challengeMarkers = ['\"'\"'captcha'\"'\"', '\"'\"'verify you are human'\"'\"', '\"'\"'challenge-platform'\"'\"', '\"'\"'cloudflare'\"'\"', '\"'\"'access denied'\"'\"'];const detectedChallenges = challengeMarkers.filter((marker) => bodyText.includes(marker));const unique = Array.from(new Set(candidates));const forms = Array.from(document.querySelectorAll('\"'\"'form'\"'\"')).map((form, index) => ({  index,  action: form.getAttribute('\"'\"'action'\"'\"') || '\"'\"''\"'\"',  method: form.getAttribute('\"'\"'method'\"'\"') || '\"'\"''\"'\"',  input_names: Array.from(form.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))    .map((el) => el.getAttribute('\"'\"'name'\"'\"') || el.getAttribute('\"'\"'id'\"'\"') || '\"'\"''\"'\"')    .filter(Boolean)    .slice(0, 40)}));const registrationFields = Array.from(document.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))  .map((el) => ({    tag: el.tagName.toLowerCase(),    type: el.getAttribute('\"'\"'type'\"'\"') || '\"'\"''\"'\"',    name: el.getAttribute('\"'\"'name'\"'\"') || '\"'\"''\"'\"',    id: el.id || '\"'\"''\"'\"',    placeholder: el.getAttribute('\"'\"'placeholder'\"'\"') || '\"'\"''\"'\"'  }))  .filter((item) => (item.name + '\"'\"' '\"'\"' + item.id + '\"'\"' '\"'\"' + item.placeholder).toLowerCase().match(/reg|keyword|search|tail|serial|aircraft/));return {  title: document.title,  current_url: location.href,  selector_counts: counts,  candidate_urls: unique.slice(0, 20),  candidate_count: unique.length,  challenge_markers: detectedChallenges,  forms_count: forms.length,  forms: forms.slice(0, 8),  candidate_registration_fields: registrationFields.slice(0, 20)};})()'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 830.3,
+            "stdout": "{\"success\":true,\"data\":{\"result\":{\"candidate_count\":9,\"candidate_registration_fields\":[{\"id\":\"quicksearch\",\"name\":\"\",\"placeholder\":\"Aircraft registration, photo location, photographer\",\"tag\":\"input\",\"type\":\"search\"},{\"id\":\"search-advanced-aircraft\",\"name\":\"aircraft\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-airline\",\"name\":\"airline\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-airport\",\"name\":\"country-location\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-photographer\",\"name\":\"photographer-group\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-category\",\"name\":\"category\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-keywords\",\"name\":\"keywords-type\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-keywords-contain\",\"name\":\"keywords-contain\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-keywords-text\",\"name\":\"keywords\",\"placeholder\":\"Keyword\",\"tag\":\"input\",\"type\":\"text\"},{\"id\":\"search-advanced-year\",\"name\":\"photo-year\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":\"\"},{\"id\":\"search-advanced-width\",\"name\":\"width\",\"placeholder\":\"Min width px\",\"tag\":\"input\",\"type\":\"text\"},{\"id\":\"search-advanced-height\",\"name\":\"height\",\"placeholder\":\"Min height px\",\"tag\":\"input\",\"type\":\"text\"},{\"id\":\"\",\"name\":\"search-type\",\"placeholder\":\"\",\"tag\":\"input\",\"type\":\"hidden\"},{\"id\":\"search-advanced-multi-aircraft\",\"name\":\"aircraft[]\",\"placeholder\":\"\",\"tag\":\"select\",\"type\":...<truncated>",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "result": {
+                  "candidate_count": 9,
+                  "candidate_registration_fields": [
+                    {
+                      "id": "quicksearch",
+                      "name": "",
+                      "placeholder": "Aircraft registration, photo location, photographer",
+                      "tag": "input",
+                      "type": "search"
+                    },
+                    {
+                      "id": "search-advanced-aircraft",
+                      "name": "aircraft",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-airline",
+                      "name": "airline",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-airport",
+                      "name": "country-location",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-photographer",
+                      "name": "photographer-group",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-category",
+                      "name": "category",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-keywords",
+                      "name": "keywords-type",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-keywords-contain",
+                      "name": "keywords-contain",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-keywords-text",
+                      "name": "keywords",
+                      "placeholder": "Keyword",
+                      "tag": "input",
+                      "type": "text"
+                    },
+                    {
+                      "id": "search-advanced-year",
+                      "name": "photo-year",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-width",
+                      "name": "width",
+                      "placeholder": "Min width px",
+                      "tag": "input",
+                      "type": "text"
+                    },
+                    {
+                      "id": "search-advanced-height",
+                      "name": "height",
+                      "placeholder": "Min height px",
+                      "tag": "input",
+                      "type": "text"
+                    },
+                    {
+                      "id": "",
+                      "name": "search-type",
+                      "placeholder": "",
+                      "tag": "input",
+                      "type": "hidden"
+                    },
+                    {
+                      "id": "search-advanced-multi-aircraft",
+                      "name": "aircraft[]",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-multi-airline",
+                      "name": "airline[]",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-multi-airport",
+                      "name": "airport[]",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "search-advanced-multi-photographer",
+                      "name": "photographer[]",
+                      "placeholder": "",
+                      "tag": "select",
+                      "type": ""
+                    },
+                    {
+                      "id": "",
+                      "name": "search-type",
+                      "placeholder": "",
+                      "tag": "input",
+                      "type": "hidden"
+                    },
+                    {
+                      "id": "",
+                      "name": "search-type",
+                      "placeholder": "",
+                      "tag": "input",
+                      "type": "hidden"
+                    },
+                    {
+                      "id": "searchParams",
+                      "name": "",
+                      "placeholder": "",
+                      "tag": "input",
+                      "type": "hidden"
+                    }
+                  ],
+                  "candidate_urls": [
+                    "https://cdn.jetphotos.com/400/5/514229_1768163505.jpg",
+                    "https://cdn.jetphotos.com/400/6/1737831_1767474905.jpg",
+                    "https://cdn.jetphotos.com/400/5/1009693_1764668179.jpg",
+                    "https://cdn.jetphotos.com/400/6/486296_1764109014.jpg",
+                    "https://cdn.jetphotos.com/400/6/1017445_1762832800.jpg",
+                    "https://cdn.jetphotos.com/400/5/467788_1761531099.jpg",
+                    "https://cdn.jetphotos.com/400/5/899127_1760209639.jpg",
+                    "https://cdn.jetphotos.com/400/6/896944_1759717174.jpg",
+                    "https://www.jetphotos.com/assets/img/logo-black.svg"
+                  ],
+                  "challenge_markers": [],
+                  "current_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE",
+                  "forms": [
+                    {
+                      "action": "/signup.php",
+                      "index": 0,
+                      "input_names": [],
+                      "method": "post"
+                    },
+                    {
+                      "action": "/signup.php",
+                      "index": 1,
+                      "input_names": [],
+                      "method": "post"
+                    },
+                    {
+                      "action": "/showphotos.php",
+                      "index": 2,
+                      "input_names": [
+                        "aircraft",
+                        "airline",
+                        "country-location",
+                        "photographer-group",
+                        "category",
+                        "keywords-type",
+                        "keywords-contain",
+                        "keywords",
+                        "photo-year",
+                        "width",
+                        "height",
+                        "genre",
+                        "search-type",
+                        "sort-order"
+                      ],
+                      "method": "get"
+                    },
+                    {
+                      "action": "/showphotos.php",
+                      "index": 3,
+                      "input_names": [
+                        "aircraft[]",
+                        "airline[]",
+                        "airport[]",
+                        "photographer[]",
+                        "fromDate",
+                        "toDate",
+                        "search-type",
+                        "sort-order",
+                        "genre",
+                        "accfromDate",
+                        "acctoDate",
+                        "search-type",
+                        "sort-order",
+                        "genre"
+                      ],
+                      "method": "get"
+                    },
+                    {
+                      "action": "/classes/PostHandler.php",
+                      "index": 4,
+                      "input_names": [
+                        "form-add-to-album-name",
+                        "form-add-to-album-photoId",
+                        "form-add-to-album-remarks"
+                      ],
+                      "method": "post"
+                    },
+                    {
+                      "action": "/classes/PostHandler.php",
+                      "index": 5,
+                      "input_names": [
+                        "loginForm_emailField",
+                        "loginForm_passwordField",
+                        "loginForm_rememberMe"
+                      ],
+                      "method": "post"
+                    }
+                  ],
+                  "forms_count": 6,
+                  "selector_counts": {
+                    "a.result__photoLink img": 14,
+                    "img.result-photo__img": 0,
+                    "img.result__photo": 14,
+                    "img[src*='jetphotos']": 15
+                  },
+                  "title": "Aviation photos on Jetphotos"
+                }
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-jetphotos-1771827204 close",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 1422.14,
+            "stdout": "{\"success\":true,\"data\":{\"closed\":true},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "closed": true
+              },
+              "error": null
+            }
+          }
+        ],
+        "eval_payload": {
+          "success": true,
+          "data": {
+            "result": {
+              "candidate_count": 9,
+              "candidate_registration_fields": [
+                {
+                  "id": "quicksearch",
+                  "name": "",
+                  "placeholder": "Aircraft registration, photo location, photographer",
+                  "tag": "input",
+                  "type": "search"
+                },
+                {
+                  "id": "search-advanced-aircraft",
+                  "name": "aircraft",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-airline",
+                  "name": "airline",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-airport",
+                  "name": "country-location",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-photographer",
+                  "name": "photographer-group",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-category",
+                  "name": "category",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-keywords",
+                  "name": "keywords-type",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-keywords-contain",
+                  "name": "keywords-contain",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-keywords-text",
+                  "name": "keywords",
+                  "placeholder": "Keyword",
+                  "tag": "input",
+                  "type": "text"
+                },
+                {
+                  "id": "search-advanced-year",
+                  "name": "photo-year",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-width",
+                  "name": "width",
+                  "placeholder": "Min width px",
+                  "tag": "input",
+                  "type": "text"
+                },
+                {
+                  "id": "search-advanced-height",
+                  "name": "height",
+                  "placeholder": "Min height px",
+                  "tag": "input",
+                  "type": "text"
+                },
+                {
+                  "id": "",
+                  "name": "search-type",
+                  "placeholder": "",
+                  "tag": "input",
+                  "type": "hidden"
+                },
+                {
+                  "id": "search-advanced-multi-aircraft",
+                  "name": "aircraft[]",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-multi-airline",
+                  "name": "airline[]",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-multi-airport",
+                  "name": "airport[]",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "search-advanced-multi-photographer",
+                  "name": "photographer[]",
+                  "placeholder": "",
+                  "tag": "select",
+                  "type": ""
+                },
+                {
+                  "id": "",
+                  "name": "search-type",
+                  "placeholder": "",
+                  "tag": "input",
+                  "type": "hidden"
+                },
+                {
+                  "id": "",
+                  "name": "search-type",
+                  "placeholder": "",
+                  "tag": "input",
+                  "type": "hidden"
+                },
+                {
+                  "id": "searchParams",
+                  "name": "",
+                  "placeholder": "",
+                  "tag": "input",
+                  "type": "hidden"
+                }
+              ],
+              "candidate_urls": [
+                "https://cdn.jetphotos.com/400/5/514229_1768163505.jpg",
+                "https://cdn.jetphotos.com/400/6/1737831_1767474905.jpg",
+                "https://cdn.jetphotos.com/400/5/1009693_1764668179.jpg",
+                "https://cdn.jetphotos.com/400/6/486296_1764109014.jpg",
+                "https://cdn.jetphotos.com/400/6/1017445_1762832800.jpg",
+                "https://cdn.jetphotos.com/400/5/467788_1761531099.jpg",
+                "https://cdn.jetphotos.com/400/5/899127_1760209639.jpg",
+                "https://cdn.jetphotos.com/400/6/896944_1759717174.jpg",
+                "https://www.jetphotos.com/assets/img/logo-black.svg"
+              ],
+              "challenge_markers": [],
+              "current_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE",
+              "forms": [
+                {
+                  "action": "/signup.php",
+                  "index": 0,
+                  "input_names": [],
+                  "method": "post"
+                },
+                {
+                  "action": "/signup.php",
+                  "index": 1,
+                  "input_names": [],
+                  "method": "post"
+                },
+                {
+                  "action": "/showphotos.php",
+                  "index": 2,
+                  "input_names": [
+                    "aircraft",
+                    "airline",
+                    "country-location",
+                    "photographer-group",
+                    "category",
+                    "keywords-type",
+                    "keywords-contain",
+                    "keywords",
+                    "photo-year",
+                    "width",
+                    "height",
+                    "genre",
+                    "search-type",
+                    "sort-order"
+                  ],
+                  "method": "get"
+                },
+                {
+                  "action": "/showphotos.php",
+                  "index": 3,
+                  "input_names": [
+                    "aircraft[]",
+                    "airline[]",
+                    "airport[]",
+                    "photographer[]",
+                    "fromDate",
+                    "toDate",
+                    "search-type",
+                    "sort-order",
+                    "genre",
+                    "accfromDate",
+                    "acctoDate",
+                    "search-type",
+                    "sort-order",
+                    "genre"
+                  ],
+                  "method": "get"
+                },
+                {
+                  "action": "/classes/PostHandler.php",
+                  "index": 4,
+                  "input_names": [
+                    "form-add-to-album-name",
+                    "form-add-to-album-photoId",
+                    "form-add-to-album-remarks"
+                  ],
+                  "method": "post"
+                },
+                {
+                  "action": "/classes/PostHandler.php",
+                  "index": 5,
+                  "input_names": [
+                    "loginForm_emailField",
+                    "loginForm_passwordField",
+                    "loginForm_rememberMe"
+                  ],
+                  "method": "post"
+                }
+              ],
+              "forms_count": 6,
+              "selector_counts": {
+                "a.result__photoLink img": 14,
+                "img.result-photo__img": 0,
+                "img.result__photo": 14,
+                "img[src*='jetphotos']": 15
+              },
+              "title": "Aviation photos on Jetphotos"
+            }
+          },
+          "error": null
+        },
+        "registration_insertion_strategy": {
+          "provider": "jetphotos",
+          "type": "query_param",
+          "base_url": "https://www.jetphotos.com/showphotos.php",
+          "parameter": "keywords",
+          "example_value": "EC-OLE",
+          "example_url": "https://www.jetphotos.com/showphotos.php?aircraft=all&airline=all&category=all&country-location=all&genre=all&keywords-contain=1&keywords-type=all&photo-year=all&photographer-group=all&search-type=Advanced&sort-order=0&page=1&keywords=EC-OLE",
+          "note": "Set aircraft registration in query string parameter 'keywords'."
+        },
+        "image_extraction_strategy": {
+          "provider": "jetphotos",
+          "selectors": [
+            "img.result__photo",
+            "a.result__photoLink img",
+            "img.result-photo__img",
+            "img[src*='jetphotos']"
+          ],
+          "attributes_order": [
+            "src",
+            "data-src",
+            "data-lazy-src",
+            "srcset"
+          ],
+          "normalization": [
+            "// -> https://",
+            "relative path -> absolute URL"
+          ]
+        }
+      },
+      "planespotters": {
+        "provider": "planespotters",
+        "target_url": "https://www.planespotters.net/photos/reg/EC-OLE?sort=latest",
+        "session": "probe-planespotters-1771827216",
+        "ok": true,
+        "steps": [
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 open 'https://www.planespotters.net/photos/reg/EC-OLE?sort=latest'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 4953.17,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net\",\"url\":\"https://www.planespotters.net/photos/reg/EC-OLE?sort=latest\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net",
+                "url": "https://www.planespotters.net/photos/reg/EC-OLE?sort=latest"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 wait --load domcontentloaded",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 853.55,
+            "stdout": "{\"success\":true,\"data\":{\"state\":\"domcontentloaded\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "state": "domcontentloaded"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 get title",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 852.75,
+            "stdout": "{\"success\":true,\"data\":{\"title\":\"EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "title": "EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 get url",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 792.0,
+            "stdout": "{\"success\":true,\"data\":{\"url\":\"https://www.planespotters.net/photos/reg/EC-OLE?sort=latest\"},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "url": "https://www.planespotters.net/photos/reg/EC-OLE?sort=latest"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 snapshot -i",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 883.95,
+            "stdout": "{\"success\":true,\"data\":{\"refs\":{\"e1\":{\"name\":\"Planespotters.net\",\"role\":\"link\"},\"e10\":{\"name\":\"\uf009\",\"role\":\"link\"},\"e11\":{\"name\":\"\uf00b\",\"role\":\"link\"},\"e12\":{\"name\":\"EC-OLE Iberia Airbus A321-253NY XLR \u00a9 Wilfredo Torres\",\"role\":\"link\"},\"e13\":{\"name\":\"EC-OLE\",\"role\":\"link\"},\"e14\":{\"name\":\"11686\",\"role\":\"link\"},\"e15\":{\"name\":\"Iberia\",\"role\":\"link\"},\"e16\":{\"name\":\"Airbus A321-253NY XLR\",\"role\":\"link\"},\"e17\":{\"name\":\"San Juan Luis Mu\u00f1oz Mar\u00edn International (SJU / TJSJ)\",\"role\":\"link\"},\"e18\":{\"name\":\"28\",\"role\":\"link\"},\"e19\":{\"name\":\"October\",\"role\":\"link\"},\"e2\":{\"name\":\"Radar\",\"role\":\"button\"},\"e20\":{\"name\":\"2025\",\"role\":\"link\"},\"e21\":{\"name\":\"About\",\"role\":\"link\"},\"e22\":{\"name\":\"Our Team\",\"role\":\"link\"},\"e23\":{\"name\":\"Imprint\",\"role\":\"link\"},\"e24\":{\"name\":\"Contact\",\"role\":\"link\"},\"e25\":{\"name\":\"Production Lists\",\"role\":\"link\"},\"e26\":{\"name\":\"Deliveries\",\"role\":\"link\"},\"e27\":{\"name\":\"Index\",\"role\":\"link\"},\"e28\":{\"name\":\"Country List\",\"role\":\"link\"},\"e29\":{\"name\":\"Latest Additions\",\"role\":\"link\"},\"e3\":{\"name\":\"Photos\",\"role\":\"button\"},\"e30\":{\"name\":\"Most Popular Last 24hrs\",\"role\":\"link\"},\"e31\":{\"name\":\"Editor's Choice\",\"role\":\"link\"},\"e32\":{\"name\":\"Upload Your Photos\",\"role\":\"link\"},\"e33\":{\"name\":\"Photo API\",\"role\":\"link\"},\"e34\":{\"name\":\"Terms of Use\",\"role\":\"link\"},\"e35\":{\"name\":\"Privacy Policy\",\"role\":\"link\"},\"e36\":{\"name\":\"Cookie Policy\",\"role\":\"link\"},\"e37\":{\"name\":\"Privacy Manager\",\"role\":\"link\"},\"e38\":{\"name\":\"Latest Photos\",\"role\":\"link\"},\"e39\":{\"name\":\"9H-MLO | Eurowings | Air...<truncated>",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "refs": {
+                  "e1": {
+                    "name": "Planespotters.net",
+                    "role": "link"
+                  },
+                  "e10": {
+                    "name": "\uf009",
+                    "role": "link"
+                  },
+                  "e11": {
+                    "name": "\uf00b",
+                    "role": "link"
+                  },
+                  "e12": {
+                    "name": "EC-OLE Iberia Airbus A321-253NY XLR \u00a9 Wilfredo Torres",
+                    "role": "link"
+                  },
+                  "e13": {
+                    "name": "EC-OLE",
+                    "role": "link"
+                  },
+                  "e14": {
+                    "name": "11686",
+                    "role": "link"
+                  },
+                  "e15": {
+                    "name": "Iberia",
+                    "role": "link"
+                  },
+                  "e16": {
+                    "name": "Airbus A321-253NY XLR",
+                    "role": "link"
+                  },
+                  "e17": {
+                    "name": "San Juan Luis Mu\u00f1oz Mar\u00edn International (SJU / TJSJ)",
+                    "role": "link"
+                  },
+                  "e18": {
+                    "name": "28",
+                    "role": "link"
+                  },
+                  "e19": {
+                    "name": "October",
+                    "role": "link"
+                  },
+                  "e2": {
+                    "name": "Radar",
+                    "role": "button"
+                  },
+                  "e20": {
+                    "name": "2025",
+                    "role": "link"
+                  },
+                  "e21": {
+                    "name": "About",
+                    "role": "link"
+                  },
+                  "e22": {
+                    "name": "Our Team",
+                    "role": "link"
+                  },
+                  "e23": {
+                    "name": "Imprint",
+                    "role": "link"
+                  },
+                  "e24": {
+                    "name": "Contact",
+                    "role": "link"
+                  },
+                  "e25": {
+                    "name": "Production Lists",
+                    "role": "link"
+                  },
+                  "e26": {
+                    "name": "Deliveries",
+                    "role": "link"
+                  },
+                  "e27": {
+                    "name": "Index",
+                    "role": "link"
+                  },
+                  "e28": {
+                    "name": "Country List",
+                    "role": "link"
+                  },
+                  "e29": {
+                    "name": "Latest Additions",
+                    "role": "link"
+                  },
+                  "e3": {
+                    "name": "Photos",
+                    "role": "button"
+                  },
+                  "e30": {
+                    "name": "Most Popular Last 24hrs",
+                    "role": "link"
+                  },
+                  "e31": {
+                    "name": "Editor's Choice",
+                    "role": "link"
+                  },
+                  "e32": {
+                    "name": "Upload Your Photos",
+                    "role": "link"
+                  },
+                  "e33": {
+                    "name": "Photo API",
+                    "role": "link"
+                  },
+                  "e34": {
+                    "name": "Terms of Use",
+                    "role": "link"
+                  },
+                  "e35": {
+                    "name": "Privacy Policy",
+                    "role": "link"
+                  },
+                  "e36": {
+                    "name": "Cookie Policy",
+                    "role": "link"
+                  },
+                  "e37": {
+                    "name": "Privacy Manager",
+                    "role": "link"
+                  },
+                  "e38": {
+                    "name": "Latest Photos",
+                    "role": "link"
+                  },
+                  "e39": {
+                    "name": "9H-MLO | Eurowings | Airbus A320-214(WL)",
+                    "role": "link"
+                  },
+                  "e4": {
+                    "name": "Data",
+                    "role": "button"
+                  },
+                  "e40": {
+                    "name": "G-AOHT | British Airways | Vickers Viscount 802",
+                    "role": "link"
+                  },
+                  "e41": {
+                    "name": "N229JQ | Delta Connection | Embraer ERJ-175LR (ERJ-170-200 LR)",
+                    "role": "link"
+                  },
+                  "e42": {
+                    "name": "N3149J | JetBlue | Airbus A220-300 (BD-500-1A11)",
+                    "role": "link"
+                  },
+                  "e43": {
+                    "name": "N905JB | JetBlue | Airbus A321-231(WL)",
+                    "role": "link"
+                  },
+                  "e44": {
+                    "name": "VH-NEI | Tamair | Piper PA-31-350 Chieftain",
+                    "role": "link"
+                  },
+                  "e45": {
+                    "name": "RA-89078 | IrAero | Sukhoi Superjet 100-95LR",
+                    "role": "link"
+                  },
+                  "e46": {
+                    "name": "N89014 | Commemorative Air Force | North American SNJ-5 Texan",
+                    "role": "link"
+                  },
+                  "e47": {
+                    "name": "N976JT | JetBlue | Airbus A321-231(WL)",
+                    "role": "link"
+                  },
+                  "e48": {
+                    "name": "N4062J | JetBlue | Airbus A321-271NX",
+                    "role": "link"
+                  },
+                  "e5": {
+                    "name": "Search",
+                    "role": "searchbox"
+                  },
+                  "e6": {
+                    "name": "Switch to dark mode",
+                    "role": "button"
+                  },
+                  "e7": {
+                    "name": "Login",
+                    "role": "link"
+                  },
+                  "e8": {
+                    "name": "Sign Up",
+                    "role": "link"
+                  },
+                  "e9": {
+                    "name": "\uf002 Advanced Search",
+                    "role": "link"
+                  }
+                },
+                "snapshot": "- link \"Planespotters.net\" [ref=e1]\n- button \"Radar\" [ref=e2]\n- button \"Photos\" [ref=e3]\n- button \"Data\" [ref=e4]\n- searchbox \"Search\" [ref=e5]\n- button \"Switch to dark mode\" [ref=e6]\n- link \"Login\" [ref=e7]\n- link \"Sign Up\" [ref=e8]\n- link \"\uf002 Advanced Search\" [ref=e9]\n- link \"\uf009\" [ref=e10]\n- link \"\uf00b\" [ref=e11]\n- link \"EC-OLE Iberia Airbus A321-253NY XLR \u00a9 Wilfredo Torres\" [ref=e12]\n- link \"EC-OLE\" [ref=e13]\n- link \"11686\" [ref=e14]\n- link \"Iberia\" [ref=e15]\n- link \"Airbus A321-253NY XLR\" [ref=e16]\n- link \"San Juan Luis Mu\u00f1oz Mar\u00edn International (SJU / TJSJ)\" [ref=e17]\n- link \"28\" [ref=e18]\n- link \"October\" [ref=e19]\n- link \"2025\" [ref=e20]\n- link \"About\" [ref=e21]\n- link \"Our Team\" [ref=e22]\n- link \"Imprint\" [ref=e23]\n- link \"Contact\" [ref=e24]\n- link \"Production Lists\" [ref=e25]\n- link \"Deliveries\" [ref=e26]\n- link \"Index\" [ref=e27]\n- link \"Country List\" [ref=e28]\n- link \"Latest Additions\" [ref=e29]\n- link \"Most Popular Last 24hrs\" [ref=e30]\n- link \"Editor's Choice\" [ref=e31]\n- link \"Upload Your Photos\" [ref=e32]\n- link \"Photo API\" [ref=e33]\n- link \"Terms of Use\" [ref=e34]\n- link \"Privacy Policy\" [ref=e35]\n- link \"Cookie Policy\" [ref=e36]\n- link \"Privacy Manager\" [ref=e37]\n- link \"Latest Photos\" [ref=e38]\n- link \"9H-MLO | Eurowings | Airbus A320-214(WL)\" [ref=e39]\n- link \"G-AOHT | British Airways | Vickers Viscount 802\" [ref=e40]\n- link \"N229JQ | Delta Connection | Embraer ERJ-175LR (ERJ-170-200 LR)\" [ref=e41]\n- link \"N3149J | JetBlue | Airbus A220-300 (BD-500-1A11)\" [ref=e42]\n- link \"N905JB | JetBlue | Airbus A321-231(WL)\" [ref=e43]\n- link \"VH-NEI | Tamair | Piper PA-31-350 Chieftain\" [ref=e44]\n- link \"RA-89078 | IrAero | Sukhoi Superjet 100-95LR\" [ref=e45]\n- link \"N89014 | Commemorative Air Force | North American SNJ-5 Texan\" [ref=e46]\n- link \"N976JT | JetBlue | Airbus A321-231(WL)\" [ref=e47]\n- link \"N4062J | JetBlue | Airbus A321-271NX\" [ref=e48]"
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 eval '(() => {const selectors = [\"img.photo_card__photo\", \"div.photo_card img\", \"img[data-photo-id]\", \"img[src*='\"'\"'plnspttrs'\"'\"']\", \"img[src*='\"'\"'planespotters'\"'\"']\"];const candidates = [];const counts = {};const add = (raw) => {  if (!raw) return;  let url = String(raw).trim();  if (!url) return;  if (url.startsWith('\"'\"'//'\"'\"')) url = '\"'\"'https:'\"'\"' + url;  else if (url.startsWith('\"'\"'/'\"'\"')) url = location.origin + url;  else if (!url.startsWith('\"'\"'http'\"'\"')) url = location.origin + '\"'\"'/'\"'\"' + url.replace(/^\\/+/, '\"'\"''\"'\"');  if (!/^https?:\\/\\//.test(url)) return;  candidates.push(url);};for (const selector of selectors) {  const elements = Array.from(document.querySelectorAll(selector));  counts[selector] = elements.length;  for (const element of elements.slice(0, 8)) {    add(element.getAttribute('\"'\"'src'\"'\"'));    add(element.getAttribute('\"'\"'data-src'\"'\"'));    add(element.getAttribute('\"'\"'data-lazy-src'\"'\"'));    const srcset = element.getAttribute('\"'\"'srcset'\"'\"');    if (srcset) {      for (const part of srcset.split('\"'\"','\"'\"')) {        const pieces = part.trim().split(/\\s+/);        if (pieces.length > 0) add(pieces[0]);      }    }  }}const bodyText = (document.body && document.body.innerText ? document.body.innerText : '\"'\"''\"'\"').toLowerCase();const challengeMarkers = ['\"'\"'captcha'\"'\"', '\"'\"'verify you are human'\"'\"', '\"'\"'challenge-platform'\"'\"', '\"'\"'cloudflare'\"'\"', '\"'\"'access denied'\"'\"'];const detectedChallenges = challengeMarkers.filter((marker) => bodyText.includes(marker));const unique = Array.from(new Set(candidates));const forms = Array.from(document.querySelectorAll('\"'\"'form'\"'\"')).map((form, index) => ({  index,  action: form.getAttribute('\"'\"'action'\"'\"') || '\"'\"''\"'\"',  method: form.getAttribute('\"'\"'method'\"'\"') || '\"'\"''\"'\"',  input_names: Array.from(form.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))    .map((el) => el.getAttribute('\"'\"'name'\"'\"') || el.getAttribute('\"'\"'id'\"'\"') || '\"'\"''\"'\"')    .filter(Boolean)    .slice(0, 40)}));const registrationFields = Array.from(document.querySelectorAll('\"'\"'input,select,textarea'\"'\"'))  .map((el) => ({    tag: el.tagName.toLowerCase(),    type: el.getAttribute('\"'\"'type'\"'\"') || '\"'\"''\"'\"',    name: el.getAttribute('\"'\"'name'\"'\"') || '\"'\"''\"'\"',    id: el.id || '\"'\"''\"'\"',    placeholder: el.getAttribute('\"'\"'placeholder'\"'\"') || '\"'\"''\"'\"'  }))  .filter((item) => (item.name + '\"'\"' '\"'\"' + item.id + '\"'\"' '\"'\"' + item.placeholder).toLowerCase().match(/reg|keyword|search|tail|serial|aircraft/));return {  title: document.title,  current_url: location.href,  selector_counts: counts,  candidate_urls: unique.slice(0, 20),  candidate_count: unique.length,  challenge_markers: detectedChallenges,  forms_count: forms.length,  forms: forms.slice(0, 8),  candidate_registration_fields: registrationFields.slice(0, 20)};})()'",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 796.18,
+            "stdout": "{\"success\":true,\"data\":{\"result\":{\"candidate_count\":9,\"candidate_registration_fields\":[{\"id\":\"search\",\"name\":\"q\",\"placeholder\":\"Search\",\"tag\":\"input\",\"type\":\"search\"}],\"candidate_urls\":[\"https://t.plnspttrs.net/05346/1841576_aa4347877d_280.jpg\",\"https://t.plnspttrs.net/05787/1894533_0aa34ea26a_t.jpg\",\"https://t.plnspttrs.net/29691/1894532_b638669f7a_t.jpg\",\"https://t.plnspttrs.net/29042/1894531_f5d57a384e_t.jpg\",\"https://t.plnspttrs.net/45500/1894530_57723b4d13_t.jpg\",\"https://t.plnspttrs.net/09835/1894529_3199a7a55b_t.jpg\",\"https://t.plnspttrs.net/20047/1894528_5d3218bfb2_t.jpg\",\"https://t.plnspttrs.net/33291/1894527_bd7314924a_t.jpg\",\"https://static.planespotters.net/img/logo.svg\"],\"challenge_markers\":[],\"current_url\":\"https://www.planespotters.net/photos/reg/EC-OLE?sort=latest\",\"forms\":[{\"action\":\"/search\",\"index\":0,\"input_names\":[\"q\"],\"method\":\"get\"}],\"forms_count\":1,\"selector_counts\":{\"div.photo_card img\":0,\"img.photo_card__photo\":0,\"img[data-photo-id]\":0,\"img[src*='planespotters']\":1,\"img[src*='plnspttrs']\":11},\"title\":\"EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net\"}},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "result": {
+                  "candidate_count": 9,
+                  "candidate_registration_fields": [
+                    {
+                      "id": "search",
+                      "name": "q",
+                      "placeholder": "Search",
+                      "tag": "input",
+                      "type": "search"
+                    }
+                  ],
+                  "candidate_urls": [
+                    "https://t.plnspttrs.net/05346/1841576_aa4347877d_280.jpg",
+                    "https://t.plnspttrs.net/05787/1894533_0aa34ea26a_t.jpg",
+                    "https://t.plnspttrs.net/29691/1894532_b638669f7a_t.jpg",
+                    "https://t.plnspttrs.net/29042/1894531_f5d57a384e_t.jpg",
+                    "https://t.plnspttrs.net/45500/1894530_57723b4d13_t.jpg",
+                    "https://t.plnspttrs.net/09835/1894529_3199a7a55b_t.jpg",
+                    "https://t.plnspttrs.net/20047/1894528_5d3218bfb2_t.jpg",
+                    "https://t.plnspttrs.net/33291/1894527_bd7314924a_t.jpg",
+                    "https://static.planespotters.net/img/logo.svg"
+                  ],
+                  "challenge_markers": [],
+                  "current_url": "https://www.planespotters.net/photos/reg/EC-OLE?sort=latest",
+                  "forms": [
+                    {
+                      "action": "/search",
+                      "index": 0,
+                      "input_names": [
+                        "q"
+                      ],
+                      "method": "get"
+                    }
+                  ],
+                  "forms_count": 1,
+                  "selector_counts": {
+                    "div.photo_card img": 0,
+                    "img.photo_card__photo": 0,
+                    "img[data-photo-id]": 0,
+                    "img[src*='planespotters']": 1,
+                    "img[src*='plnspttrs']": 11
+                  },
+                  "title": "EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net"
+                }
+              },
+              "error": null
+            }
+          },
+          {
+            "command": "agent-browser --json --session probe-planespotters-1771827216 close",
+            "ok": true,
+            "return_code": 0,
+            "elapsed_ms": 1351.52,
+            "stdout": "{\"success\":true,\"data\":{\"closed\":true},\"error\":null}\n",
+            "stderr": "",
+            "parsed_json": {
+              "success": true,
+              "data": {
+                "closed": true
+              },
+              "error": null
+            }
+          }
+        ],
+        "eval_payload": {
+          "success": true,
+          "data": {
+            "result": {
+              "candidate_count": 9,
+              "candidate_registration_fields": [
+                {
+                  "id": "search",
+                  "name": "q",
+                  "placeholder": "Search",
+                  "tag": "input",
+                  "type": "search"
+                }
+              ],
+              "candidate_urls": [
+                "https://t.plnspttrs.net/05346/1841576_aa4347877d_280.jpg",
+                "https://t.plnspttrs.net/05787/1894533_0aa34ea26a_t.jpg",
+                "https://t.plnspttrs.net/29691/1894532_b638669f7a_t.jpg",
+                "https://t.plnspttrs.net/29042/1894531_f5d57a384e_t.jpg",
+                "https://t.plnspttrs.net/45500/1894530_57723b4d13_t.jpg",
+                "https://t.plnspttrs.net/09835/1894529_3199a7a55b_t.jpg",
+                "https://t.plnspttrs.net/20047/1894528_5d3218bfb2_t.jpg",
+                "https://t.plnspttrs.net/33291/1894527_bd7314924a_t.jpg",
+                "https://static.planespotters.net/img/logo.svg"
+              ],
+              "challenge_markers": [],
+              "current_url": "https://www.planespotters.net/photos/reg/EC-OLE?sort=latest",
+              "forms": [
+                {
+                  "action": "/search",
+                  "index": 0,
+                  "input_names": [
+                    "q"
+                  ],
+                  "method": "get"
+                }
+              ],
+              "forms_count": 1,
+              "selector_counts": {
+                "div.photo_card img": 0,
+                "img.photo_card__photo": 0,
+                "img[data-photo-id]": 0,
+                "img[src*='planespotters']": 1,
+                "img[src*='plnspttrs']": 11
+              },
+              "title": "EC-OLE | ECOLE | Latest Photos | Planespotters.net | Planespotters.net"
+            }
+          },
+          "error": null
+        },
+        "registration_insertion_strategy": {
+          "provider": "planespotters",
+          "type": "path_segment",
+          "base_url": "https://www.planespotters.net/photos/reg/{registration}",
+          "parameter": "registration_path",
+          "example_value": "EC-OLE",
+          "example_url": "https://www.planespotters.net/photos/reg/EC-OLE?sort=latest",
+          "note": "Set aircraft registration in URL path segment '/photos/reg/{registration}'."
+        },
+        "image_extraction_strategy": {
+          "provider": "planespotters",
+          "selectors": [
+            "img.photo_card__photo",
+            "div.photo_card img",
+            "img[data-photo-id]",
+            "img[src*='plnspttrs']",
+            "img[src*='planespotters']"
+          ],
+          "attributes_order": [
+            "src",
+            "data-src",
+            "data-lazy-src",
+            "srcset"
+          ],
+          "normalization": [
+            "// -> https://",
+            "relative path -> absolute URL"
+          ]
+        }
+      }
+    },
+    "parser_probe": {
+      "registration": "EC-OLE",
+      "jetphotos": {
+        "url": null,
+        "error": null,
+        "elapsed_ms": 5049.35
+      },
+      "planespotters": {
+        "url": "https://cdn.plnspttrs.net/05346/ec-ole-iberia-airbus-a321-253ny-xlr_PlanespottersNet_1841576_36d63f9b99_o.jpg",
+        "error": null,
+        "elapsed_ms": 470.35
+      }
+    },
+    "findings": [
+      "jetphotos: browser probe found 9 image URL candidates in DOM.",
+      "jetphotos: browser probe found 6 forms in DOM.",
+      "jetphotos: browser detected candidate registration input fields (20).",
+      "jetphotos: parser did not resolve any image URL.",
+      "planespotters: browser probe found 9 image URL candidates in DOM.",
+      "planespotters: browser probe found 1 forms in DOM.",
+      "planespotters: browser detected candidate registration input fields (1).",
+      "planespotters: parser resolved image URL successfully (https://cdn.plnspttrs.net/05346/ec-ole-iberia-airbus-a321-253ny-xlr_PlanespottersNet_1841576_36d63f9b99_o.jpg)."
+    ],
+    "debug_plan": [
+      "Run `test/integration/image_scrape_probe.py` with 5-10 real registrations and keep JSON outputs under `test/artifacts/`.",
+      "For each provider, compare `eval_payload.candidate_urls` from browser probe vs parser output; if browser has URLs but parser fails, update selectors/parsing first.",
+      "When anti-bot markers appear, increase provider cooldown and reduce retry pressure instead of hard-failing the full social publish flow.",
+      "Track HTTP status, challenge markers, and parser reasons in monitoring to spot drift after site DOM changes.",
+      "Add regression fixtures with captured HTML snippets and test parser extraction against them before deploying."
+    ]
+  }
+}

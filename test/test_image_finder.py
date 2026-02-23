@@ -68,12 +68,17 @@ def _patch_runtime(monkeypatch) -> None:
     monkeypatch.setattr(image_finder, "record_api_event", lambda **_: None)
 
 
-def _patch_planespotters_hero(monkeypatch, return_value: str | None = None):
+_HERO_RETURN_SENTINEL = object()
+
+
+def _patch_planespotters_hero(monkeypatch, return_value: object = _HERO_RETURN_SENTINEL):
     calls: list[str] = []
 
     def fake(photo_url, _config):
         calls.append(photo_url)
-        return return_value or photo_url
+        if return_value is _HERO_RETURN_SENTINEL:
+            return photo_url
+        return return_value
 
     monkeypatch.setattr(image_finder, "_fetch_planespotters_photo_page_image", fake)
     return calls
@@ -106,7 +111,6 @@ def test_jp_retries_429_then_returns_full_size(monkeypatch) -> None:
 def test_planespotters_uses_largest_srcset_candidate(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
-    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
@@ -154,7 +158,6 @@ def test_jetphotos_prefers_image_matching_registration(monkeypatch) -> None:
 def test_planespotters_prefers_matching_registration_from_photo_links(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
-    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
@@ -183,7 +186,7 @@ def test_planespotters_prefers_matching_registration_from_photo_links(monkeypatc
 def test_planespotters_api_payload_is_primary_source(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch)
-    _patch_planespotters_hero(monkeypatch)
+    hero_calls = _patch_planespotters_hero(monkeypatch, return_value="https://cdn.planespotters.net/hero/latest_full.jpg")
 
     scraper = FakeScraper(
         [
@@ -191,7 +194,8 @@ def test_planespotters_api_payload_is_primary_source(monkeypatch) -> None:
                 status_code=200,
                 text=(
                     '{"photos": ['
-                    '{"thumbnail_large": {"src": "https://cdn.planespotters.net/33333/latest_280.jpg"}},'
+                    '{"link": "https://www.planespotters.net/photo/33333/latest?utm_source=api",'
+                    ' "thumbnail_large": {"src": "https://cdn.planespotters.net/33333/latest_280.jpg"}},'
                     '{"thumbnail_large": {"src": "https://cdn.planespotters.net/22222/older_280.jpg"}}'
                     ']}'
                 ),
@@ -202,16 +206,42 @@ def test_planespotters_api_payload_is_primary_source(monkeypatch) -> None:
 
     url = image_finder.get_first_image_url_pp("EC-API")
 
-    assert url == "https://cdn.planespotters.net/33333/latest_280.jpg"
+    assert url == "https://cdn.planespotters.net/hero/latest_full.jpg"
+    assert hero_calls == ["https://www.planespotters.net/photo/33333/latest?utm_source=api"]
     assert len(scraper.calls) == 1
     assert scraper.calls[0]["url"] == "https://api.planespotters.net/pub/photos/reg/EC-API"
     assert scraper.calls[0]["params"] == {}
 
 
+def test_planespotters_api_falls_back_to_api_image_when_hero_missing(monkeypatch) -> None:
+    _patch_runtime(monkeypatch)
+    _patch_image_finder_config(monkeypatch)
+    hero_calls = _patch_planespotters_hero(monkeypatch, return_value=None)
+
+    scraper = FakeScraper(
+        [
+            FakeResponse(
+                status_code=200,
+                text=(
+                    '{"photos": ['
+                    '{"link": "https://www.planespotters.net/photo/33333/latest?utm_source=api",'
+                    ' "thumbnail_large": {"src": "https://cdn.planespotters.net/33333/latest_280.jpg"}}'
+                    ']}'
+                ),
+            )
+        ]
+    )
+    monkeypatch.setattr(image_finder.cloudscraper, "create_scraper", lambda: scraper)
+
+    url = image_finder.get_first_image_url_pp("EC-API")
+
+    assert url == "https://cdn.planespotters.net/33333/latest_280.jpg"
+    assert hero_calls == ["https://www.planespotters.net/photo/33333/latest?utm_source=api"]
+
+
 def test_planespotters_falls_back_to_legacy_html_when_api_fails(monkeypatch) -> None:
     _patch_runtime(monkeypatch)
     _patch_image_finder_config(monkeypatch, max_retries=1)
-    _patch_planespotters_hero(monkeypatch)
 
     scraper = FakeScraper(
         [
