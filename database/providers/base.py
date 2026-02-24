@@ -34,3 +34,13 @@ class DatabaseProvider(ABC):
         airport_icao: str,
     ) -> dict[str, Any] | None:
         """Store a processed flight event for audit/history."""
+
+    @abstractmethod
+    async def upsert_interesting_registration(
+        self,
+        *,
+        airport_icao: str,
+        registration: str,
+        reason: str | None = None,
+    ) -> dict[str, Any] | None:
+        """Create or update an interesting registration entry."""

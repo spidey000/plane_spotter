@@ -354,3 +354,46 @@ class SupabaseProvider(DatabaseProvider):
         except Exception as exc:
             logger.warning(f"Failed to record flight history for {external_id}: {exc}")
             return None
+
+    async def upsert_interesting_registration(
+        self,
+        *,
+        airport_icao: str,
+        registration: str,
+        reason: str | None = None,
+    ) -> dict[str, Any] | None:
+        normalized_registration = _normalize_registration(registration)
+        if not normalized_registration:
+            raise ValueError("Registration must not be empty")
+
+        normalized_airport = str(airport_icao or "").strip().upper()
+        if not normalized_airport:
+            raise ValueError("airport_icao must not be empty")
+
+        existing_rows = await self.select_rows(
+            "interesting_registrations",
+            filters={
+                "registration": normalized_registration,
+                "airport_icao": normalized_airport,
+            },
+        )
+
+        payload: dict[str, Any] = {
+            "registration": normalized_registration,
+            "airport_icao": normalized_airport,
+            "is_active": True,
+        }
+
+        if reason is not None:
+            reason_value = str(reason).strip()
+            if reason_value:
+                payload["reason"] = reason_value
+
+        existing = existing_rows[0] if existing_rows else None
+        if existing:
+            row_id = existing.get("id")
+            if row_id:
+                updated = await self.update_row_by_id("interesting_registrations", row_id, payload)
+                return updated or existing
+
+        return await self.insert_row("interesting_registrations", payload)

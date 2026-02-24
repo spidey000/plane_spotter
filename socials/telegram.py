@@ -17,6 +17,7 @@ from telegram.constants import MessageEntityType
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 import config.config as cfg
+from database import get_database_provider
 from monitoring.api_usage import record_api_event
 from socials import message_policy as mp
 from socials.message_builder import MessageContext, build_message_context, render_flight_message
@@ -68,6 +69,7 @@ def _build_help_text(admin_user: bool) -> str:
             "- /config_set <key> <value>",
             "- /config_list",
             "- /config_reset",
+            "- /interesting_reg_add (REG,razon)",
             "",
             "Comandos de perfiles de mensaje (ADMIN):",
             "- /profile_list",
@@ -89,6 +91,7 @@ def _build_help_text(admin_user: bool) -> str:
             "- /profile_preview telegram image",
             "- /toggle off twitter",
             "- /config_set message_policy.defaults.overflow_action block",
+            "- /interesting_reg_add (EC-MYT,Razon especial)",
         ]
     )
     return "\n".join(lines)
@@ -119,6 +122,7 @@ def _build_help_tech_text(admin_user: bool) -> str:
         "- /config_set <key> <value>",
         "- /config_list",
         "- /config_reset",
+        "- /interesting_reg_add (REG,razon)",
         "",
         "2) Comandos de perfiles por red social:",
         "- /profile_list",
@@ -136,6 +140,7 @@ def _build_help_tech_text(admin_user: bool) -> str:
         "- Validar limites: /profile_get twitter",
         "- Probar resultado: /profile_preview twitter",
         "- Preview caption Telegram: /profile_preview telegram image",
+        "- Agregar registro interesante: /interesting_reg_add (EC-LMD, Primera visita)",
         "",
         "5) Keys utiles para /config_set:",
         "- message_policy.defaults.overflow_action block",
@@ -221,6 +226,59 @@ def _chunk_text(text: str, limit: int | None = None) -> list[str]:
             start += 1
 
     return [chunk for chunk in chunks if chunk]
+
+
+def _extract_command_payload(text: str | None) -> str:
+    if not text:
+        return ""
+
+    parts = text.split(maxsplit=1)
+    if len(parts) < 2:
+        return ""
+    return parts[1].strip()
+
+
+def _parse_registration_reason_pairs(payload: str) -> list[tuple[str, str]]:
+    if not payload:
+        return []
+
+    pairs: list[tuple[str, str]] = []
+    idx = 0
+    length = len(payload)
+
+    while idx < length:
+        while idx < length and payload[idx].isspace():
+            idx += 1
+        if idx < length and payload[idx] in {",", ";"}:
+            idx += 1
+            continue
+        if idx >= length:
+            break
+
+        if payload[idx] != "(":
+            raise ValueError("Cada par debe iniciarse con '('")
+
+        idx += 1
+        closing = payload.find(")", idx)
+        if closing == -1:
+            raise ValueError("Falta ')' de cierre en la lista de registros")
+
+        inside = payload[idx:closing]
+        idx = closing + 1
+
+        if "," not in inside:
+            raise ValueError("Cada par debe tener una coma entre registro y razon")
+
+        registration_part, reason_part = inside.split(",", 1)
+        registration = registration_part.strip().upper()
+        reason = reason_part.strip()
+
+        if not registration or not reason:
+            raise ValueError("Registro y razon no pueden estar vacios")
+
+        pairs.append((registration, reason))
+
+    return pairs
 
 
 def _select_config_section(config: Any, key_path: str | None) -> Any:
@@ -328,6 +386,74 @@ async def config_reset(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         await update.message.reply_text("Configuracion restablecida a valores por defecto")
     except Exception as exc:
         await update.message.reply_text(f"Error: {exc}")
+
+
+async def interesting_reg_add(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    message = update.effective_message
+    user = update.effective_user
+
+    if message is None or user is None or not is_admin(user.id):
+        if message is not None:
+            await message.reply_text("Acceso denegado")
+        return
+
+    payload = _extract_command_payload(message.text)
+    if not payload:
+        await message.reply_text("Uso: /interesting_reg_add (REG, razon) [(REG2, razon2)...]")
+        return
+
+    try:
+        pairs = _parse_registration_reason_pairs(payload)
+    except ValueError as exc:
+        await message.reply_text(f"Formato invalido: {exc}")
+        return
+
+    if not pairs:
+        await message.reply_text("No se encontraron pares (REG, razon)")
+        return
+
+    airport_icao = (
+        cfg.get_config("api.airport_icao")
+        or cfg.get_config("database.airport_icao")
+        or "LEMD"
+    )
+    airport_icao = str(airport_icao or "").strip().upper() or "LEMD"
+
+    try:
+        provider = get_database_provider()
+    except Exception as exc:
+        await message.reply_text(f"No se pudo inicializar el proveedor de BD: {exc}")
+        return
+
+    success_lines: list[str] = []
+    error_lines: list[str] = []
+
+    for registration, reason in pairs:
+        try:
+            row = await provider.upsert_interesting_registration(
+                airport_icao=airport_icao,
+                registration=registration,
+                reason=reason,
+            )
+            saved_registration = registration
+            if isinstance(row, dict):
+                saved_registration = str(row.get("registration") or registration)
+            success_lines.append(f"- {saved_registration.upper()}: {reason}")
+        except Exception as exc:
+            error_lines.append(f"- {registration}: {exc}")
+
+    response_lines: list[str] = []
+    if success_lines:
+        response_lines.append("Registros agregados/actualizados:")
+        response_lines.extend(success_lines)
+
+    if error_lines:
+        if response_lines:
+            response_lines.append("")
+        response_lines.append("Errores:")
+        response_lines.extend(error_lines)
+
+    await message.reply_text("\n".join(response_lines))
 
 
 def _parse_toggle_args(args: list[str]) -> tuple[bool, str]:
@@ -516,6 +642,7 @@ def _create_application():
     app.add_handler(CommandHandler("config_get", config_get))
     app.add_handler(CommandHandler("config_list", config_list))
     app.add_handler(CommandHandler("config_reset", config_reset))
+    app.add_handler(CommandHandler("interesting_reg_add", interesting_reg_add))
     app.add_handler(CommandHandler("profile_set", profile_set))
     app.add_handler(CommandHandler("profile_get", profile_get))
     app.add_handler(CommandHandler("profile_list", profile_list))

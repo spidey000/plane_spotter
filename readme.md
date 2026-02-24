@@ -132,6 +132,7 @@ Admin commands:
 - `/profile_get <platform>`
 - `/profile_list`
 - `/profile_preview <platform> [image]`
+- `/interesting_reg_add (REG,reason)`
 
 ## AeroAPI Key Rotation
 
