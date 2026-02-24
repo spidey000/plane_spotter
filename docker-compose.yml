@@ -35,5 +35,12 @@ services:
       X_USAGE_SYNC_DAYS: ${X_USAGE_SYNC_DAYS:-7}
     volumes:
       - ./logs:/app/logs
-      - ./config:/app/config
+    configs:
+      - source: plane_spotter_config
+        target: /app/config/config.yaml
+        mode: 0440
     command: ["python", "main.py"]
+
+configs:
+  plane_spotter_config:
+    file: ./config/config.yaml
