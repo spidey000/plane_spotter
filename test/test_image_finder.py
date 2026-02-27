@@ -104,8 +104,9 @@ def test_jp_retries_429_then_returns_full_size(monkeypatch) -> None:
     assert url == "https://cdn.jetphotos.com/full/1/example.jpg"
     assert len(scraper.calls) == 2
     assert scraper.calls[0]["params"]["keywords"] == "EC-ABC"
-    assert scraper.calls[0]["headers"] is None
-    assert scraper.calls[1]["headers"] is None
+    assert scraper.calls[0]["headers"]["User-Agent"] == "test-agent"
+    assert scraper.calls[0]["headers"]["Referer"] == "https://www.jetphotos.com/"
+    assert scraper.calls[1]["headers"]["User-Agent"] == "test-agent"
 
 
 def test_planespotters_uses_largest_srcset_candidate(monkeypatch) -> None:

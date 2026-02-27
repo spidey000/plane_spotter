@@ -15,11 +15,28 @@ import time
 from typing import Dict, List
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+from urllib.parse import urljoin
 
 import requests
 from bs4 import BeautifulSoup
+from loguru import logger
 
 from monitoring.api_usage import record_api_event
+
+
+_DEFAULT_EXTERNAL_UA = (
+    "Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0"
+)
+
+
+def _external_fetch_headers(*, referer: str | None = None) -> Dict[str, str]:
+    headers = {
+        "User-Agent": os.environ.get("BSKY_EMBED_USER_AGENT", _DEFAULT_EXTERNAL_UA),
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    if referer:
+        headers["Referer"] = referer
+    return headers
 
 
 def _tracked_request(method: str, url: str, **kwargs):
@@ -283,7 +300,7 @@ def upload_images(
     }
 
 
-def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict:
+def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict | None:
     # the required fields for an embed card
     card = {
         "uri": url,
@@ -292,8 +309,17 @@ def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict:
     }
 
     # fetch the HTML
-    resp = _tracked_get(url)
-    resp.raise_for_status()
+    try:
+        resp = _tracked_get(
+            url,
+            headers=_external_fetch_headers(),
+            timeout=15,
+        )
+        resp.raise_for_status()
+    except requests.RequestException as exc:
+        logger.warning(f"Unable to fetch embed URL {url}: {exc}. Posting without external card.")
+        return None
+
     soup = BeautifulSoup(resp.text, "html.parser")
 
     title_tag = soup.find("meta", property="og:title")
@@ -308,10 +334,17 @@ def fetch_embed_url_card(pds_url: str, access_token: str, url: str) -> Dict:
     if image_tag:
         img_url = image_tag["content"]
         if "://" not in img_url:
-            img_url = url + img_url
-        resp = _tracked_get(img_url)
-        resp.raise_for_status()
-        card["thumb"] = upload_file(pds_url, access_token, img_url, resp.content)
+            img_url = urljoin(url, img_url)
+        try:
+            resp = _tracked_get(
+                img_url,
+                headers=_external_fetch_headers(referer=url),
+                timeout=15,
+            )
+            resp.raise_for_status()
+            card["thumb"] = upload_file(pds_url, access_token, img_url, resp.content)
+        except requests.RequestException as exc:
+            logger.warning(f"Unable to fetch external card image {img_url}: {exc}. Continuing without thumbnail.")
 
     return {
         "$type": "app.bsky.embed.external",
@@ -377,9 +410,11 @@ def create_post(args):
             args.pds_url, session["accessJwt"], args.image, args.alt_text
         )
     elif args.embed_url:
-        post["embed"] = fetch_embed_url_card(
+        embed_card = fetch_embed_url_card(
             args.pds_url, session["accessJwt"], args.embed_url
         )
+        if embed_card is not None:
+            post["embed"] = embed_card
     elif args.embed_ref:
         post["embed"] = get_embed_ref(args.pds_url, args.embed_ref)
 

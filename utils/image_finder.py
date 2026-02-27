@@ -700,7 +700,7 @@ def _lookup_provider_image_url(provider: str, registration: str, config: dict[st
             provider=provider,
             request_url="https://www.jetphotos.com/showphotos.php",
             params=params,
-            headers=None,
+            headers=_build_headers(referer="https://www.jetphotos.com/", user_agent=config["user_agent"]),
             registration=registration,
             config=config,
         )
